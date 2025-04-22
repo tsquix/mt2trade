@@ -1,4 +1,4 @@
-import { LoginForm } from "./sign-up";
+import { LoginForm } from './sign-up';
 
 export default function LoginPage() {
   return (

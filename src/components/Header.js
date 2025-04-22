@@ -1,38 +1,49 @@
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { signOut } from "next-auth/react";
+import { useSession } from 'next-auth/react';
+import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 export default function Header() {
   const { data: session } = useSession();
 
   return (
-    <section className="bg-slate-200 shadow-lg">
+    <section className="bg-mainBg shadow-lg text-white mb-12">
       <div className="flex mx-auto max-w-7xl py-6 justify-between">
-        <div className="">
-          <Link href={"/"}>
-            <span className="px-6">Home</span>
-          </Link>
-          <Link href={"/huj"}>
-            <span className="px-6">huj</span>
+        <div className="bg-brighterBg px-5 py-2 rounded-xl">
+          <Link href={'/'}>Home</Link>
+        </div>
+        <div className="bg-brighterBg px-5 py-2 rounded-xl">
+          <Link href={'/marketplace/offers'}>marketplace</Link>
+        </div>
+        <div className="bg-brighterBg px-5 py-2 rounded-xl">
+          <Link href={'/panel'}>
+            <span className="px-6">Admin panel</span>
           </Link>
         </div>
 
         <div className="">
           {!session ? (
             <>
-              <Link href={"/login"}>
+              <Link href={'/login'}>
                 <span className="px-6">Login</span>
               </Link>
-              <Link href={"/sign-up"}>
+
+              <Link href={'/sign-up'}>
                 <span className="px-6">Signup</span>
               </Link>
             </>
           ) : (
             <>
-              <span className="px-6">Welcome, {session.user.name}</span>
-              <button onClick={() => signOut()} className="px-6">
-                Logout
-              </button>
+              <div className="flex gap-6">
+                <p className="bg-brighterBg px-5 py-2 rounded-xl">
+                  Welcome, {session.user.name}
+                </p>
+                <button
+                  onClick={() => signOut()}
+                  className="bg-brighterBg px-5 py-2 rounded-xl"
+                >
+                  Logout
+                </button>
+              </div>
             </>
           )}
         </div>

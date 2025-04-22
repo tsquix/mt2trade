@@ -1,16 +1,16 @@
-import NextAuth from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
-import bcrypt from "bcryptjs";
-import User from "../../../../models/User";
-import connectMongoDB from "../../../../lib/mongoose";
+import NextAuth from 'next-auth';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcryptjs';
+import User from '../../../../models/User';
+import connectMongoDB from '../../../../lib/mongoose';
 
 export const authOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: 'Credentials',
       credentials: {
-        email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
@@ -35,7 +35,7 @@ export const authOptions = {
           }
           return null;
         } catch (error) {
-          console.error("Auth error:", error);
+          console.error('Auth error:', error);
           throw error; // This will help with debugging
         }
       },
@@ -56,11 +56,11 @@ export const authOptions = {
     },
   },
   pages: {
-    signIn: "/login",
-    error: "/auth/error",
+    signIn: '/login',
+    error: '/auth/error',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === "development",
+  debug: process.env.NODE_ENV === 'development',
 };
 
 export default NextAuth(authOptions);
