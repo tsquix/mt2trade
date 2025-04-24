@@ -34,9 +34,11 @@ export default function Header() {
           ) : (
             <>
               <div className="flex gap-6">
-                <p className="bg-brighterBg px-5 py-2 rounded-xl">
-                  Welcome, {session.user.name}
-                </p>
+                <Link href={'/profile'}>
+                  <p className="bg-brighterBg px-5 py-2 rounded-xl">
+                    Welcome, {session.user.name}
+                  </p>
+                </Link>
                 <button
                   onClick={() => signOut()}
                   className="bg-brighterBg px-5 py-2 rounded-xl"

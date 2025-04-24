@@ -1,25 +1,10 @@
 import axios from 'axios';
+import Link from 'next/link';
 
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
 export default function OfferDetailPage({ selectedOffer }) {
-  const [userData, setUserData] = useState(null);
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       const response = await axios.get(`/api/user/${selectedOffer.username}`);
-  //       setUserData(response.data.user);
-  //     } catch (error) {
-  //       console.error('Error fetching user data:', error);
-  //     }
-  //   };
-
-  //   if (selectedOffer?.username) {
-  //     fetchUserData();
-  //   }
-  // }, [selectedOffer]);
-
   useEffect(() => {
     console.log(selectedOffer);
   }, [selectedOffer]);
@@ -34,10 +19,12 @@ export default function OfferDetailPage({ selectedOffer }) {
           <div className="mb-2 flex items-center gap-2">
             <span> Sprzedawca:</span>
             <span className="bg-brighterBg px-3 py-2  rounded-2xl">
-              <strong className="text-xs text-red-300 ">
-                {' '}
-                {selectedOffer.seller.name}
-              </strong>
+              <Link href={`/profile/${selectedOffer.seller.name}`}>
+                <strong className="text-xs text-red-300 ">
+                  {' '}
+                  {selectedOffer.seller.name}
+                </strong>
+              </Link>
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -61,7 +48,7 @@ export default function OfferDetailPage({ selectedOffer }) {
           <div>
             {' '}
             <p>
-              Platnosc:
+              Platnosc:{' '}
               <span className="text-xs text-red-300">
                 {selectedOffer.seller.prefPayment}
               </span>
