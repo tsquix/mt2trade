@@ -68,6 +68,42 @@ export default function OfferPage() {
     }
   }, [server]);
 
+  // useEffect(() => {}, [offers]);
+
+  const handleSort = (e) => {
+    const option = e.target.value;
+    const sorted = [...offers];
+    switch (option) {
+      case 'yangAsc': {
+        sorted.sort((a, b) => a.currencyAmount - b.currencyAmount);
+        break;
+      }
+      case 'yangDesc': {
+        sorted.sort((a, b) => b.currencyAmount - a.currencyAmount);
+        break;
+      }
+      case 'priceAsc': {
+        sorted.sort(
+          (a, b) =>
+            a.pricePLN / a.currencyAmount - b.pricePLN / b.currencyAmount
+        );
+        break;
+      }
+      case 'priceDesc': {
+        sorted.sort(
+          (a, b) =>
+            b.pricePLN / b.currencyAmount - a.pricePLN / a.currencyAmount
+        );
+        break;
+      }
+      case 'rating': {
+        sorted.sort((a, b) => b.seller.userRating - a.seller.userRating);
+        break;
+      }
+    }
+    setOffers(sorted);
+  };
+
   return (
     <Layout>
       {/* Header section remains unchanged */}
@@ -93,12 +129,23 @@ export default function OfferPage() {
           </div>
           <h1 className="text-3xl font-bold">{server}</h1>
         </div>
-        <div className="flex justify-center">
+        <div className="flex justify-center mb-4">
           <Link href={`/marketplace/offers/create?server=${server}`}>
             <p className="text-3xl font-bold bg-mainBg hover:bg-white hover:text-black px-3 py-1 rounded-lg">
               Utworz swoja oferte
             </p>
           </Link>
+        </div>
+        <div>
+          <h3>sortuj</h3>
+          <select onChange={handleSort} className="text-black">
+            <option value=""></option>
+            <option value="yangAsc">Ilosc yang ASC</option>
+            <option value="yangDesc">Ilosc yang DESC</option>
+            <option value="priceAsc">Najtaniej</option>
+            <option value="priceDesc">Najdrozej</option>
+            <option value="rating">UserRating</option>
+          </select>
         </div>
       </div>
 
