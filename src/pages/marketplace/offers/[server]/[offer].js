@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
-export default function OfferDetailPage({ selectedOffer }) {
+export default function OfferDetailPage({ selectedOffer, handleBuy }) {
   useEffect(() => {
     console.log(selectedOffer);
   }, [selectedOffer]);
@@ -27,14 +27,32 @@ export default function OfferDetailPage({ selectedOffer }) {
               </Link>
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span>ilość transakcji:</span>
-            <span className="bg-brighterBg px-3 py-2 rounded-2xl">
-              <strong className="text-xs text-red-300 ">
-                {' '}
-                {selectedOffer.seller.transactionCount}
-              </strong>
-            </span>
+          <div className="flex items-center gap-2 justify-between">
+            <div>
+              <span>ilość transakcji:</span>
+              <span className="bg-brighterBg px-3 py-2 rounded-2xl">
+                <strong className="text-xs text-red-300 ">
+                  {' '}
+                  {selectedOffer.seller.transactionCount}
+                </strong>
+              </span>
+            </div>
+            <div className="flex gap-4">
+              <button
+                value={'buy'}
+                onClick={handleBuy}
+                className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300"
+              >
+                kup teraz
+              </button>
+              <button
+                value={'reserve'}
+                onClick={handleBuy}
+                className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300"
+              >
+                zarezerwuj
+              </button>
+            </div>
           </div>
         </div>
         <p className="mb-2">cennik</p>

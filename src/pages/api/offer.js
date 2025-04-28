@@ -6,12 +6,19 @@ export default async function handler(req, res) {
   try {
     const { method } = req;
     const { server } = req.query;
+    const { userId } = req.query;
     await connectMongoDB();
 
     if (method === 'GET') {
       if (server) {
         // Find offers for specific server with populated seller data
         const offers = await Offer.find({ serverName: server })
+          .populate('seller', 'name userRating prefPayment transactionCount')
+          .exec();
+        return res.status(200).json({ success: true, offers });
+      } else if (userId) {
+        // Find offers for specific server with populated seller data
+        const offers = await Offer.find({ seller: userId })
           .populate('seller', 'name userRating prefPayment transactionCount')
           .exec();
         return res.status(200).json({ success: true, offers });

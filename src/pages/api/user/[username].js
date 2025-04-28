@@ -21,7 +21,7 @@ export default async function handler(req, res) {
 
     // Optimize database query by selecting only needed fields
     const user = await User.findOne({ name: username }).select(
-      'name userRating prefPayment transactionCount verified createdAt'
+      '_id name userRating prefPayment transactionCount verified createdAt'
     );
 
     if (!user) {
@@ -37,6 +37,7 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       user: {
+        _id: user._id,
         name: user.name,
         userRating: user.userRating,
         transactionCount: user.transactionCount,

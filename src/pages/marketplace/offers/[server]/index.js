@@ -14,7 +14,8 @@ export default function OfferPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [visibleCount, setVisibleCount] = useState(3);
   const listRef = useRef(null);
-
+  const [actionType, setActionType] = useState(null);
+  const [currencyCount, setCurrencyCount] = useState(1);
   // Function to load more items
   const loadMore = useCallback(() => {
     if (offers && visibleCount < offers.length) {
@@ -104,93 +105,150 @@ export default function OfferPage() {
     setOffers(sorted);
   };
 
+  const handleBuy = (e) => {
+    setActionType(e.target.value);
+    console.log(selectedOffer);
+  };
+  const pricePerUnit = 200 / 100;
   return (
     <Layout>
       {/* Header section remains unchanged */}
-      <div className="flex justify-center text-center mb-12 flex-col">
-        <div className="mb-2">
-          <div className="absolute bg-mainBg px-4 py-2 rounded-full hover:opacity-70 pointer">
-            <Link href={'/marketplace/offers'}>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="size-6"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                />
-              </svg>
+      {actionType === 'buy' && (
+        <div className="bg-mainBg p-6 flex relative flex-col">
+          <h1>
+            kupujesz od :
+            <Link
+              target="_blank"
+              href={`/profile/${selectedOffer.seller.name}`}
+            >
+              {selectedOffer.seller.name}
+            </Link>
+          </h1>
+          <div className="flex gap-6 w-1/2 mx-3 text-center items-center mb-8">
+            <label htmlFor="" className="text-nowrap">
+              ile siana {currencyCount}
+            </label>
+            <input
+              type="range"
+              min="1"
+              max={selectedOffer.currencyAmount}
+              value={currencyCount}
+              onChange={(e) => setCurrencyCount(parseInt(e.target.value))}
+              className="w-full "
+            />
+            <div className="text-nowrap">
+              {(
+                (currencyCount * selectedOffer.pricePLN) /
+                selectedOffer.currencyAmount
+              ).toFixed(2)}{' '}
+              zł
+            </div>
+          </div>
+          <div>
+            <button className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300">
+              kup tera
+            </button>
+          </div>
+          <div className="absolute top-5 right-5">
+            <button
+              onClick={() => setActionType(null)}
+              className="text-red-500 font-bold text-lg"
+            >
+              X
+            </button>
+          </div>
+        </div>
+      )}
+      <div className={`${actionType === 'buy' ? 'opacity-20' : 'opacity-100'}`}>
+        <div className="flex justify-center text-center mb-12 flex-col">
+          <div className="mb-2">
+            <div className="absolute bg-mainBg px-4 py-2 rounded-full hover:opacity-70 pointer">
+              <Link href={'/marketplace/offers'}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="1.5"
+                  stroke="currentColor"
+                  className="size-6"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                  />
+                </svg>
+              </Link>
+            </div>
+            <h1 className="text-3xl font-bold">{server}</h1>
+          </div>
+          <div className="flex justify-center mb-4">
+            <Link href={`/marketplace/offers/create?server=${server}`}>
+              <p className="text-3xl font-bold bg-mainBg hover:bg-white hover:text-black px-3 py-1 rounded-lg">
+                Utworz swoja oferte
+              </p>
             </Link>
           </div>
-          <h1 className="text-3xl font-bold">{server}</h1>
-        </div>
-        <div className="flex justify-center mb-4">
-          <Link href={`/marketplace/offers/create?server=${server}`}>
-            <p className="text-3xl font-bold bg-mainBg hover:bg-white hover:text-black px-3 py-1 rounded-lg">
-              Utworz swoja oferte
-            </p>
-          </Link>
-        </div>
-        <div>
-          <h3>sortuj</h3>
-          <select onChange={handleSort} className="text-black">
-            <option value=""></option>
-            <option value="yangAsc">Ilosc yang ASC</option>
-            <option value="yangDesc">Ilosc yang DESC</option>
-            <option value="priceAsc">Najtaniej</option>
-            <option value="priceDesc">Najdrozej</option>
-            <option value="rating">UserRating</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-16">
-        <div className="flex flex-col gap-y-8 max-h-screen pr-4">
-          {!isLoading ? (
-            <>
-              {offers?.slice(0, visibleCount).map((offer) => (
-                <OfferCard
-                  key={offer._id}
-                  offer={offer}
-                  isSelected={selectedOffer?._id === offer._id}
-                  onClick={() => setSelectedOffer(offer)}
-                  isLoading={isLoading}
-                />
-              ))}
-
-              {/* Load more trigger element */}
-              {offers && visibleCount < offers.length && (
-                <div ref={listRef} className="py-4 text-center">
-                  <OfferCard offer={''} isLoading={true} />
-                </div>
-              )}
-            </>
-          ) : (
-            <>
-              <OfferCard offer={''} isLoading={true} />
-              <OfferCard offer={''} isLoading={true} />
-              <OfferCard offer={''} isLoading={true} />
-            </>
-          )}
-          {offers?.length === 0 && (
-            <div>
-              <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
-              <p>Bądź pierwszy i utwórz swoją ofertę już teraz!</p>
-            </div>
-          )}
+          <div>
+            <h3>sortuj</h3>
+            <select onChange={handleSort} className="text-black">
+              <option value=""></option>
+              <option value="yangAsc">Ilosc yang ASC</option>
+              <option value="yangDesc">Ilosc yang DESC</option>
+              <option value="priceAsc">Najtaniej</option>
+              <option value="priceDesc">Najdrozej</option>
+              <option value="rating">UserRating</option>
+            </select>
+          </div>
         </div>
 
-        {/* Right side remains unchanged */}
-        <div className="sticky top-10 h-screen overflow-auto">
-          <div className="flex bg-mainBg rounded-3xl">
-            {selectedOffer && (
-              <OfferDetailPage offers={offers} selectedOffer={selectedOffer} />
+        <div className="grid grid-cols-2 gap-16">
+          <div className="flex flex-col gap-y-8 max-h-screen pr-4">
+            {!isLoading ? (
+              <>
+                {offers?.slice(0, visibleCount).map((offer) => (
+                  <OfferCard
+                    key={offer._id}
+                    offer={offer}
+                    isSelected={selectedOffer?._id === offer._id}
+                    onClick={() => setSelectedOffer(offer)}
+                    isLoading={isLoading}
+                  />
+                ))}
+
+                {/* Load more trigger element */}
+                {offers && visibleCount < offers.length && (
+                  <div ref={listRef} className="py-4 text-center">
+                    <OfferCard offer={''} isLoading={true} />
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <OfferCard offer={''} isLoading={true} />
+                <OfferCard offer={''} isLoading={true} />
+                <OfferCard offer={''} isLoading={true} />
+              </>
             )}
+            {offers?.length === 0 && (
+              <div>
+                <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
+                <p>Bądź pierwszy i utwórz swoją ofertę już teraz!</p>
+              </div>
+            )}
+          </div>
+
+          {/* Right side remains unchanged */}
+          <div className="sticky top-10 h-screen overflow-auto">
+            <div className="flex bg-mainBg rounded-3xl">
+              {selectedOffer && (
+                <OfferDetailPage
+                  offers={offers}
+                  selectedOffer={selectedOffer}
+                  handleBuy={handleBuy}
+                />
+              )}
+            </div>
           </div>
         </div>
       </div>
