@@ -5,6 +5,7 @@ import OfferDetailPage from './[offer]';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import OfferCard from '@/components/OfferCard';
+import BuyOrder from '@/components/BuyOrder';
 
 export default function OfferPage() {
   const router = useRouter();
@@ -15,7 +16,7 @@ export default function OfferPage() {
   const [visibleCount, setVisibleCount] = useState(3);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
-  const [currencyCount, setCurrencyCount] = useState(1);
+
   // Function to load more items
   const loadMore = useCallback(() => {
     if (offers && visibleCount < offers.length) {
@@ -114,50 +115,11 @@ export default function OfferPage() {
     <Layout>
       {/* Header section remains unchanged */}
       {actionType === 'buy' && (
-        <div className="bg-mainBg p-6 flex relative flex-col">
-          <h1>
-            kupujesz od :
-            <Link
-              target="_blank"
-              href={`/profile/${selectedOffer.seller.name}`}
-            >
-              {selectedOffer.seller.name}
-            </Link>
-          </h1>
-          <div className="flex gap-6 w-1/2 mx-3 text-center items-center mb-8">
-            <label htmlFor="" className="text-nowrap">
-              ile siana {currencyCount}
-            </label>
-            <input
-              type="range"
-              min="1"
-              max={selectedOffer.currencyAmount}
-              value={currencyCount}
-              onChange={(e) => setCurrencyCount(parseInt(e.target.value))}
-              className="w-full "
-            />
-            <div className="text-nowrap">
-              {(
-                (currencyCount * selectedOffer.pricePLN) /
-                selectedOffer.currencyAmount
-              ).toFixed(2)}{' '}
-              zł
-            </div>
-          </div>
-          <div>
-            <button className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300">
-              kup tera
-            </button>
-          </div>
-          <div className="absolute top-5 right-5">
-            <button
-              onClick={() => setActionType(null)}
-              className="text-red-500 font-bold text-lg"
-            >
-              X
-            </button>
-          </div>
-        </div>
+        <BuyOrder
+          selectedOffer={selectedOffer}
+          handleBuy={handleBuy}
+          setActionType={setActionType}
+        />
       )}
       <div className={`${actionType === 'buy' ? 'opacity-20' : 'opacity-100'}`}>
         <div className="flex justify-center text-center mb-12 flex-col">

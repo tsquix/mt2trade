@@ -19,6 +19,11 @@ export default function Header() {
             <span className="px-6">Admin panel</span>
           </Link>
         </div>
+        <div className="bg-brighterBg px-5 py-2 rounded-xl">
+          <Link href={'/orders'}>
+            <span className="px-6">Zamowienia</span>
+          </Link>
+        </div>
 
         <div className="">
           {!session ? (

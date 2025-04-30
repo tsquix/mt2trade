@@ -1,0 +1,18 @@
+import mongoose from 'mongoose';
+
+const BuyOrderSchema = new mongoose.Schema({
+  offer: { type: mongoose.Schema.Types.ObjectId, ref: 'Offer', required: true },
+  buyer: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  seller: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  currencyAmount: { type: Number, required: true },
+  seen: { type: Boolean, default: false },
+  orderStatus: {
+    type: String,
+    enum: ['pending', 'accepted', 'rejected'],
+    default: 'pending',
+  },
+  createdAt: { type: Date, default: Date.now },
+});
+
+export default mongoose.models.BuyOrder ||
+  mongoose.model('BuyOrder', BuyOrderSchema);

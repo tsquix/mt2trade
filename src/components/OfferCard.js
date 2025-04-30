@@ -1,8 +1,11 @@
 import Link from 'next/link';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 import OfferCardSkeleton from './OfferCardSkeleton';
 // Add onClick and isSelected props
 function OfferCard({ offer, onClick, isSelected, isLoading }) {
+  useEffect(() => {
+    console.log(offer);
+  }, [offer]);
   if (!offer || isLoading) {
     return <OfferCardSkeleton />;
   }
