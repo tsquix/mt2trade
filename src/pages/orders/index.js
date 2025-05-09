@@ -48,7 +48,9 @@ export default function OrdersPage() {
   }
   useEffect(() => {
     async function name() {
-      let sw = await navigator.serviceWorker.register('./sw.js');
+      let sw = await navigator.serviceWorker.register(
+        '../../notification/sw.js'
+      );
       console.log(sw);
     }
     name();
@@ -105,12 +107,12 @@ export default function OrdersPage() {
                 </button>
                 {orders?.buyOrders?.map((order) => (
                   <div key={order._id} className="bg-brighterBg p-4 rounded-lg">
-                    <p>Buyer: {order.buyer.name}</p>
-                    <p>Seller: {order.seller.name}</p>
-                    <p>Server: {order.offer.serverName}</p>
-                    <p>Amount: {order.currencyAmount} yang</p>
-                    <p>Price: {order.offer.pricePLN} PLN</p>
-                    <p>Status: {order.orderStatus}</p>
+                    <p>Buyer: {order?.buyer?.name || 'N/A'}</p>
+                    <p>Seller: {order?.seller?.name || 'N/A'}</p>
+                    <p>Server: {order?.offer?.serverName || 'N/A'}</p>
+                    <p>Amount: {order?.currencyAmount || 0} yang</p>
+                    <p>Price: {order?.offer?.pricePLN || 0} PLN</p>
+                    <p>Status: {order?.orderStatus || 'N/A'}</p>
                   </div>
                 ))}
               </div>
