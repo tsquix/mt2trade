@@ -4,6 +4,13 @@ const UserSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
+  pushSubscription: {
+    endpoint: String,
+    keys: {
+      p256dh: String,
+      auth: String
+    }
+  },
 
   // role: { type: String, enum: ["buyer", "seller"], default: "buyer" }, // można rozszerzyć w przyszłości
   userRating: { type: Number, default: 0, min: 0, max: 5 },
