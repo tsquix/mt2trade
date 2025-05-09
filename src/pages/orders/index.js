@@ -47,13 +47,19 @@ export default function OrdersPage() {
     console.log(JSON.stringify(push));
   }
   useEffect(() => {
-    async function name() {
-      let sw = await navigator.serviceWorker.register(
-        '../../notification/sw.js'
-      );
-      console.log(sw);
+    async function registerServiceWorker() {
+      try {
+        if ('serviceWorker' in navigator) {
+          const registration = await navigator.serviceWorker.register('/sw.js', {
+            scope: '/'
+          });
+          console.log('Service Worker registration successful:', registration);
+        }
+      } catch (error) {
+        console.error('Service Worker registration failed:', error);
+      }
     }
-    name();
+    registerServiceWorker();
   }, []);
   useEffect(() => {
     console.log(orders);
