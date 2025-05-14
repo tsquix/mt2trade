@@ -1,3 +1,4 @@
+import PushNotification from '@/components/notification/PushNotification';
 import OfferCard from '@/components/OfferCard';
 import Layout from '@/pages/layout';
 import axios from 'axios';
@@ -37,30 +38,52 @@ export default function OrdersPage() {
   //   }
   // }, [requestNotificationPermission]);
 
-  async function subscribe() {
-    let sw = await navigator.serviceWorker.ready;
-    let push = await sw.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey:
-        'BEy9M0NM8txQ1yRYTHXFYL5588f3pR1u-em5StnrvXLaLLW-EKzyWKjinlEe7CGij5WfJ75dyC9rKXB8NDBDCRI',
-    });
-    console.log(JSON.stringify(push));
-  }
-  useEffect(() => {
-    async function registerServiceWorker() {
-      try {
-        if ('serviceWorker' in navigator) {
-          const registration = await navigator.serviceWorker.register('/sw.js', {
-            scope: '/'
-          });
-          console.log('Service Worker registration successful:', registration);
-        }
-      } catch (error) {
-        console.error('Service Worker registration failed:', error);
-      }
-    }
-    registerServiceWorker();
-  }, []);
+  // async function subscribe() {
+  //   let sw = await navigator.serviceWorker.ready;
+  //   let push = await sw.pushManager.subscribe({
+  //     userVisibleOnly: true,
+  //     applicationServerKey:
+  //       'BEy9M0NM8txQ1yRYTHXFYL5588f3pR1u-em5StnrvXLaLLW-EKzyWKjinlEe7CGij5WfJ75dyC9rKXB8NDBDCRI',
+  //   });
+  //   console.log(JSON.stringify(push));
+  // }
+
+  // const sendNotification = async () => {
+  //   try {
+  //     const response = await fetch('/api/send-notification', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(subscription),
+  //     });
+
+  //     if (!response.ok) {
+  //       throw new Error('Failed to send notification');
+  //     }
+  //   } catch (error) {
+  //     console.error('Error sending notification:', error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   async function registerServiceWorker() {
+  //     try {
+  //       if ('serviceWorker' in navigator) {
+  //         const registration = await navigator.serviceWorker.register(
+  //           '/sw.js',
+  //           {
+  //             scope: '/',
+  //           }
+  //         );
+  //         console.log('Service Worker registration successful:', registration);
+  //       }
+  //     } catch (error) {
+  //       console.error('Service Worker registration failed:', error);
+  //     }
+  //   }
+  //   registerServiceWorker();
+  // }, []);
   useEffect(() => {
     console.log(orders);
   }, [orders]);
@@ -102,15 +125,10 @@ export default function OrdersPage() {
       {view === 'buy' ? (
         <div className="bg-mainBg p-12 shadow-2xl mb-12">
           <h1>kupuje</h1>
+          <PushNotification />
           {buyOrders && (
             <>
               <div>
-                <button
-                  onClick={subscribe}
-                  className="bg-brighterBg px-4 py-2 rounded-lg hover:bg-red-300 transition-colors"
-                >
-                  Subscribe
-                </button>
                 {orders?.buyOrders?.map((order) => (
                   <div key={order._id} className="bg-brighterBg p-4 rounded-lg">
                     <p>Buyer: {order?.buyer?.name || 'N/A'}</p>
