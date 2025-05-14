@@ -84,27 +84,37 @@ export default async function handler(req, res) {
       });
 
       // Znajdź sprzedawcę i wyślij powiadomienie
-      // const sellerUser = await User.findById(seller);
-      // console.log('Seller user found:', sellerUser);
-      // console.log('Push subscription:', sellerUser?.pushSubscription);
+      const sellerUser = await User.findById(seller);
+      console.log('Seller user found:', sellerUser);
+      console.log('Push subscription:', sellerUser?.pushSubscription);
 
-      // if (sellerUser?.pushSubscription) {
-      //   try {
-      //     await sendPushNotification(sellerUser.pushSubscription, {
-      //       title: 'Nowe zamówienie!',
-      //       body: `Użytkownik ${buyer.name} chce kupić ${currencyAmount} waluty`,
-      //     });
-      //     console.log('Push notification sent successfully');
-      //   } catch (error) {
-      //     console.error('Push notification error:', error);
-      //     console.error(
-      //       'Push subscription details:',
-      //       sellerUser.pushSubscription
-      //     );
-      //   }
-      // } else {
-      //   console.log('No push subscription found for seller');
-      // }
+      if (sellerUser?.pushSubscription) {
+        try {
+          const response = await fetch('http://localhost:3000/api/send-notification', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              endpoint: sellerUser.pushSubscription.endpoint,
+              keys: sellerUser.pushSubscription.keys,
+              message: {
+                title: 'New Order Received!',
+                body: `You have a new order for ${currencyAmount} currency`,
+                icon: '/icon.png'
+              }
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to send notification: ${response.statusText}`);
+          }
+        } catch (error) {
+          console.error('Error sending notification:', error);
+        }
+      } else {
+        console.log('No push subscription found for seller');
+      }
 
       return res.status(201).json({
         success: true,
