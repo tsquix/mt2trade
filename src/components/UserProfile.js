@@ -13,7 +13,7 @@ const fetcher = async (url) => {
 };
 
 export default function UserProfile({ sessionUser }) {
-  // Using SWR for data fetching with caching and revalidationconst [selectedOffer, setSelectedOffer] = useState(null);
+  // Using SWR for data fetching with caching and revalidation
   const [offers, setOffers] = useState(null);
   const [view, setView] = useState('profile');
   const [selectedOffer, setSelectedOffer] = useState(null);
@@ -39,9 +39,7 @@ export default function UserProfile({ sessionUser }) {
         // setIsLoading(true);
         const response = await axios.get(`/api/offer?userId=${userData._id}`);
         setOffers(response.data.offers);
-        // Auto-select first offer if available
         if (response.data.offers && response.data.offers.length > 0) {
-          // setSelectedOffer(response.data.offers[0]);
         }
       } catch (error) {
         console.error('Error fetching offers:', error);

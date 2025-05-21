@@ -3,10 +3,12 @@ import Layout from '@/pages/layout';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { socket } from '../../../public/socket.js';
 
 import Swal from 'sweetalert2';
+import OfferCard from '@/components/OfferCard.js';
+import OfferDetailPage from '../marketplace/offers/[server]/[offer].js';
 export default function OrdersPage() {
   const { data: session } = useSession();
   const initialState = {
@@ -15,12 +17,23 @@ export default function OrdersPage() {
       buyOrders: [],
       sellOrders: [],
     },
-    pendingOffersId: [],
+    pendingOffers: {
+      buyOffersId: [],
+      sellOffersId: [],
+    },
+    offers: [],
+
     isLoading: false,
   };
+  const [selectedOffer, setSelectedOffer] = useState(null);
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { view, orders, pendingOffersId, isLoading } = state;
+  const { view, orders, pendingOffers, isLoading, offers } = state;
   const { buyOrders, sellOrders } = orders;
+  const { buyOffersId, sellOffersId } = pendingOffers;
+
+  const sortedBuyOrders = orders.buyOrders.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   function reducer(state, action) {
     switch (action.type) {
@@ -29,15 +42,15 @@ export default function OrdersPage() {
       case 'SET_ORDERS':
         return { ...state, orders: action.payload };
 
-      case 'UPDATE_ORDER_STATUS':
+      case 'UPDATE_BUY_ORDER_STATUS':
         const { orderId: id, status } = action.payload;
-        const orderToUpdate = state.orders.buyOrders.find(
+        const buyOrderToUpdate = state.orders.buyOrders.find(
           (order) => order._id === id
         );
-        if (!orderToUpdate) return state;
-        const updatedOrder = { ...orderToUpdate, orderStatus: status };
+        if (!buyOrderToUpdate) return state;
+        const updatedBuyOrder = { ...buyOrderToUpdate, orderStatus: status };
         const updatedBuyOrders = state.orders.buyOrders.map((order) =>
-          order._id === id ? updatedOrder : order
+          order._id === id ? updatedBuyOrder : order
         );
         return {
           ...state,
@@ -47,7 +60,16 @@ export default function OrdersPage() {
           },
         };
       case 'SET_PENDING_OFFERS':
-        return { ...state, pendingOffersId: action.payload };
+        const { pendingSellOffers, pendingBuyOffers } = action.payload;
+        return {
+          ...state,
+          pendingOffers: {
+            buyOffersId: pendingBuyOffers,
+            sellOffersId: pendingSellOffers,
+          },
+        };
+      case 'SET_OFFERS':
+        return { ...state, offers: action.payload };
       case 'SET_LOADING':
         return { ...state, isLoading: action.payload };
       default:
@@ -57,20 +79,26 @@ export default function OrdersPage() {
 
   useEffect(() => {
     // dołącz do pokoju zamówienia
-    if (!pendingOffersId || pendingOffersId.length === 0) return;
-    socket.emit('join-order-room', pendingOffersId);
+    // console.log(buyOffersId, 'xd');
+    //TODO socket emit dla sprzedajacego
+    // dolacz do pokoju jesli masz oferte sprzedazy i nasluchuj na oferty kupna danej sprzedazy
+    if (!buyOffersId || buyOffersId.length === 0) return;
+    socket.emit('join-order-room', buyOffersId);
 
     // nasłu chuj aktualizacji statusu
     socket.on('order-updated', ({ orderId, status }) => {
-      if (pendingOffersId.includes(orderId)) {
-        dispatch({ type: 'UPDATE_ORDER_STATUS', payload: { orderId, status } });
+      if (buyOffersId.includes(orderId)) {
+        dispatch({
+          type: 'UPDATE_BUY_ORDER_STATUS',
+          payload: { orderId, status },
+        });
       }
     });
     //funkcja czysczaca
     return () => {
       socket.off('order-updated');
     };
-  }, [pendingOffersId]);
+  }, [buyOffersId]);
 
   async function handleStatusChange(status, orderId) {
     socket.emit('order-status-updated', {
@@ -91,7 +119,11 @@ export default function OrdersPage() {
       dispatch({ type: 'SET_LOADING', payload: false });
     }
   }
-
+  function pending(data) {
+    return data
+      ?.filter((order) => order.orderStatus === 'pending')
+      .map((order) => order._id);
+  }
   const fetchBuyOrders = async () => {
     try {
       // setIsLoading(true);
@@ -100,12 +132,17 @@ export default function OrdersPage() {
       );
       dispatch({ type: 'SET_ORDERS', payload: response.data.orders });
 
-      const pendingOffers = response.data.orders?.buyOrders
-        ?.filter((order) => order.orderStatus === 'pending')
-        .map((order) => order._id);
+      const pendingBuyOffers = pending(response.data.orders?.buyOrders);
+      // const pendingSellOffers = pending(response.data.orders?.sellOrders);
 
-      if (pendingOffers.length > 0)
-        dispatch({ type: 'SET_PENDING_OFFERS', payload: pendingOffers });
+      if (pendingBuyOffers.length > 0)
+        dispatch({
+          type: 'SET_PENDING_OFFERS',
+          payload: { pendingBuyOffers },
+        });
+
+      // if (pendingBuyOffers.length > 0)
+      //   dispatch({ type: 'SET_PENDING_BUY_OFFERS', payload: pendingBuyOffers });
     } catch (error) {
       console.error('Error fetching offers:', error);
     } finally {
@@ -113,11 +150,32 @@ export default function OrdersPage() {
     }
   };
 
+  const fetchOffers = async () => {
+    try {
+      // setIsLoading(true);
+      const response = await axios.get(`/api/offer?userId=${session?.user.id}`);
+      const offers = response.data.offers;
+
+      dispatch({
+        type: 'SET_OFFERS',
+        payload: offers,
+      });
+    } catch (error) {
+      console.error('Error fetching offers:', error);
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (session?.user.id) {
       fetchBuyOrders();
+      fetchOffers();
     }
   }, [session?.user.id]);
+  useEffect(() => {
+    console.log(offers);
+  }, [offers]);
 
   const deleteOrder = async (orderId) => {
     const result = await Swal.fire({
@@ -161,23 +219,31 @@ export default function OrdersPage() {
         >
           sprzedaje
         </button>
+        <button
+          className={`bg-mainBg px-2 py-1 ${view === 'offers' ? 'bg-red-300' : ''}`}
+          onClick={() => dispatch({ type: 'SET_VIEW', payload: 'offers' })}
+        >
+          Moje oferty
+        </button>
       </div>
-      {view === 'buy' ? (
+      {view === 'buy' && (
         <div className="bg-mainBg p-12 shadow-2xl mb-12">
           <h1>kupuje</h1>
           <PushNotification />
-
           <>
             <div className="bg-brighterBg p-4 my-8 rounded-lg">
               {orders?.buyOrders.length > 0 ? (
                 <>
-                  {orders.buyOrders.map((order) => (
+                  {sortedBuyOrders.map((order) => (
                     <>
                       <div
                         key={order._id}
-                        className="p-4   bg-mainBg flex justify-between"
+                        className={`p-4 bg-mainBg flex justify-between ${
+                          order?.orderStatus === `accepted` ? '' : 'mb-8'
+                        }`}
                       >
                         <div>
+                          <p>id {order._id}</p>
                           <p>Buyer: {order?.buyer?.name || 'N/A'}</p>
                           <p>Seller: {order?.seller?.name || 'N/A'}</p>
                           <p>Server: {order?.offer?.serverName || 'N/A'}</p>
@@ -245,107 +311,132 @@ export default function OrdersPage() {
             </div>
           </>
         </div>
-      ) : (
+      )}
+      {view === 'sell' && (
         <div className="bg-mainBg p-12 shadow-2xl mb-12">
           <h1>ktos chce kupic od ciebie:</h1>
-          {buyOrders && (
-            <>
-              <div className="bg-brighterBg p-4 my-8 rounded-lg">
-                {orders.sellOrders.length > 0 ? (
-                  <>
-                    {orders?.sellOrders?.map((order) => (
-                      <>
-                        <div
-                          key={order._id}
-                          className="mb-4 flex justify-between"
-                        >
-                          <div>
-                            <p>Buyer: {order.buyer.name}</p>
-                            <p>Seller: {order.seller.name}</p>
-                            <p>Server: {order.offer.serverName}</p>
-                            <p>Amount: {order.currencyAmount} yang</p>
-                            <p>Price: {order.offer.pricePLN} PLN</p>
-                            <p>
-                              Status:{' '}
-                              <span
-                                className={
-                                  order.orderStatus === 'accepted'
-                                    ? 'text-green-300'
-                                    : order.orderStatus === 'rejected'
-                                      ? 'text-red-300'
-                                      : ''
-                                }
-                              >
-                                {order.orderStatus}
-                              </span>
-                            </p>
-                          </div>
+          <>
+            <div className="bg-brighterBg p-4 my-8 rounded-lg">
+              {orders.sellOrders.length > 0 ? (
+                <>
+                  {orders?.sellOrders?.map((order) => (
+                    <>
+                      <div
+                        key={order._id}
+                        className="mb-4 flex justify-between"
+                      >
+                        <div>
+                          <p>id {order._id}</p>
+                          <p>Buyer: {order.buyer.name}</p>
+                          <p>Seller: {order.seller.name}</p>
+                          <p>Server: {order.offer.serverName}</p>
+                          <p>Amount: {order.currencyAmount} yang</p>
+                          <p>Price: {order.offer.pricePLN} PLN</p>
+                          <p>
+                            Status:{' '}
+                            <span
+                              className={
+                                order.orderStatus === 'accepted'
+                                  ? 'text-green-300'
+                                  : order.orderStatus === 'rejected'
+                                    ? 'text-red-300'
+                                    : ''
+                              }
+                            >
+                              {order.orderStatus}
+                            </span>
+                          </p>
+                        </div>
+                        <div>
+                          <button
+                            type="button"
+                            className="text-xl"
+                            onClick={() => deleteOrder(order._id)}
+                          >
+                            X
+                          </button>
+                        </div>
+                      </div>
+                      {order.orderStatus === 'pending' && (
+                        // TODO zapytac czy aktualizowac zlecenie na minus currency co ktos chce kupc
+                        <div className=" flex flex-col gap-4 mb-8">
                           <div>
                             <button
-                              type="button"
-                              className="text-xl"
-                              onClick={() => deleteOrder(order._id)}
+                              onClick={() =>
+                                handleStatusChange('accepted', order._id)
+                              }
+                              className={`bg-mainBg px-4 py-2 rounded-lg hover:opacity-50 ${isLoading ? 'hover:opacity-100' : ''}`}
+                              disabled={isLoading}
                             >
-                              X
+                              {' '}
+                              Akceptuj
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleStatusChange('rejected', order._id)
+                              }
+                              disabled={isLoading}
+                              className={`bg-red-100 text-mainBg px-4 py-2 rounded-lg hover:opacity-70 ${isLoading ? 'hover:opacity-100' : ''}`}
+                            >
+                              {' '}
+                              Odrzuć
+                            </button>
+                          </div>
+                          <div className="">
+                            {' '}
+                            <button
+                              disabled={isLoading}
+                              className={`bg-red-100 text-mainBg px-4 py-2 rounded-lg hover:opacity-70 ${isLoading ? 'hover:opacity-100' : ''}`}
+                            >
+                              {' '}
+                              Zaaktualizuj zlecenie o sprzedaną kwotę
                             </button>
                           </div>
                         </div>
-                        {order.orderStatus === 'pending' && (
-                          // TODO zapytac czy aktualizowac zlecenie na minus currency co ktos chce kupc
-                          <div className=" flex flex-col gap-4 mb-8">
-                            <div>
-                              <button
-                                onClick={() =>
-                                  handleStatusChange('accepted', order._id)
-                                }
-                                className={`bg-mainBg px-4 py-2 rounded-lg hover:opacity-50 ${isLoading ? 'hover:opacity-100' : ''}`}
-                                disabled={isLoading}
-                              >
-                                {' '}
-                                Akceptuj
-                              </button>
-                              <button
-                                onClick={() =>
-                                  handleStatusChange('rejected', order._id)
-                                }
-                                disabled={isLoading}
-                                className={`bg-red-100 text-mainBg px-4 py-2 rounded-lg hover:opacity-70 ${isLoading ? 'hover:opacity-100' : ''}`}
-                              >
-                                {' '}
-                                Odrzuć
-                              </button>
-                            </div>
-                            <div className="">
-                              {' '}
-                              <button
-                                disabled={isLoading}
-                                className={`bg-red-100 text-mainBg px-4 py-2 rounded-lg hover:opacity-70 ${isLoading ? 'hover:opacity-100' : ''}`}
-                              >
-                                {' '}
-                                Zaaktualizuj zlecenie o sprzedaną kwotę
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </>
-                    ))}
-                  </>
-                ) : (
-                  <>
-                    <p className="text-lg">
-                      Nie masz jeszcze żadnych zleceń sprzedaży
-                    </p>
-                    <p>
-                      Swoje oferty znajdziesz na swoim{' '}
-                      <span className="font-bold text-red-300">
-                        <Link href={'/profile'}>profilu</Link>
-                      </span>
-                    </p>
-                  </>
-                )}
-              </div>
-            </>
-          )}
+                      )}
+                    </>
+                  ))}
+                </>
+              ) : (
+                <>
+                  <p className="text-lg">
+                    Nie masz jeszcze żadnych zleceń sprzedaży
+                  </p>
+                  <p>
+                    Swoje oferty znajdziesz na swoim{' '}
+                    <span className="font-bold text-red-300">
+                      <Link href={'/profile'}>profilu</Link>
+                    </span>
+                  </p>
+                </>
+              )}
+            </div>
+          </>
+        </div>
+      )}
+      {view === 'offers' && (
+        <div className="bg-mainBg p-12 shadow-2xl">
+          <div className="flex">
+            {offers?.map((offer) => (
+              <OfferCard
+                key={offer._id}
+                offer={offer}
+                isSelected={selectedOffer?._id === offer._id}
+                onClick={() => setSelectedOffer(offer)}
+                // isLoading={isLoading}
+              />
+            ))}
+          </div>
+          <div className="sticky top-10 h-screen overflow-auto">
+            <div className="flex bg-mainBg rounded-3xl">
+              {selectedOffer && (
+                <OfferDetailPage
+                  offers={offers}
+                  selectedOffer={selectedOffer}
+                />
+              )}
+            </div>
+          </div>
         </div>
       )}
     </Layout>
