@@ -3,6 +3,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { socket } from '../../public/socket.js';
 export default function BuyOrder({ selectedOffer, setActionType }) {
   const [currencyCount, setCurrencyCount] = useState(1);
   const { data: session } = useSession();
@@ -29,8 +30,19 @@ export default function BuyOrder({ selectedOffer, setActionType }) {
       };
 
       const response = await axios.post(`/api/buyOrder`, orderToSubmit);
+      console.log('Response:', response.data);
 
       if (response.data.success) {
+        const orderId = response.data.data._id;
+        console.log('Emitting new-purchase-request', {
+          orderId,
+          selectedOffer,
+        });
+        socket.emit('new-purchase-request', {
+          orderId,
+          selectedOffer,
+        });
+
         router.push('/marketplace/offers');
       }
     } catch (error) {

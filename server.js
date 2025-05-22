@@ -25,6 +25,11 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('new-purchase-request', ({ orderId, selectedOffer }) => {
+    console.log(`📤 update for ${orderId}: ${selectedOffer}`);
+    io.to(selectedOffer._id).emit('new-purchase', { orderId });
+  });
+
   socket.on('order-status-updated', ({ orderId, status }) => {
     console.log(`📤 update for ${orderId}: ${status}`);
     io.to(orderId).emit('order-updated', { orderId, status });
