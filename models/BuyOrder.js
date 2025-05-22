@@ -8,7 +8,7 @@ const BuyOrderSchema = new mongoose.Schema({
   seen: { type: Boolean, default: false },
   orderStatus: {
     type: String,
-    enum: ['pending', 'accepted', 'rejected'],
+    enum: ['pending', 'accepted', 'rejected', 'finalized'],
     default: 'pending',
   },
   createdAt: { type: Date, default: Date.now },
