@@ -12,6 +12,11 @@ const BuyOrderSchema = new mongoose.Schema({
     default: 'pending',
   },
   createdAt: { type: Date, default: Date.now },
+  rated: {
+    type: String,
+    enum: ['rated', 'reported', 'no'],
+    default: 'no',
+  },
 });
 
 export default mongoose.models.BuyOrder ||
