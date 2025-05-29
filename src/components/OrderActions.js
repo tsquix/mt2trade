@@ -70,7 +70,6 @@ export function OrderActions({
           }`}
           onClick={() => {
             handleUpdateOffer(order);
-            //  flaga że waluta została już zaktualizowana
             order.currencyUpdated = true;
           }}
         >

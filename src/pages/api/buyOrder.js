@@ -73,16 +73,21 @@ export default async function handler(req, res) {
       }
     }
     if (method === 'PUT') {
-      const { status, orderId } = req.body;
+      const { status, orderId, currencyUpdated } = req.body;
       try {
-        await BuyOrder.findByIdAndUpdate(orderId, {
-          orderStatus: status,
-        });
-      } catch (error) {
-        // obsługa błędów jak w Twoim kodzie
-        console.error(error);
-      } finally {
+        if (status) {
+          await BuyOrder.findByIdAndUpdate(orderId, {
+            orderStatus: status,
+          });
+        } else if (currencyUpdated !== undefined) {
+          await BuyOrder.findByIdAndUpdate(orderId, {
+            currencyUpdated: currencyUpdated,
+          });
+        }
         return res.status(200).json({ success: true });
+      } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, error: error.message });
       }
     }
     if (method === 'DELETE') {

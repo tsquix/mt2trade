@@ -17,6 +17,7 @@ const BuyOrderSchema = new mongoose.Schema({
     enum: ['rated', 'reported', 'no'],
     default: 'no',
   },
+  currencyUpdated: { type: Boolean, default: false },
 });
 
 export default mongoose.models.BuyOrder ||

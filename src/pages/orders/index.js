@@ -26,7 +26,7 @@ export default function OrdersPage() {
     isLoading: false,
     isOfferSold: false,
   };
-  const [selectedOffer, setSelectedOffer] = useState(null);
+
   const [state, dispatch] = useReducer(reducer, initialState);
   const { view, orders, pendingOffers, isLoading, offers } = state;
   const { buyOffersId, sellOffersId } = pendingOffers;
@@ -96,7 +96,6 @@ export default function OrdersPage() {
   useEffect(() => {
     if (state.isOfferSold) {
       const handleAlert = async (order) => {
-        console.log('handleUpdateOffer called with:', order);
         const result = await Swal.fire({
           title: 'W ofercie nie masz więcej waluty!',
           text: 'Czy chcesz usunąć tą ofertę?',
@@ -110,7 +109,6 @@ export default function OrdersPage() {
         // if (result.isConfirmed) {
         //   dispatch({ type: 'DELETE_OFFER', payload: { offerId: ... } });
         // }
-
         dispatch({ type: 'CLEAR_OFFER_SOLD_FLAG' });
       };
 
@@ -256,23 +254,43 @@ export default function OrdersPage() {
     dispatch({ type: 'SET_VIEW', payload: key });
   };
   const handleUpdateOffer = async (order) => {
-    // if (offerToUpdate.currencyAmount < order.currencyAmount) {
-    //   // Show Swal alert for invalid amount
-    //   await Swal.fire({
-    //     title: 'Błąd aktualizacji!',
-    //     text: 'Ilość waluty w zamówieniu przekracza dostępną ilość w ofercie.',
-    //     icon: 'error',
-    //     confirmButtonText: 'OK',
-    //   });
-    //   return;
-    // }
-    dispatch({
-      type: 'UPDATE_OFFER_CURRENCY_AMOUNT',
-      payload: {
-        currencyAmount: order.currencyAmount,
+    const offerToUpdate = offers.find((offer) => offer._id === order.offer._id);
+    const newCurrAmount = offerToUpdate.currencyAmount - order.currencyAmount;
+    if (offerToUpdate.currencyAmount < order.currencyAmount) {
+      await Swal.fire({
+        title: 'Błąd aktualizacji!',
+        text: 'Ilość waluty w zamówieniu przekracza dostępną ilość w ofercie.',
+        icon: 'error',
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+
+    if (newCurrAmount < 0) return;
+
+    try {
+      // Aktualizacja oferty
+      await axios.put('/api/offer', {
         offerId: order.offer._id,
-      },
-    });
+        newCurrAmount,
+      });
+      // Aktualizacja flagi
+      await axios.put('/api/buyOrder', {
+        orderId: order._id,
+        currencyUpdated: true,
+      });
+
+      // Dopiero po udanej aktualizacji w bazie danych aktualizujemy stan lokalny
+      dispatch({
+        type: 'UPDATE_OFFER_CURRENCY_AMOUNT',
+        payload: {
+          currencyAmount: order.currencyAmount,
+          offerId: order.offer._id,
+        },
+      });
+    } catch (error) {
+      console.error('Błąd podczas aktualizacji:', error);
+    }
   };
   return (
     <Layout>
@@ -290,13 +308,7 @@ export default function OrdersPage() {
           isLoading={isLoading}
         />
       )}
-      {view === 'offers' && (
-        <OffersView
-          offers={offers}
-          selectedOffer={selectedOffer}
-          onOfferSelect={setSelectedOffer}
-        />
-      )}
+      {view === 'offers' && <OffersView offers={offers} />}
     </Layout>
   );
 }

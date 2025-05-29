@@ -29,7 +29,14 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, offers });
       }
     }
+    if (method === 'PUT') {
+      const { offerId, newCurrAmount } = req.body;
 
+      await Offer.findByIdAndUpdate(offerId, {
+        currencyAmount: newCurrAmount,
+      });
+      return res.status(200).json({ success: true });
+    }
     if (method === 'POST') {
       const {
         seller,

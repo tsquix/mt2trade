@@ -1,7 +1,9 @@
 import OfferDetailPage from '@/pages/marketplace/offers/[server]/[offer]';
 import OfferCard from './OfferCard';
+import { useState } from 'react';
 
 export default function OffersView({ offers }) {
+  const [selectedOffer, setSelectedOffer] = useState(null);
   return (
     <div className="bg-mainBg p-12 shadow-2xl">
       <div className="flex">

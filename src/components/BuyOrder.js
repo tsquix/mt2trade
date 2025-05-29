@@ -43,7 +43,7 @@ export default function BuyOrder({ selectedOffer, setActionType }) {
           selectedOffer,
         });
 
-        router.push('/marketplace/offers');
+        router.push('/orders');
       }
     } catch (error) {
       console.error('Error creating buy order:', error);
