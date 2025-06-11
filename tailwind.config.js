@@ -7,6 +7,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      keyframes: {
+        'fade-in': {
+          '0%': { opacity: 0 },
+          '100%': { opacity: 1 },
+        },
+      },
+      animation: {
+        'fade-in': 'fade-in 0.5s ease forwards',
+      },
       colors: {
         background: 'var(--background)',
         foreground: 'var(--foreground)',
@@ -15,5 +24,17 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities }) {
+      const delays = {
+        '.animation-delay-0': { animationDelay: '0ms' },
+        '.animation-delay-200': { animationDelay: '200ms' },
+        '.animation-delay-400': { animationDelay: '400ms' },
+        '.animation-delay-600': { animationDelay: '600ms' },
+        '.animation-delay-800': { animationDelay: '800ms' },
+        '.animation-delay-1200': { animationDelay: '1200ms' },
+      };
+      addUtilities(delays, ['responsive', 'hover']);
+    },
+  ],
 };

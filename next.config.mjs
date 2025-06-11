@@ -11,6 +11,7 @@ const nextConfig = {
       'cdn.tipo.live',
       'encrypted-tbn0.gstatic.com',
       'a.allegroimg.com',
+      'mt2trade.s3.amazonaws.com',
     ],
   },
   reactStrictMode: true,

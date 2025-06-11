@@ -14,7 +14,7 @@ const BuyOrderSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   rated: {
     type: String,
-    enum: ['rated', 'reported', 'no'],
+    enum: ['yes', 'reported', 'no', 'skipped'],
     default: 'no',
   },
   currencyUpdated: { type: Boolean, default: false },

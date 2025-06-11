@@ -13,7 +13,7 @@ import OffersView from '@/components/OffersView.js';
 export default function OrdersPage() {
   const { data: session } = useSession();
   const initialState = {
-    view: 'sell',
+    view: 'buy',
     orders: {
       buyOrders: [],
       sellOrders: [],
@@ -297,7 +297,7 @@ export default function OrdersPage() {
       <PushNotification />
       <ViewSelect view={view} onViewChange={onViewChange} />
       {view === 'buy' && (
-        <BuyOrdersView orders={orders} onDeleteOrder={deleteOrder} />
+        <BuyOrdersView orders={orders} deleteOrder={deleteOrder} />
       )}
       {view === 'sell' && (
         <SellOrdersView

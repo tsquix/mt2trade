@@ -125,7 +125,7 @@ export default function UserProfile({ sessionUser }) {
                 </div>
                 {userData?.verified && (
                   <p className="flex gap-2 mb-4">
-                    certified cwel
+                    certified
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
@@ -144,7 +144,7 @@ export default function UserProfile({ sessionUser }) {
                 )}
                 {userData?.verified !== true && (
                   <p className="flex gap-2 mb-4">
-                    non certified cwel
+                    non certified
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"

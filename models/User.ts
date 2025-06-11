@@ -8,8 +8,8 @@ const UserSchema = new mongoose.Schema({
     endpoint: String,
     keys: {
       p256dh: String,
-      auth: String
-    }
+      auth: String,
+    },
   },
 
   // role: { type: String, enum: ["buyer", "seller"], default: "buyer" }, // można rozszerzyć w przyszłości
@@ -22,6 +22,11 @@ const UserSchema = new mongoose.Schema({
   },
   verified: { type: Boolean, default: false }, // czy użytkownik został ręcznie zweryfikowany
   createdAt: { type: Date, default: Date.now },
+  avatar: {
+    type: String,
+    default:
+      'https://cdn.tipo.live/files/avatar/48968_avatar.jpg?id=fa2f0c061cfb9c5000b18d2561baf330',
+  },
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);
