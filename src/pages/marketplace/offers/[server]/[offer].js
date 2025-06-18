@@ -29,11 +29,11 @@ export default function OfferDetailPage({ selectedOffer, handleBuy }) {
           </div>
           <div className="flex items-center gap-2 justify-between">
             <div>
-              <span>ilość transakcji:</span>
+              <span>ilość opinii:</span>
               <span className="bg-brighterBg px-3 py-2 rounded-2xl">
                 <strong className="text-xs text-red-300 ">
                   {' '}
-                  {selectedOffer?.seller.transactionCount}
+                  {selectedOffer?.seller.ratingCount}
                 </strong>
               </span>
             </div>

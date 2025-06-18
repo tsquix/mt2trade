@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
 
   // role: { type: String, enum: ["buyer", "seller"], default: "buyer" }, // można rozszerzyć w przyszłości
   userRating: { type: Number, default: 0, min: 0, max: 5 },
+  ratingCount: { type: Number, default: 0 },
   transactionCount: { type: Number, default: 0 },
   prefPayment: {
     type: String,

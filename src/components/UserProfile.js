@@ -185,7 +185,7 @@ export default function UserProfile({ sessionUser }) {
               <div>
                 {' '}
                 <div className="mb-2 flex items-center gap-4">
-                  <h2> Ilość transakcji</h2>
+                  <h2> Ilość opinii</h2>
                   <span className="text-xl bg-brighterBg text-red-300 px-4 py-1 rounded-2xl  text-center">
                     {userData?.transactionCount}
                   </span>

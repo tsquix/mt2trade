@@ -5,21 +5,47 @@ import { useEffect, useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
 export default function RateUser({ order }) {
   const seller = order.seller;
+  const orderId = order._id;
   const [rateOk, setRateOk] = useState();
   const [rating, setRating] = useState(0);
   const [images, setImages] = useState([]);
   const [isUploading, setIsUploading] = useState();
+  const [description, setDescription] = useState('');
+  const ticketData = {
+    buyOrder: order,
+    description,
+    images,
+  };
 
   const handleRating = (rate) => {
     setRating(rate);
   };
-  const rateUser = () => {
-    alert(`oceniono uzytkownika ${seller.name} na ${rating}`);
+
+  const rateUser = async (isRated) => {
+    await axios.put(`/api/user/${seller.name}`, {
+      newRate: rating,
+    });
+
+    updateBuyOrder(isRated);
     setRateOk('');
   };
-  const reportUser = () => {
-    alert(`zgloszono uzytkownika ${seller.name} `);
+  const updateBuyOrder = async (isRated) => {
+    await axios.put('/api/buyOrder', { orderId, isRated });
     setRateOk('');
+  };
+
+  const reportUser = async () => {
+    setRateOk('');
+    try {
+      const res = await axios.post('/api/ticket', ticketData);
+      if (res.status === 200) {
+        alert('Ticket submitted successfully!');
+        setDescription('');
+      }
+      updateBuyOrder('reported');
+    } catch (error) {
+      alert('Something went wrong. Please try again.');
+    }
   };
   const fillColorArray = [
     '#cc4c4c', //czerwony
@@ -58,7 +84,7 @@ export default function RateUser({ order }) {
     <>
       <div className="flex justify-center mb-4 bg-mainBg p-4  shadow-md">
         <div className="flex flex-col items-center text-white">
-          {rateOk === undefined && (
+          {rateOk === undefined && order.rated === 'no' && (
             <>
               <p className="mb-4">Czy transakcja przebiegła pomyślnie?</p>
               <div className="flex gap-6 justify-center">
@@ -128,16 +154,16 @@ export default function RateUser({ order }) {
                   <div>
                     <div className="flex flex-col gap-4">
                       <button
-                        onClick={rateUser}
+                        onClick={() => rateUser('yes')}
                         className="px-6 py-3 bg-brighterBg rounded-lg hover:opacity-75 opacity-0 animate-fade-in animation-delay-1200"
                       >
                         Wystaw ocene
                       </button>
                       <button
-                        onClick={rateUser}
+                        onClick={() => updateBuyOrder('skipped')}
                         className="px-6 py-3 bg-brighterBg rounded-lg hover:opacity-75 opacity-0 animate-fade-in animation-delay-1200"
                       >
-                        Pomiń
+                        Nie oceniaj
                       </button>
                     </div>
                   </div>
@@ -181,7 +207,10 @@ export default function RateUser({ order }) {
                         className="text-black p-2"
                         rows="4"
                         cols="50"
-                      ></textarea>
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                      />
                     </div>
                   </div>
                   <div className="opacity-0 animate-fade-in animation-delay-800">

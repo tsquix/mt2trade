@@ -73,15 +73,20 @@ export default async function handler(req, res) {
       }
     }
     if (method === 'PUT') {
-      const { status, orderId, currencyUpdated } = req.body;
+      const { status, orderId, currencyUpdated, isRated } = req.body;
       try {
         if (status) {
           await BuyOrder.findByIdAndUpdate(orderId, {
             orderStatus: status,
           });
-        } else if (currencyUpdated !== undefined) {
+        } else if (currencyUpdated !== undefined && rating === undefined) {
           await BuyOrder.findByIdAndUpdate(orderId, {
             currencyUpdated: currencyUpdated,
+          });
+        }
+        if (isRated) {
+          await BuyOrder.findByIdAndUpdate(orderId, {
+            rated: isRated,
           });
         }
         return res.status(200).json({ success: true });

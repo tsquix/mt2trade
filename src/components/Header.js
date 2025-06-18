@@ -1,10 +1,16 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import { useRouter } from 'next/router';
 
 export default function Header() {
   const { data: session } = useSession();
+  const router = useRouter();
 
+  const handleChange = (e) => {
+    const path = e.target.value;
+    if (path) router.push(path);
+  };
   return (
     <section className="bg-mainBg shadow-lg text-white mb-12">
       <div className="flex mx-auto max-w-7xl py-6 justify-between">
@@ -21,9 +27,14 @@ export default function Header() {
           </Link>
         </div>
         <div className="bg-brighterBg  text-xs py-2 rounded-xl">
-          <Link href={'/panel/create'}>
-            <span className="">Admin panel</span>
-          </Link>
+          <select
+            onChange={handleChange}
+            className="bg-gray-800 text-white p-2 rounded"
+          >
+            <option value="">Select</option>
+            <option value="/panel/create">Create Server</option>
+            <option value="/panel/ticket">Ticket</option>
+          </select>
         </div>
 
         <div className="">
