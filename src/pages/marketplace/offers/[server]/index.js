@@ -165,7 +165,7 @@ export default function OfferPage() {
         </div>
 
         <div className="grid grid-cols-2 gap-16">
-          <div className="flex flex-col gap-y-8 max-h-screen pr-4">
+          <div className="flex flex-col gap-y-8  pr-4">
             {!isLoading ? (
               <>
                 {offers?.slice(0, visibleCount).map((offer) => (
@@ -200,8 +200,7 @@ export default function OfferPage() {
             )}
           </div>
 
-          {/* Right side remains unchanged */}
-          <div className="sticky top-10 h-screen overflow-auto">
+          <div className="sticky top-0 self-start h-fit">
             <div className="flex bg-mainBg rounded-3xl">
               {selectedOffer && (
                 <OfferDetailPage

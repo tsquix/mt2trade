@@ -53,7 +53,7 @@ export default function BuyOrder({ selectedOffer, setActionType }) {
     setCurrencyCount(e.target.value);
   };
   return (
-    <div className="bg-mainBg p-6 flex relative flex-col">
+    <div className="bg-mainBg p-6 flex sticky top-0 z-20 flex-col">
       <h1>
         kupujesz od :
         <Link target="_blank" href={`/profile/${selectedOffer.seller.name}`}>

@@ -280,7 +280,6 @@ export default function OrdersPage() {
         currencyUpdated: true,
       });
 
-      // Dopiero po udanej aktualizacji w bazie danych aktualizujemy stan lokalny
       dispatch({
         type: 'UPDATE_OFFER_CURRENCY_AMOUNT',
         payload: {
