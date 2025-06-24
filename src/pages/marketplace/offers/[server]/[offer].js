@@ -1,8 +1,12 @@
 import axios from 'axios';
 import Link from 'next/link';
-
+import { Rating } from 'react-simple-star-rating';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import TitleRating from '@/components/TittleRating';
+import UserDisplay from '@/components/UserDisplayOffer/UserDisplay';
+import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
+import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
 
 export default function OfferDetailPage({ selectedOffer, handleBuy }) {
   useEffect(() => {
@@ -11,67 +15,47 @@ export default function OfferDetailPage({ selectedOffer, handleBuy }) {
   return (
     // <Layout>
     <>
-      <div className="bg-mainBg p-6 flex flex-col rounded-3xl w-full ">
-        <p className="mb-4">
-          <strong>{selectedOffer?.title || 'title'}</strong>
-        </p>
-        <div className="mb-4 text-xs flex flex-col">
-          <div className="mb-2 flex items-center gap-2">
-            <span> Sprzedawca:</span>
-            <span className="bg-brighterBg px-3 py-2  rounded-2xl">
-              <Link href={`/profile/${selectedOffer?.seller.name}`}>
-                <strong className="text-xs text-red-300 ">
-                  {' '}
-                  {selectedOffer?.seller.name}
-                </strong>
-              </Link>
-            </span>
-          </div>
-          <div className="flex items-center gap-2 justify-between">
-            <div>
-              <span>ilość opinii:</span>
-              <span className="bg-brighterBg px-3 py-2 rounded-2xl">
-                <strong className="text-xs text-red-300 ">
-                  {' '}
-                  {selectedOffer?.seller.ratingCount}
-                </strong>
-              </span>
-            </div>
-            <div className="flex gap-4">
-              <button
-                value={'buy'}
-                onClick={handleBuy}
-                className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300"
-              >
-                kup teraz
-              </button>
-              <button
-                value={'reserve'}
-                onClick={handleBuy}
-                className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300"
-              >
-                zarezerwuj
-              </button>
+      <div className="bg-brighterBg p-6 flex flex-col rounded-xl w-full ">
+        <TitleRating
+          offer={selectedOffer}
+          displayRatingNumber={true}
+          className={'mb-2'}
+        />
+        <div className="border-t border-b border-gray-700 py-4 mb-6">
+          <UserDisplay
+            offer={selectedOffer}
+            height={45}
+            width={45}
+            classNameImg={''}
+          />
+        </div>
+        <OfferDetails selectedOffer={selectedOffer} />
+        <DeliveryInfo />
+
+        <div className="bg-mainBg rounded-lg p-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 mb-2">
+            <div className="flex-1">
+              <label className="block text-sm text-gray-400 mb-1">
+                Character Name
+              </label>
+              <input
+                type="text"
+                placeholder="Enter your character name"
+                className="w-full bg-brighterBg border border-gray-700 rounded-lg py-2 px-3"
+              />
             </div>
           </div>
         </div>
-        <p className="mb-2">cennik</p>
-        <div className="grid grid-cols-2">
-          <div>
-            {' '}
-            <p className="text-sm font-bold mb-2">
-              {selectedOffer?.currencyAmount} kk - {selectedOffer?.pricePLN} PLN
-            </p>{' '}
-          </div>
-          <div>
-            {' '}
-            <p>
-              Platnosc:{' '}
-              <span className="text-xs text-red-300">
-                {selectedOffer?.seller.prefPayment}
-              </span>
-            </p>
-          </div>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <button
+            className="flex-1 bg-red-300 hover:bg-red-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center"
+            onClick={handleBuy}
+          >
+            Kup teraz
+          </button>
+          <button className="flex-1 bg-transparent hover:bg-gray-700 text-white font-medium py-3 px-6 border border-gray-600 rounded-lg transition-colors duration-200 flex items-center justify-center">
+            Zarezerwuj oferte
+          </button>
         </div>
       </div>
     </>

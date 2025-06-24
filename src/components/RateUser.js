@@ -138,7 +138,7 @@ export default function RateUser({ order }) {
                       </p>
                     </div>
                   </div>
-                  <div className=" mb-8 opacity-0 animate-fade-in animation-delay-800 items-center justify-center text-center">
+                  <div className="mb-8 opacity-0 animate-fade-in animation-delay-800 items-center justify-center text-center">
                     <Rating
                       onClick={handleRating}
                       SVGclassName="inline"

@@ -6,6 +6,7 @@ import { useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
 import OfferCard from '@/components/OfferCard';
 import BuyOrder from '@/components/BuyOrder';
+import Image from 'next/image';
 
 export default function OfferPage() {
   const router = useRouter();
@@ -102,6 +103,20 @@ export default function OfferPage() {
         sorted.sort((a, b) => b.seller.userRating - a.seller.userRating);
         break;
       }
+      case 'updatedAtDesc': {
+        sorted.sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+        break;
+      }
+      case 'updatedAtAsc': {
+        sorted.sort(
+          (a, b) =>
+            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        );
+        break;
+      }
     }
     setOffers(sorted);
   };
@@ -113,7 +128,6 @@ export default function OfferPage() {
   const pricePerUnit = 200 / 100;
   return (
     <Layout>
-      {/* Header section remains unchanged */}
       {actionType === 'buy' && (
         <BuyOrder
           selectedOffer={selectedOffer}
@@ -121,10 +135,23 @@ export default function OfferPage() {
           setActionType={setActionType}
         />
       )}
-      <div className={`${actionType === 'buy' ? 'opacity-20' : 'opacity-100'}`}>
-        <div className="flex justify-center text-center mb-12 flex-col">
-          <div className="mb-2">
-            <div className="absolute bg-mainBg px-4 py-2 rounded-full hover:opacity-70 pointer">
+      <div className="bg-mainBg">
+        <div
+          className={`${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
+        >
+          <div class="relative w-full h-64 mb-8 bg-mainBg">
+            <Image
+              src="https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png"
+              alt="Background"
+              fill
+              className="object-cover"
+              priority
+            />
+            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+            <div class="absolute inset-0 flex items-center justify-center text-white">
+              <h1 class="text-3xl">{server}</h1>
+            </div>
+            <div className="absolute top-0  p-4 rounded-full pointer">
               <Link href={'/marketplace/offers'}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -142,73 +169,107 @@ export default function OfferPage() {
                 </svg>
               </Link>
             </div>
-            <h1 className="text-3xl font-bold">{server}</h1>
           </div>
-          <div className="flex justify-center mb-4">
-            <Link href={`/marketplace/offers/create?server=${server}`}>
-              <p className="text-3xl font-bold bg-mainBg hover:bg-white hover:text-black px-3 py-1 rounded-lg">
-                Utworz swoja oferte
+
+          <div className="flex justify-between  mb-12 z-10">
+            <div>
+              <h2 className="font-bold text-xl">Yang Marketplace</h2>
+              <p className="text-gray-300">
+                Przeklądaj i kupuj yangi od zaufany handlarzy
               </p>
-            </Link>
+            </div>
+            <div className="flex justify-center mb-4">
+              <Link href={`/marketplace/offers/create?server=${server}`}>
+                <p className="text-3xl bg-mainBg hover:bg-white hover:text-black px-3 py-1 ">
+                  Utworz nową oferte
+                </p>
+              </Link>
+            </div>
           </div>
           <div>
-            <h3>sortuj</h3>
-            <select onChange={handleSort} className="text-black">
-              <option value=""></option>
-              <option value="yangAsc">Ilosc yang ASC</option>
-              <option value="yangDesc">Ilosc yang DESC</option>
-              <option value="priceAsc">Najtaniej</option>
-              <option value="priceDesc">Najdrozej</option>
-              <option value="rating">UserRating</option>
-            </select>
-          </div>
-        </div>
+            <div className="grid grid-cols-[0.7fr_1.3fr] gap-4">
+              <div className="flex flex-col gap-y-4  pr-4">
+                <div className="bg-brighterBg p-4 rounded-xl">
+                  <div className="flex justify-between mb-2">
+                    <p>Filtruj</p>
+                    <p className="text-red-300">Clear All</p>
+                  </div>
+                  <div className="justify-between flex">
+                    <div>
+                      <p className="text-lightGray mb-1">Zakres cen</p>
+                      <select
+                        onChange={handleSort}
+                        className="text-white bg-mainBg rounded-lg p-2"
+                      >
+                        <option value="">Cena</option>
+                        <option value="yangAsc">Ilosc yang ASC</option>
+                        <option value="yangDesc">Ilosc yang DESC</option>
+                        <option value="priceAsc">Najtaniej</option>
+                        <option value="priceDesc">Najdrozej</option>
+                      </select>
+                    </div>
+                    <div>
+                      <p className="text-lightGray mb-1">
+                        Opinie sprzedajacego
+                      </p>
+                      <select
+                        onChange={handleSort}
+                        className="text-white bg-mainBg rounded-lg p-2"
+                      >
+                        <option value="">Opinie</option>
 
-        <div className="grid grid-cols-2 gap-16">
-          <div className="flex flex-col gap-y-8  pr-4">
-            {!isLoading ? (
-              <>
-                {offers?.slice(0, visibleCount).map((offer) => (
-                  <OfferCard
-                    key={offer._id}
-                    offer={offer}
-                    isSelected={selectedOffer?._id === offer._id}
-                    onClick={() => setSelectedOffer(offer)}
-                    isLoading={isLoading}
-                  />
-                ))}
+                        <option value="rating">UserRating</option>
+                        <option value="updatedAtDesc">updatedAtDesc</option>
+                        <option value="updatedAtAsc">updatedAtAsc</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                {!isLoading ? (
+                  <>
+                    {offers?.slice(0, visibleCount).map((offer) => (
+                      <OfferCard
+                        key={offer._id}
+                        offer={offer}
+                        isSelected={selectedOffer?._id === offer._id}
+                        onClick={() => setSelectedOffer(offer)}
+                        isLoading={isLoading}
+                      />
+                    ))}
 
-                {/* Load more trigger element */}
-                {offers && visibleCount < offers.length && (
-                  <div ref={listRef} className="py-4 text-center">
+                    {/* Load more trigger element */}
+                    {offers && visibleCount < offers.length && (
+                      <div ref={listRef} className="py-4 text-center">
+                        <OfferCard offer={''} isLoading={true} />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <>
                     <OfferCard offer={''} isLoading={true} />
+                    <OfferCard offer={''} isLoading={true} />
+                    <OfferCard offer={''} isLoading={true} />
+                  </>
+                )}
+                {offers?.length === 0 && (
+                  <div>
+                    <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
+                    <p>Bądź pierwszy i utwórz swoją ofertę już teraz!</p>
                   </div>
                 )}
-              </>
-            ) : (
-              <>
-                <OfferCard offer={''} isLoading={true} />
-                <OfferCard offer={''} isLoading={true} />
-                <OfferCard offer={''} isLoading={true} />
-              </>
-            )}
-            {offers?.length === 0 && (
-              <div>
-                <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
-                <p>Bądź pierwszy i utwórz swoją ofertę już teraz!</p>
               </div>
-            )}
-          </div>
 
-          <div className="sticky top-0 self-start h-fit">
-            <div className="flex bg-mainBg rounded-3xl">
-              {selectedOffer && (
-                <OfferDetailPage
-                  offers={offers}
-                  selectedOffer={selectedOffer}
-                  handleBuy={handleBuy}
-                />
-              )}
+              <div className="sticky -top-7 self-start h-fit">
+                <div className="flex bg-mainBg rounded-3xl">
+                  {selectedOffer && (
+                    <OfferDetailPage
+                      offers={offers}
+                      selectedOffer={selectedOffer}
+                      handleBuy={handleBuy}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
