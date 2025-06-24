@@ -3,8 +3,8 @@ export default function DeliveryInfo() {
     <div className="bg-mainBg rounded-lg p-4 mb-6">
       <h4 className="font-medium text-white mb-2">Delivery Information</h4>
       <p className="text-gray-300 text-sm mb-3">
-        After purchase, you'll receive instructions on how to meet in-game for
-        the Yang transfer. Please have your character name and server ready.
+        After purchase, you&apos;ll receive instructions on how to meet in-game
+        for the Yang transfer. Please have your character name and server ready.
       </p>
       <div className="flex items-center text-yellow-500 bg-yellow-900 bg-opacity-30 rounded-lg p-3">
         <i className="mr-2" data-fa-i2svg="">
