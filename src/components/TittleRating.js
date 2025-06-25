@@ -1,14 +1,23 @@
-import Image from 'next/image';
 import { Rating } from 'react-simple-star-rating';
-import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
+import { useEffect } from 'react';
 
-export default function TitleRating({ offer, displayRatingNumber, className }) {
+export default function TitleRating({
+  offer,
+  displayRatingNumber,
+  className,
+  smaller,
+}) {
+  useEffect(() => {
+    console.log(offer?.seller?.userRating);
+  }, [offer]);
   return (
     <div className={className}>
       <div className="flex justify-between">
         <div className="bg-brighterBg ">
-          <div className="">
-            <strong>{offer?.title}</strong>
+          <div className={`${smaller ? '' : 'text-2xl'}`}>
+            <strong>
+              {offer?.title ? offer?.title : '50M Yang - Fast Delivery'}
+            </strong>
           </div>
           <div className="flex ">
             <div className="flex">
@@ -23,11 +32,15 @@ export default function TitleRating({ offer, displayRatingNumber, className }) {
                       initialValue={offer?.seller?.userRating}
                       allowFraction
                       size={17}
+                      fillColor="#facc15"
+                      emptyColor="#e5e7eb"
                     />
                   </div>
                   {displayRatingNumber && (
                     <p className="text-xs text-white">
-                      {offer?.seller?.userRating}
+                      {offer?.seller?.userRating.toString().length <= 1
+                        ? offer?.seller?.userRating.toString() + '.0'
+                        : offer?.seller?.userRating}
                     </p>
                   )}
 

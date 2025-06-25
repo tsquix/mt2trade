@@ -28,7 +28,8 @@ function OfferCard({ offer, onClick, isSelected, isLoading }) {
           className={`p-4 ml-[6px] rounded-xl h-[107px] block transition-all w-full text-left z-20 bg-brighterBg  justify-between`}
           onClick={onClick}
         >
-          <TitleRating offer={offer} />
+          <TitleRating offer={offer} smaller />
+
           <UserDisplayInOffer offer={offer} smaller />
         </button>
       </div>

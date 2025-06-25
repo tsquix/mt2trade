@@ -7,6 +7,7 @@ import axios from 'axios';
 import OfferCard from '@/components/OfferCard';
 import BuyOrder from '@/components/BuyOrder';
 import Image from 'next/image';
+import FilterAndSearch from '@/components/FilterAndSearch';
 
 export default function OfferPage() {
   const router = useRouter();
@@ -151,7 +152,7 @@ export default function OfferPage() {
             <div class="absolute inset-0 flex items-center justify-center text-white">
               <h1 class="text-3xl">{server}</h1>
             </div>
-            <div className="absolute top-0  p-4 rounded-full pointer">
+            <div className="absolute top-0 p-4 rounded-full pointer ">
               <Link href={'/marketplace/offers'}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -159,7 +160,7 @@ export default function OfferPage() {
                   viewBox="0 0 24 24"
                   strokeWidth="1.5"
                   stroke="currentColor"
-                  className="size-6"
+                  className="size-6 hover:text-red-300 hover:opacity-80 transition-all"
                 >
                   <path
                     strokeLinecap="round"
@@ -171,60 +172,25 @@ export default function OfferPage() {
             </div>
           </div>
 
-          <div className="flex justify-between  mb-12 z-10">
+          <div className="flex lg:justify-between flex-col lg:flex-row mb-8 lg:mb-12 z-10">
             <div>
               <h2 className="font-bold text-xl">Yang Marketplace</h2>
-              <p className="text-gray-300">
-                Przeklądaj i kupuj yangi od zaufany handlarzy
+              <p className="text-gray-300 mb-4 lg:mb-0">
+                Przeglądaj i kupuj yangi od zaufanych handlarzy
               </p>
             </div>
-            <div className="flex justify-center mb-4">
+            <div className="flex mb-4">
               <Link href={`/marketplace/offers/create?server=${server}`}>
-                <p className="text-3xl bg-mainBg hover:bg-white hover:text-black px-3 py-1 ">
-                  Utworz nową oferte
+                <p className="bg-red-300 hover:bg-red-400 text-white py-2 px-4 rounded-lg transition-colors duration-200">
+                  + Utworz nową oferte
                 </p>
               </Link>
             </div>
           </div>
           <div>
-            <div className="grid grid-cols-[0.7fr_1.3fr] gap-4">
-              <div className="flex flex-col gap-y-4  pr-4">
-                <div className="bg-brighterBg p-4 rounded-xl">
-                  <div className="flex justify-between mb-2">
-                    <p>Filtruj</p>
-                    <p className="text-red-300">Clear All</p>
-                  </div>
-                  <div className="justify-between flex">
-                    <div>
-                      <p className="text-lightGray mb-1">Zakres cen</p>
-                      <select
-                        onChange={handleSort}
-                        className="text-white bg-mainBg rounded-lg p-2"
-                      >
-                        <option value="">Cena</option>
-                        <option value="yangAsc">Ilosc yang ASC</option>
-                        <option value="yangDesc">Ilosc yang DESC</option>
-                        <option value="priceAsc">Najtaniej</option>
-                        <option value="priceDesc">Najdrozej</option>
-                      </select>
-                    </div>
-                    <div>
-                      <p className="text-lightGray mb-1">
-                        Opinie sprzedajacego
-                      </p>
-                      <select
-                        onChange={handleSort}
-                        className="text-white bg-mainBg rounded-lg p-2"
-                      >
-                        <option value="">Opinie</option>
-
-                        <option value="rating">UserRating</option>
-                        <option value="updatedAtDesc">updatedAtDesc</option>
-                        <option value="updatedAtAsc">updatedAtAsc</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+            <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
+              <div className="flex flex-col gap-y-4 lg:pr-4">
+                <FilterAndSearch handleSort={handleSort} />
                 {!isLoading ? (
                   <>
                     {offers?.slice(0, visibleCount).map((offer) => (
