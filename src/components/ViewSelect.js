@@ -2,24 +2,26 @@ export default function ViewSelect({ onViewChange, view }) {
   const views = [
     {
       key: 'buy',
-      label: 'kupuje',
+      label: 'Kupuje',
     },
     {
       key: 'sell',
-      label: 'sprzedaje',
+      label: 'Sprzedaje',
     },
-    {
-      key: 'offers',
-      label: 'moje oferty',
-    },
+    // {
+    //   key: 'offers',
+    //   label: 'moje oferty',
+    // },
   ];
   return (
-    <div>
+    <div className="flex">
       {views.map(({ key, label }) => (
         <button
           key={key}
-          className={`bg-mainBg px-2 py-1 transition-colors ${
-            view === key ? 'bg-red-300' : 'hover:bg-red-200'
+          className={`w-full px-6 py-4 transition-colors  ${
+            view === key
+              ? 'bg-mainBg border-b-2 border-red-300'
+              : 'bg-brighterBg border-b-2 border-gray-700 text-gray-500 hover:text-white'
           }`}
           onClick={() => onViewChange(key)}
         >

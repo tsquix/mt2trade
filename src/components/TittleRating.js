@@ -10,6 +10,7 @@ export default function TitleRating({
   useEffect(() => {
     console.log(offer?.seller?.userRating);
   }, [offer]);
+  if (!offer || !offer.seller) return null;
   return (
     <div className={className}>
       <div className="flex justify-between">
@@ -29,7 +30,7 @@ export default function TitleRating({
                     <Rating
                       readonly
                       SVGclassName="inline"
-                      initialValue={offer?.seller?.userRating}
+                      initialValue={offer?.seller?.userRating || 0}
                       allowFraction
                       size={17}
                       fillColor="#facc15"
@@ -57,15 +58,15 @@ export default function TitleRating({
         </div>
         <div className="bg-brighterBg text-right">
           <p className="text-red-300">
-            {offer.currencyAmount} {offer?.tag !== '' ? 'kk' : 'Wony'}
+            {offer?.currencyAmount} {offer?.tag !== '' ? 'kk' : 'Wony'}
           </p>
           <p className="text-xs text-lightGray font-semibold">
-            {(offer.pricePLN / offer.currencyAmount)
+            {(offer?.pricePLN / offer?.currencyAmount)
               .toFixed(2)
               .toString()
               .includes('.00')
-              ? (offer.pricePLN / offer.currencyAmount).toFixed(0)
-              : (offer.pricePLN / offer.currencyAmount).toFixed(2)}
+              ? (offer?.pricePLN / offer?.currencyAmount).toFixed(0)
+              : (offer?.pricePLN / offer?.currencyAmount).toFixed(2)}
             zł za 1kk
           </p>
         </div>

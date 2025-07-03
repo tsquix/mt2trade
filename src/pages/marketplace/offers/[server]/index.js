@@ -14,7 +14,7 @@ export default function OfferPage() {
   const { server } = router.query;
   const [selectedOffer, setSelectedOffer] = useState(null);
   const [offers, setOffers] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [visibleCount, setVisibleCount] = useState(3);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
@@ -59,6 +59,8 @@ export default function OfferPage() {
         // Auto-select first offer if available
         if (response.data.offers && response.data.offers.length > 0) {
           setSelectedOffer(response.data.offers[0]);
+        } else {
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Error fetching offers:', error);
@@ -72,51 +74,55 @@ export default function OfferPage() {
     }
   }, [server]);
 
-  // useEffect(() => {}, [offers]);
+  // useEffect(() => {
+  //   console.log(selectedOffer);
+  // }, [selectedOffer]);
 
   const handleSort = (e) => {
     const option = e.target.value;
     const sorted = [...offers];
-    switch (option) {
-      case 'yangAsc': {
-        sorted.sort((a, b) => a.currencyAmount - b.currencyAmount);
-        break;
-      }
-      case 'yangDesc': {
-        sorted.sort((a, b) => b.currencyAmount - a.currencyAmount);
-        break;
-      }
-      case 'priceAsc': {
-        sorted.sort(
-          (a, b) =>
-            a.pricePLN / a.currencyAmount - b.pricePLN / b.currencyAmount
-        );
-        break;
-      }
-      case 'priceDesc': {
-        sorted.sort(
-          (a, b) =>
-            b.pricePLN / b.currencyAmount - a.pricePLN / a.currencyAmount
-        );
-        break;
-      }
-      case 'rating': {
-        sorted.sort((a, b) => b.seller.userRating - a.seller.userRating);
-        break;
-      }
-      case 'updatedAtDesc': {
-        sorted.sort(
-          (a, b) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-        );
-        break;
-      }
-      case 'updatedAtAsc': {
-        sorted.sort(
-          (a, b) =>
-            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-        );
-        break;
+    if (currencyAmount) {
+      switch (option) {
+        case 'yangAsc': {
+          sorted.sort((a, b) => a.currencyAmount - b.currencyAmount);
+          break;
+        }
+        case 'yangDesc': {
+          sorted.sort((a, b) => b.currencyAmount - a.currencyAmount);
+          break;
+        }
+        case 'priceAsc': {
+          sorted.sort(
+            (a, b) =>
+              a.pricePLN / a.currencyAmount - b.pricePLN / b.currencyAmount
+          );
+          break;
+        }
+        case 'priceDesc': {
+          sorted.sort(
+            (a, b) =>
+              b.pricePLN / b.currencyAmount - a.pricePLN / a.currencyAmount
+          );
+          break;
+        }
+        case 'rating': {
+          sorted.sort((a, b) => b.seller.userRating - a.seller.userRating);
+          break;
+        }
+        case 'updatedAtDesc': {
+          sorted.sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
+          break;
+        }
+        case 'updatedAtAsc': {
+          sorted.sort(
+            (a, b) =>
+              new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+          );
+          break;
+        }
       }
     }
     setOffers(sorted);
@@ -124,9 +130,7 @@ export default function OfferPage() {
 
   const handleBuy = (e) => {
     setActionType(e.target.value);
-    console.log(selectedOffer);
   };
-  const pricePerUnit = 200 / 100;
   return (
     <Layout>
       {actionType === 'buy' && (
@@ -190,7 +194,15 @@ export default function OfferPage() {
           <div>
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
-                <FilterAndSearch handleSort={handleSort} />
+                {!isLoading ? (
+                  <FilterAndSearch
+                    handleSort={handleSort}
+                    isLoading={isLoading}
+                  />
+                ) : (
+                  <FilterAndSearch handleSort={handleSort} isLoading={true} />
+                )}
+
                 {!isLoading ? (
                   <>
                     {offers?.slice(0, visibleCount).map((offer) => (
@@ -214,24 +226,40 @@ export default function OfferPage() {
                   <>
                     <OfferCard offer={''} isLoading={true} />
                     <OfferCard offer={''} isLoading={true} />
-                    <OfferCard offer={''} isLoading={true} />
                   </>
                 )}
                 {offers?.length === 0 && (
                   <div>
                     <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
-                    <p>Bądź pierwszy i utwórz swoją ofertę już teraz!</p>
+                    <p className="mb-1">
+                      Bądź pierwszy i
+                      <Link
+                        href={`/marketplace/offers/create?server=${server}`}
+                        className="text-red-300 hover:text-red-400"
+                      >
+                        {' '}
+                        utwórz teraz
+                      </Link>{' '}
+                    </p>
                   </div>
                 )}
               </div>
 
-              <div className="sticky -top-7 self-start h-fit">
+              <div className="sticky -top-7 self-start h-fit ">
                 <div className="flex bg-mainBg rounded-3xl">
-                  {selectedOffer && (
+                  {!isLoading && selectedOffer ? (
                     <OfferDetailPage
                       offers={offers}
                       selectedOffer={selectedOffer}
                       handleBuy={handleBuy}
+                      isLoading={isLoading}
+                    />
+                  ) : (
+                    <OfferDetailPage
+                      offers={offers}
+                      selectedOffer={selectedOffer}
+                      handleBuy={handleBuy}
+                      isLoading={isLoading}
                     />
                   )}
                 </div>

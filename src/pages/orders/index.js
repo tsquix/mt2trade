@@ -13,7 +13,7 @@ import OffersView from '@/components/OffersView.js';
 export default function OrdersPage() {
   const { data: session } = useSession();
   const initialState = {
-    view: 'buy',
+    view: 'sell',
     orders: {
       buyOrders: [],
       sellOrders: [],
@@ -23,7 +23,7 @@ export default function OrdersPage() {
       sellOffersId: [],
     },
     offers: [],
-    isLoading: false,
+    isLoading: true,
     isOfferSold: false,
   };
 
@@ -177,7 +177,7 @@ export default function OrdersPage() {
   }
   const fetchBuyOrders = async () => {
     try {
-      // setIsLoading(true);
+      dispatch({ type: 'SET_LOADING', payload: true });
       const response = await axios.get(
         `/api/buyOrder?userId=${session?.user.id}`
       );
@@ -199,7 +199,7 @@ export default function OrdersPage() {
   };
   const fetchOffers = async () => {
     try {
-      // setIsLoading(true);
+      dispatch({ type: 'SET_LOADING', payload: true });
       const response = await axios.get(`/api/offer?userId=${session?.user.id}`);
       const offers = response.data.offers;
       dispatch({
@@ -209,13 +209,15 @@ export default function OrdersPage() {
     } catch (error) {
       console.error('Error fetching offers:', error);
     } finally {
-      // setIsLoading(false);
+      dispatch({ type: 'SET_LOADING', payload: false });
     }
   };
   useEffect(() => {
     if (session?.user.id) {
-      fetchBuyOrders();
-      fetchOffers();
+      dispatch({ type: 'SET_LOADING', payload: true });
+      Promise.all([fetchBuyOrders(), fetchOffers()]).finally(() => {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      });
     }
   }, [session?.user.id]);
   useEffect(() => {
@@ -295,9 +297,22 @@ export default function OrdersPage() {
     <Layout>
       <PushNotification />
       <ViewSelect view={view} onViewChange={onViewChange} />
-      {view === 'buy' && (
-        <BuyOrdersView orders={orders} deleteOrder={deleteOrder} />
-      )}
+      {/* {view === 'buy' ? (
+        isLoading ? (
+          <BuyOrdersView
+            orders={orders}
+            deleteOrder={deleteOrder}
+            isLoading={true}
+          />
+        ) : (
+          <BuyOrdersView
+            orders={orders}
+            deleteOrder={deleteOrder}
+            isLoading={isLoading}
+          />
+        )
+      ) : null}
+
       {view === 'sell' && (
         <SellOrdersView
           orders={orders}
@@ -307,7 +322,37 @@ export default function OrdersPage() {
           isLoading={isLoading}
         />
       )}
-      {view === 'offers' && <OffersView offers={offers} />}
+      {view === 'offers' && (
+        <OffersView offers={offers} isLoading={isLoading} />
+      )} */}
+
+      {
+        // isLoading ? (
+        //   <div className="bg-brighterBg  p-6">
+        //     <div className="bg-mainBg p-6 mb-4">
+        //       <div className="h-2 w-32 bg-brighterBg animate-pulse mb-2"></div>
+        //       <div className="h-2 w-12 bg-brighterBg animate-pulse"></div>
+        //     </div>
+        //   </div>
+        // ) :
+        view === 'buy' ? (
+          <BuyOrdersView
+            orders={orders}
+            deleteOrder={deleteOrder}
+            isLoading={isLoading}
+          />
+        ) : view === 'sell' ? (
+          <SellOrdersView
+            orders={orders}
+            deleteOrder={deleteOrder}
+            handleStatusChange={handleStatusChange}
+            handleUpdateOffer={handleUpdateOffer}
+            isLoading={isLoading}
+          />
+        ) : (
+          <OffersView offers={offers} isLoading={isLoading} />
+        )
+      }
     </Layout>
   );
 }

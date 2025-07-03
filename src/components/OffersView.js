@@ -2,7 +2,7 @@ import OfferDetailPage from '@/pages/marketplace/offers/[server]/[offer]';
 import OfferCard from './OfferCard';
 import { useState } from 'react';
 
-export default function OffersView({ offers }) {
+export default function OffersView({ offers, isLoading }) {
   const [selectedOffer, setSelectedOffer] = useState(null);
   return (
     <div className="bg-mainBg p-12 shadow-2xl">
@@ -20,7 +20,11 @@ export default function OffersView({ offers }) {
       <div className="sticky top-10 h-screen overflow-auto">
         <div className="flex bg-mainBg rounded-3xl">
           {selectedOffer && (
-            <OfferDetailPage offers={offers} selectedOffer={selectedOffer} />
+            <OfferDetailPage
+              offers={offers}
+              selectedOffer={selectedOffer}
+              isLoading={isLoading}
+            />
           )}
         </div>
       </div>

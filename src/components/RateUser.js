@@ -82,20 +82,20 @@ export default function RateUser({ order }) {
 
   return (
     <>
-      <div className="flex justify-center mb-4 bg-mainBg p-4  shadow-md">
-        <div className="flex flex-col items-center text-white">
+      <div className="flex justify-center mb-4 bg-mainBg p-4 shadow-md">
+        <div className="flex flex-col items-center text-white py-3 rounded-lg bg-[#252525] w-full">
           {rateOk === undefined && order.rated === 'no' && (
             <>
               <p className="mb-4">Czy transakcja przebiegła pomyślnie?</p>
               <div className="flex gap-6 justify-center">
                 <button
-                  className="bg-brighterBg px-6 py-2 text-lg rounded-lg text-red-300 hover:opacity-60"
+                  className="bg-brighterBg px-6 py-2 text-lg rounded-lg text-red-300 hover:opacity-60 border border-gray-700"
                   onClick={() => setRateOk(true)}
                 >
                   Tak
                 </button>
                 <button
-                  className="bg-red-300 text-white text-lg px-6 py-2 rounded hover:opacity-60 transition"
+                  className="bg-red-300 text-white text-lg px-6 py-2 rounded hover:opacity-60 transition border border-red-200"
                   onClick={() => setRateOk(false)}
                 >
                   Nie

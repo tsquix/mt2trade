@@ -1,4 +1,29 @@
-export default function FilterAndSearch({ handleSort }) {
+export default function FilterAndSearch({ handleSort, isLoading }) {
+  if (isLoading) {
+    return (
+      <div className="animate-pulse bg-mainBg p-4 rounded-xl border mb-1 ">
+        <div className="flex justify-between mb-2">
+          <div className="px-1 mb-3 pb-4 bg-brighterBg  w-24 rounded-3xl text-xs "></div>
+        </div>
+        <div className="grid grid-cols-2 gap-4 pb-2">
+          <div>
+            <p className="text-lightGray mb-1"></p>
+            <div className="px-1 mb-3 py-4 bg-brighterBg  w-32 rounded-lg text-xs "></div>
+          </div>
+          <div>
+            <p className="text-lightGray mb-1"></p>
+            <div className="px-1 mb-3 py-4 bg-brighterBg  w-32 rounded-lg text-xs "></div>
+          </div>
+          <div class="">
+            <div className="px-1 mb-3 py-1 bg-brighterBg  w-24 rounded-lg text-xs "></div>
+          </div>
+        </div>
+        <div class="relative">
+          <div className="px-1 mb-3 py-4 bg-brighterBg  w-full rounded-lg text-xs "></div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="bg-brighterBg p-4 rounded-xl">
       <div className="flex justify-between mb-2">
