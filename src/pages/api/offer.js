@@ -36,12 +36,22 @@ export default async function handler(req, res) {
       }
     }
     if (method === 'PUT') {
-      const { offerId, newCurrAmount } = req.body;
-
-      await Offer.findByIdAndUpdate(offerId, {
-        currencyAmount: newCurrAmount,
-      });
-      return res.status(200).json({ success: true });
+      const { offerId, newCurrAmount, newOffer } = req.body;
+      if (!offerId) {
+        return res.status(400).json({ success: false, error: 'Brak offerId' });
+      }
+      if (newCurrAmount) {
+        await Offer.findByIdAndUpdate(offerId, {
+          currencyAmount: newCurrAmount,
+        });
+        return res.status(200).json({ success: true });
+      }
+      if (newOffer) {
+        const { title, currencyAmount, pricePLN, description } = newOffer;
+        const updateData = { title, currencyAmount, pricePLN, description };
+        await Offer.findByIdAndUpdate(offerId, updateData);
+        return res.status(200).json({ success: true });
+      }
     }
     if (method === 'POST') {
       const {

@@ -7,7 +7,7 @@ export default function Create() {
   const [serverData, setServerData] = useState({
     name: '',
     slug: '',
-    img: ''
+    img: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -15,9 +15,9 @@ export default function Create() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setServerData(prev => ({
+    setServerData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -32,7 +32,7 @@ export default function Create() {
         router.push('/marketplace/offers'); // Redirect to servers list
       }
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to create server');
+      setError(error.response?.data?.message || 'Failed to add server');
     } finally {
       setLoading(false);
     }
@@ -41,10 +41,14 @@ export default function Create() {
   return (
     <Layout>
       <div className="max-w-md mx-auto bg-mainBg p-6 rounded-lg">
-        <h1 className="text-2xl font-bold mb-6">Create New Server</h1>
-        
-        {error && <div className="bg-red-500 bg-opacity-20 text-red-500 p-3 rounded mb-4">{error}</div>}
-        
+        <h1 className="text-2xl font-bold mb-6">Add New Server</h1>
+
+        {error && (
+          <div className="bg-red-500 bg-opacity-20 text-red-500 p-3 rounded mb-4">
+            {error}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block mb-2">Server Name</label>
@@ -57,7 +61,7 @@ export default function Create() {
               required
             />
           </div>
-          
+
           <div className="mb-4">
             <label className="block mb-2">Slug (URL-friendly name)</label>
             <input
@@ -69,7 +73,7 @@ export default function Create() {
               required
             />
           </div>
-          
+
           <div className="mb-6">
             <label className="block mb-2">Image URL</label>
             <input
@@ -78,16 +82,15 @@ export default function Create() {
               value={serverData.img}
               onChange={handleChange}
               className="w-full p-2 bg-brighterBg rounded focus:outline-none"
-              placeholder="https://example.com/image.jpg"
             />
           </div>
-          
+
           <button
             type="submit"
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded disabled:opacity-50"
           >
-            {loading ? 'Creating...' : 'Create Server'}
+            {loading ? 'Adding...' : 'Add Server'}
           </button>
         </form>
       </div>

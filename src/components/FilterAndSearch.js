@@ -14,11 +14,11 @@ export default function FilterAndSearch({ handleSort, isLoading }) {
             <p className="text-lightGray mb-1"></p>
             <div className="px-1 mb-3 py-4 bg-brighterBg  w-32 rounded-lg text-xs "></div>
           </div>
-          <div class="">
+          <div className="">
             <div className="px-1 mb-3 py-1 bg-brighterBg  w-24 rounded-lg text-xs "></div>
           </div>
         </div>
-        <div class="relative">
+        <div className="relative">
           <div className="px-1 mb-3 py-4 bg-brighterBg  w-full rounded-lg text-xs "></div>
         </div>
       </div>
@@ -57,15 +57,15 @@ export default function FilterAndSearch({ handleSort, isLoading }) {
             <option value="updatedAtAsc">updatedAtAsc</option>
           </select>
         </div>
-        <div class="">
-          <label class="block text-sm text-gray-400 mb-1">Search</label>
+        <div className="">
+          <label className="block text-sm text-gray-400 mb-1">Search</label>
         </div>
       </div>
-      <div class="relative">
+      <div className="relative">
         <input
           type="text"
           placeholder="Search offers..."
-          class="w-full bg-mainBg border border-gray-700 rounded-lg py-2 px-3 text-sm"
+          className="w-full bg-mainBg border border-gray-700 rounded-lg py-2 px-3 text-sm"
         />
       </div>
     </div>

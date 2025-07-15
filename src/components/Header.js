@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
-export default function Header() {
+export default function Header({ noMb }) {
   const { data: session } = useSession();
   const router = useRouter();
 
@@ -12,7 +12,9 @@ export default function Header() {
     if (path) router.push(path);
   };
   return (
-    <section className="bg-brighterBg text-white mb-12 shadow-2xl">
+    <section
+      className={`bg-brighterBg text-white  ${noMb ? '' : 'mb-12'} shadow-2xl`}
+    >
       <div className="flex mx-auto max-w-7xl py-4 justify-between">
         <div className="flex gap-12">
           <div className="rounded-xl">
@@ -49,7 +51,7 @@ export default function Header() {
                     className="bg-gray-800 text-white p-2 rounded"
                   >
                     <option value="">Select</option>
-                    <option value="/panel/create">Create Server</option>
+                    <option value="/panel/create">Add new Server</option>
                     <option value="/panel/ticket">Ticket</option>
                   </select>
                 </div>

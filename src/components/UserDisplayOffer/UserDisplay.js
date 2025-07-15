@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function UserDisplay({
   offer,
@@ -26,11 +27,19 @@ export default function UserDisplay({
           height={height}
           className={`${classNameImg} rounded-full`}
         />
+
         <div className="flex-col">
           <div className="flex gap-2 items-center">
-            <h3 className={`font-sm ${smaller ? 'text-gray-400' : ''}`}>
-              {offer?.seller?.name}
-            </h3>
+            {!smaller ? (
+              <Link href={`/profile/${offer?.seller?.name}`}>
+                {offer?.seller?.name}
+              </Link>
+            ) : (
+              <p className={`font-sm ${smaller ? 'text-gray-400' : ''}`}>
+                {offer?.seller?.name}
+              </p>
+            )}
+
             {offer?.seller?.verified && (
               <p
                 className={` bg-green-900 text-green-400 px-1.5 py-0.5 rounded text-xs`}

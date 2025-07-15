@@ -144,17 +144,17 @@ export default function OfferPage() {
         <div
           className={`${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
         >
-          <div class="relative w-full h-64 mb-8 bg-mainBg">
+          <div className="relative w-full h-64 mb-8 bg-mainBg">
             <Image
               src="https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png"
               alt="Background"
               fill
-              className="object-cover"
+              classNameName="object-cover"
               priority
             />
-            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div class="absolute inset-0 flex items-center justify-center text-white">
-              <h1 class="text-3xl">{server}</h1>
+            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
+            <div className="absolute inset-0 flex items-center justify-center text-white">
+              <h1 className="text-3xl">{server}</h1>
             </div>
             <div className="absolute top-0 p-4 rounded-full pointer ">
               <Link href={'/marketplace/offers'}>

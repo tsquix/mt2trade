@@ -113,7 +113,7 @@ export default function RateUser({ order }) {
                 <div className="flex flex-col justify-center items-center">
                   <div className="flex flex-col items-center p-6 gap-4">
                     {' '}
-                    <div class="opacity-0 animate-fade-in animation-delay-400">
+                    <div className="opacity-0 animate-fade-in animation-delay-400">
                       <div className="">
                         <p className="text-3xl mb-8">Oceń sprzedajacego</p>
                       </div>
@@ -129,10 +129,10 @@ export default function RateUser({ order }) {
                         />
                       </div>
                     </div>
-                    <div class="opacity-0 animate-fade-in animation-delay-400 ">
+                    <div className="opacity-0 animate-fade-in animation-delay-400 ">
                       <p className="">{seller.name}</p>
                     </div>
-                    <div class="opacity-0 animate-fade-in animation-delay-800">
+                    <div className="opacity-0 animate-fade-in animation-delay-800">
                       <p className="">
                         Średnia ocena tego użytkownika: {seller.userRating} / 5
                       </p>
@@ -181,7 +181,7 @@ export default function RateUser({ order }) {
                 <div className="flex flex-col justify-center items-center">
                   <div className="flex flex-col items-center p-6 gap-4">
                     {' '}
-                    <div class="opacity-0 animate-fade-in animation-delay-400">
+                    <div className="opacity-0 animate-fade-in animation-delay-400">
                       <div className="">
                         <p className="text-3xl mb-8">Zgłoś sprzedajacego</p>
                       </div>
@@ -194,13 +194,14 @@ export default function RateUser({ order }) {
                           width={232}
                           height={232}
                           className="p-4 bg-brighterBg rounded-lg"
+                          alt=""
                         />
                       </div>
                     </div>
-                    <div class="opacity-0 animate-fade-in animation-delay-400 ">
+                    <div className="opacity-0 animate-fade-in animation-delay-400 ">
                       <p className="">{seller.name}</p>
                     </div>
-                    <div class="opacity-0 animate-fade-in animation-delay-800 flex flex-col gap-2">
+                    <div className="opacity-0 animate-fade-in animation-delay-800 flex flex-col gap-2">
                       <label>Treść zgłoszenia</label>
 
                       <textarea

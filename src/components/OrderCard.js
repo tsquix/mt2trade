@@ -38,12 +38,14 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
       <div>
         <div className="flex justify-between items-center bg-[#252525] p-3">
           <div className="flex items-center">
-            <span class={`w-2 h-2 rounded-full mr-2  ${style.bgColor}`}></span>
+            <span
+              className={`w-2 h-2 rounded-full mr-2  ${style.bgColor}`}
+            ></span>
             <p> {order.offer.title || '50M Yang - Fast delivery'}</p>
           </div>
           <div className="flex items-center">
             <span
-              class={` text-xs px-2 py-0.5 rounded-full mr-2 ${style.bgColor} ${style.color} `}
+              className={` text-xs px-2 py-0.5 rounded-full mr-2 ${style.bgColor} ${style.color} `}
             >
               {style.text}
             </span>
@@ -56,14 +58,14 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
             </button>
           </div>
         </div>
-        <div class="p-4 bg-mainBg">
-          <div class="flex flex-col md:flex-row justify-between mb-4">
-            <div class="space-y-2 mb-4 md:mb-0">
-              <div class="flex items-center">
-                <div class="w-6 text-gray-400">
+        <div className="p-4 bg-mainBg">
+          <div className="flex flex-col md:flex-row justify-between mb-4">
+            <div className="space-y-2 mb-4 md:mb-0">
+              <div className="flex items-center">
+                <div className="w-6 text-gray-400">
                   <i data-fa-i2svg="">
                     <svg
-                      class="svg-inline--fa fa-user-tag"
+                      className="svg-inline--fa fa-user-tag"
                       aria-hidden="true"
                       focusable="false"
                       data-prefix="fas"
@@ -80,14 +82,16 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
                     </svg>
                   </i>
                 </div>{' '}
-                <span class="text-gray-400 mr-2">Seller:</span>
-                <span class="font-medium">{order?.seller?.name || 'N/A'}</span>
+                <span className="text-gray-400 mr-2">Seller:</span>
+                <span className="font-medium">
+                  {order?.seller?.name || 'N/A'}
+                </span>
               </div>
-              <div class="flex items-center">
-                <div class="w-6 text-gray-400">
+              <div className="flex items-center">
+                <div className="w-6 text-gray-400">
                   <i data-fa-i2svg="">
                     <svg
-                      class="svg-inline--fa fa-user"
+                      className="svg-inline--fa fa-user"
                       aria-hidden="true"
                       focusable="false"
                       data-prefix="fas"
@@ -104,14 +108,16 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
                     </svg>
                   </i>
                 </div>
-                <span class="text-gray-400 mr-2">Buyer:</span>
-                <span class="font-medium">{order?.buyer?.name || 'N/A'}</span>
+                <span className="text-gray-400 mr-2">Buyer:</span>
+                <span className="font-medium">
+                  {order?.buyer?.name || 'N/A'}
+                </span>
               </div>
-              <div class="flex items-center">
-                <div class="w-6 text-gray-400">
+              <div className="flex items-center">
+                <div className="w-6 text-gray-400">
                   <i data-fa-i2svg="">
                     <svg
-                      class="svg-inline--fa fa-server"
+                      className="svg-inline--fa fa-server"
                       aria-hidden="true"
                       focusable="false"
                       data-prefix="fas"
@@ -128,17 +134,17 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
                     </svg>
                   </i>
                 </div>
-                <span class="text-gray-400 mr-2">Server:</span>
-                <span class="font-medium">{order?.offer.serverName}</span>
+                <span className="text-gray-400 mr-2">Server:</span>
+                <span className="font-medium">{order?.offer.serverName}</span>
               </div>
             </div>
 
-            <div class="bg-[#252525] rounded-lg p-3 text-center">
-              <div class="text-sm text-gray-400">Amount</div>
-              <div class="text-xl font-bold text-white">
-                {order?.currencyAmount || 0} <span class="text-sm">kk</span>
+            <div className="bg-[#252525] rounded-lg p-3 text-center">
+              <div className="text-sm text-gray-400">Amount</div>
+              <div className="text-xl font-bold text-white">
+                {order?.currencyAmount || 0} <span className="text-sm">kk</span>
               </div>
-              <div class="text-accent font-bold mt-1">
+              <div className="text-accent font-bold mt-1">
                 {' '}
                 Final price:{' '}
                 {(
@@ -147,7 +153,7 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
                 ).toFixed(2)}
                 PLN
               </div>
-              <div class="text-xs text-gray-400">
+              <div className="text-xs text-gray-400">
                 {(order?.offer?.pricePLN / order?.offer?.currencyAmount)
                   .toFixed(2)
                   .toString()
@@ -178,7 +184,7 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
               {order.orderStatus}
             </span>
           </div>
-          <div class="w-full bg-[#252525] rounded-full h-2 mb-4">
+          <div className="w-full bg-[#252525] rounded-full h-2 mb-4">
             {}
             <div
               className={`h-2 rounded-full ${style.bgColor} ${style.width}`}

@@ -12,6 +12,7 @@ const nextConfig = {
       'encrypted-tbn0.gstatic.com',
       'a.allegroimg.com',
       'mt2trade.s3.amazonaws.com',
+      'mt2trade.s3.eu-north-1.amazonaws.com',
     ],
   },
   reactStrictMode: true,

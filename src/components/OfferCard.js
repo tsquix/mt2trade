@@ -6,7 +6,7 @@ import { Rating } from 'react-simple-star-rating';
 import TitleRating from './TittleRating';
 import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
 
-function OfferCard({ offer, onClick, isSelected, isLoading }) {
+function OfferCard({ offer, onClick, isSelected, isLoading, status }) {
   useEffect(() => {
     console.log(offer);
   }, [offer]);
@@ -16,7 +16,9 @@ function OfferCard({ offer, onClick, isSelected, isLoading }) {
 
   return (
     <>
-      <div className="flex hover:ml-1 hover:-mr-1 transition-all ">
+      <div
+        className={`flex ${status === 'view' ? 'hover:ml-1 hover:-mr-1' : ''} transition-all `}
+      >
         <div
           className={
             isSelected
@@ -24,12 +26,13 @@ function OfferCard({ offer, onClick, isSelected, isLoading }) {
               : `hidden `
           }
         ></div>
+
         <button
           className={`p-4 ml-[6px] rounded-xl h-[107px] block transition-all w-full text-left z-20 bg-brighterBg  justify-between`}
           onClick={onClick}
         >
+          {' '}
           <TitleRating offer={offer} smaller />
-
           <UserDisplayInOffer offer={offer} smaller />
         </button>
       </div>
