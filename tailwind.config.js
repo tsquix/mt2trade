@@ -23,7 +23,6 @@ module.exports = {
         brighterBg: '#2e2e2e',
         darkGreen: '#14532d',
         lightGreen: '#4ade80',
-
         lightGray: '#7e949d',
       },
     },
