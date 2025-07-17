@@ -4,65 +4,100 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { socket } from '../../public/socket.js';
-export default function BuyOrder({ selectedOffer, setActionType }) {
+import UserDisplay from './UserDisplayOffer/UserDisplay.js';
+
+export default function BuyOrder({ selectedOffer, setActionType, actionType }) {
   const [currencyCount, setCurrencyCount] = useState(1);
   const { data: session } = useSession();
   const router = useRouter();
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setActionType(null);
+      }
+    };
+
+    if (actionType) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [actionType, setActionType]);
+  useEffect(() => {
+    setNewBuyOrder((prev) => ({
+      ...prev,
+      buyer: session?.user,
+      currencyAmount: currencyCount,
+    }));
+  }, [session, currencyCount]);
+
   const [newBuyOrder, setNewBuyOrder] = useState({
     offer: selectedOffer,
     seller: selectedOffer.seller._id,
     buyer: session?.user,
     currencyAmount: currencyCount,
   });
-  useEffect(() => {
-    console.log(newBuyOrder);
-  }, [newBuyOrder]);
 
-  async function createBuyOrder(e) {
+  const handleCurrChange = (e) => {
+    setCurrencyCount(Number(e.target.value));
+  };
+
+  const createBuyOrder = async (e) => {
     e.preventDefault();
+    if (!session) return;
 
     try {
-      if (!session) return;
-
       const orderToSubmit = {
         ...newBuyOrder,
         currencyAmount: currencyCount,
       };
 
       const response = await axios.post(`/api/buyOrder`, orderToSubmit);
-      console.log('Response:', response.data);
-
       if (response.data.success) {
         const orderId = response.data.data._id;
-        console.log('Emitting new-purchase-request', {
-          orderId,
-          selectedOffer,
-        });
+        router.push('/orders');
         socket.emit('new-purchase-request', {
           orderId,
           selectedOffer,
         });
-
-        router.push('/orders');
       }
     } catch (error) {
       console.error('Error creating buy order:', error);
     }
-  }
-  const handleCurrChange = (e) => {
-    setCurrencyCount(e.target.value);
   };
+
+  const totalPrice = (
+    (currencyCount * selectedOffer.pricePLN) /
+    selectedOffer.currencyAmount
+  ).toFixed(2);
+
   return (
-    <div className="bg-mainBg p-6 flex sticky top-0 z-20 flex-col">
-      <h1>
-        kupujesz od :
-        <Link target="_blank" href={`/profile/${selectedOffer.seller.name}`}>
-          {selectedOffer.seller.name}
-        </Link>
-      </h1>
-      <div className="flex gap-6 w-1/2 mx-3 text-center items-center mb-8">
-        <label htmlFor="" className="text-nowrap">
-          ile siana {currencyCount}
+    <div className="bg-brighterBg p-6 rounded-2xl shadow-lg text-white relative ">
+      {/* Zamknij */}
+      <button
+        onClick={() => setActionType(null)}
+        className="absolute top-4 right-4 text-red-400 text-3xl font-bold hover:text-red-600"
+        title="Zamknij"
+      >
+        ×
+      </button>
+
+      <h2 className="text-xl font-semibold py-4 mb-6">Kupujesz od: </h2>
+      <div className="border-t border-b border-gray-700 py-4 mb-6">
+        <UserDisplay
+          offer={selectedOffer}
+          height={45}
+          width={45}
+          classNameImg={''}
+        />
+      </div>
+      {/* Slider */}
+
+      <div className="bg-mainBg rounded-lg p-4 flex items-center gap-4 mb-4">
+        <label className="whitespace-nowrap font-semibold text-sm">
+          Podaj ilość waluty: {currencyCount}
         </label>
         <input
           type="range"
@@ -70,32 +105,21 @@ export default function BuyOrder({ selectedOffer, setActionType }) {
           max={selectedOffer.currencyAmount}
           value={currencyCount}
           onChange={handleCurrChange}
-          className="w-full "
+          className="w-full accent-red-300"
         />
-        <div className="text-nowrap">
-          {(
-            (currencyCount * selectedOffer.pricePLN) /
-            selectedOffer.currencyAmount
-          ).toFixed(2)}{' '}
-          zł
-        </div>
+        <span className="whitespace-nowrap text-green-400 font-medium">
+          {totalPrice} zł
+        </span>
       </div>
-      <div>
-        <button
-          onClick={createBuyOrder}
-          className="bg-brighterBg px-4 py-2 text-lg rounded-lg text-red-300"
-        >
-          kup tera
-        </button>
-      </div>
-      <div className="absolute top-5 right-5">
-        <button
-          onClick={() => setActionType(null)}
-          className="text-red-500 font-bold text-lg"
-        >
-          X
-        </button>
-      </div>
+
+      {/* Przycisk kupna */}
+      <button
+        onClick={createBuyOrder}
+        className=" bg-red-300 hover:bg-red-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center w-full"
+        value={'buy'}
+      >
+        Kup teraz
+      </button>
     </div>
   );
 }

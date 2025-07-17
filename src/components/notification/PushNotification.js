@@ -10,8 +10,9 @@ export default function PushNotification() {
       if (session) {
         try {
           const registration = await navigator.serviceWorker.ready;
-          const existingSubscription = await registration.pushManager.getSubscription();
-          
+          const existingSubscription =
+            await registration.pushManager.getSubscription();
+
           if (existingSubscription) {
             setSubscription(existingSubscription);
             console.log('Existing subscription found');
@@ -37,12 +38,14 @@ export default function PushNotification() {
       }
 
       // Register service worker
-      const registration = await navigator.serviceWorker.register('/sw.js');
-      
+      await navigator.serviceWorker.register('/sw.js');
+      const registration = await navigator.serviceWorker.ready;
+
       // Subscribe to push notifications
       const pushSubscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: 'BEy9M0NM8txQ1yRYTHXFYL5588f3pR1u-em5StnrvXLaLLW-EKzyWKjinlEe7CGij5WfJ75dyC9rKXB8NDBDCRI'
+        applicationServerKey:
+          'BEy9M0NM8txQ1yRYTHXFYL5588f3pR1u-em5StnrvXLaLLW-EKzyWKjinlEe7CGij5WfJ75dyC9rKXB8NDBDCRI',
       });
 
       // Send subscription to backend
@@ -85,14 +88,14 @@ export default function PushNotification() {
 
   return (
     <div>
-      <button 
+      <button
         onClick={subscribeToNotifications}
         className="bg-brighterBg px-4 py-2 rounded-lg text-red-300 mr-2"
       >
         Subscribe to Notifications
       </button>
       {subscription && (
-        <button 
+        <button
           onClick={sendNotification}
           className="bg-brighterBg px-4 py-2 rounded-lg text-red-300"
         >

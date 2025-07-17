@@ -133,17 +133,8 @@ export default function OfferPage() {
   };
   return (
     <Layout>
-      {actionType === 'buy' && (
-        <BuyOrder
-          selectedOffer={selectedOffer}
-          handleBuy={handleBuy}
-          setActionType={setActionType}
-        />
-      )}
       <div className="bg-mainBg">
-        <div
-          className={`${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
-        >
+        <div>
           <div className="relative w-full h-64 mb-8 bg-mainBg">
             <Image
               src="https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png"
@@ -191,6 +182,7 @@ export default function OfferPage() {
               </Link>
             </div>
           </div>
+
           <div>
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
@@ -245,8 +237,21 @@ export default function OfferPage() {
                 )}
               </div>
 
-              <div className="sticky -top-7 self-start h-fit ">
-                <div className="flex bg-mainBg rounded-3xl">
+              <div className="sticky -top-7 self-start h-fit  ">
+                <div className="absolute w-full z-20">
+                  {actionType === 'buy' && (
+                    <BuyOrder
+                      selectedOffer={selectedOffer}
+                      handleBuy={handleBuy}
+                      setActionType={setActionType}
+                      actionType={actionType}
+                    />
+                  )}
+                </div>
+                <div
+                  className={`flex bg-mainBg rounded-3xl ${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
+                  // className={``}
+                >
                   {!isLoading && selectedOffer ? (
                     <OfferDetailPage
                       offers={offers}

@@ -6,7 +6,7 @@ import { Rating } from 'react-simple-star-rating';
 import TitleRating from './TittleRating';
 import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
 
-function OfferCard({ offer, onClick, isSelected, isLoading, status }) {
+function OfferCard({ offer, onClick, isSelected, isLoading, status = 'view' }) {
   useEffect(() => {
     console.log(offer);
   }, [offer]);

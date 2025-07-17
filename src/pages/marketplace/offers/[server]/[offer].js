@@ -25,6 +25,8 @@ export default function OfferDetailPage({
     description: '',
   });
   //TODO adda validation, prevent empty input
+  //TODO prevent buying own offer
+  //TODO add bg highlight to own offers
   useEffect(() => {
     if (selectedOffer) {
       setNewOffer({
