@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import OrderCard from './OrderCard';
 import RateUser from './RateUser';
+import { useOrders } from '@/contexts/OrdersContext';
 
-export default function BuyOrdersView({ orders, deleteOrder, isLoading }) {
+export default function BuyOrdersView() {
+  const { state } = useOrders();
+  const { orders, isLoading } = state;
   const { buyOrders } = orders;
   const sortedBuyOrders = buyOrders.sort(
     (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -21,7 +24,7 @@ export default function BuyOrdersView({ orders, deleteOrder, isLoading }) {
                     order?.orderStatus === 'finalized' ? '' : 'mb-4'
                   }`}
                 >
-                  <OrderCard order={order} deleteOrder={deleteOrder} buyOrder />
+                  <OrderCard order={order} />
                   {order?.orderStatus === 'finalized' && (
                     <RateUser order={order} />
                   )}

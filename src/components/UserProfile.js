@@ -1,11 +1,9 @@
-// UserProfile.jsx
-import axios from 'axios';
-import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import OfferCard from './OfferCard';
 import OfferDetailPage from '@/pages/marketplace/offers/[server]/[offer]';
 import Profile from './Profile';
+import { useOrders } from '@/contexts/OrdersContext';
 // SWR fetcher function
 const fetcher = async (url) => {
   const res = await fetch(url);
@@ -15,10 +13,10 @@ const fetcher = async (url) => {
 
 export default function UserProfile({ sessionUser, otherUser }) {
   // Using SWR for data fetching with caching and revalidation
-  const [offers, setOffers] = useState(null);
+  const { state, actions, dispatch } = useOrders();
+  const { selectedOffer, userOffers } = state;
   const [view, setView] = useState('offers');
   const [status, setStatus] = useState('view');
-  const [selectedOffer, setSelectedOffer] = useState(null);
 
   const { data, error, isLoading } = useSWR(
     sessionUser?.name ? `/api/user/${sessionUser.name}` : null,
@@ -36,22 +34,10 @@ export default function UserProfile({ sessionUser, otherUser }) {
     console.log(otherUser);
     // console.log(sessionUser);
   }, [otherUser]);
-  const fetchOffers = async () => {
-    try {
-      // setIsLoading(true);
-      const response = await axios.get(`/api/offer?userId=${userData._id}`);
-      setOffers(response.data.offers);
-      if (response.data.offers && response.data.offers.length > 0) {
-      }
-    } catch (error) {
-      console.error('Error fetching offers:', error);
-    } finally {
-      // setIsLoading(false);
-    }
-  };
+
   useEffect(() => {
     if (userData?._id) {
-      fetchOffers();
+      actions.fetchUserOffers();
     }
   }, [userData]);
 
@@ -109,13 +95,19 @@ export default function UserProfile({ sessionUser, otherUser }) {
       ) : (
         <div className="bg-mainBg p-12 shadow-2xl">
           <div className="flex mb-4 gap-2 group relative">
-            {offers?.map((offer) => (
+            {userOffers?.map((offer) => (
               <OfferCard
                 key={offer._id}
                 offer={offer}
                 isSelected={selectedOffer?._id === offer._id}
                 onClick={
-                  status === 'view' ? () => setSelectedOffer(offer) : null
+                  status === 'view'
+                    ? () =>
+                        dispatch({
+                          type: 'SET_SELECTED_OFFER',
+                          payload: offer,
+                        })
+                    : null
                 }
                 status={status}
                 mode={'profile'}
@@ -138,13 +130,9 @@ export default function UserProfile({ sessionUser, otherUser }) {
             <div className="flex bg-mainBg rounded-3xl">
               {selectedOffer && (
                 <OfferDetailPage
-                  offers={offers}
-                  selectedOffer={selectedOffer}
-                  setSelectedOffer={setSelectedOffer}
                   mode={'profile'}
                   status={status}
                   setStatus={setStatus}
-                  fetchOffers={fetchOffers}
                 />
               )}
             </div>

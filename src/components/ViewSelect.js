@@ -1,4 +1,4 @@
-export default function ViewSelect({ onViewChange, view }) {
+export default function ViewSelect({ view, setView }) {
   const views = [
     {
       key: 'buy',
@@ -8,10 +8,6 @@ export default function ViewSelect({ onViewChange, view }) {
       key: 'sell',
       label: 'Sprzedaje',
     },
-    // {
-    //   key: 'offers',
-    //   label: 'moje oferty',
-    // },
   ];
   return (
     <div className="flex">
@@ -23,7 +19,7 @@ export default function ViewSelect({ onViewChange, view }) {
               ? 'bg-mainBg border-b-2 border-red-300'
               : 'bg-brighterBg border-b-2 border-gray-700 text-gray-500 hover:text-white'
           }`}
-          onClick={() => onViewChange(key)}
+          onClick={() => setView(key)}
         >
           {label}
         </button>

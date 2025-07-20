@@ -1,23 +1,20 @@
 import axios from 'axios';
-import Link from 'next/link';
-import { Rating } from 'react-simple-star-rating';
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import TitleRating from '@/components/TittleRating';
 import UserDisplay from '@/components/UserDisplayOffer/UserDisplay';
 import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
 import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
+import { useOrders } from '@/contexts/OrdersContext';
 
 export default function OfferDetailPage({
-  selectedOffer,
   handleBuy,
-  isLoading,
   mode = 'default', // default or profile,
   status,
   setStatus, // edit or view
-  fetchOffers,
-  setSelectedOffer,
 }) {
+  const { state, actions, dispatch } = useOrders();
+  const { isLoading, selectedOffer } = state;
+
   const [newOffer, setNewOffer] = useState({
     title: '',
     currencyAmount: '',
@@ -81,11 +78,11 @@ export default function OfferDetailPage({
         offerId: selectedOffer._id,
         newOffer,
       });
-      await fetchOffers();
-      setSelectedOffer((prev) => ({
-        ...prev,
-        ...newOffer,
-      }));
+      await actions.fetchUserOffers();
+      dispatch({
+        type: 'REFRESH_EDITED_OFFER',
+        payload: newOffer,
+      });
     }
   };
   //TODO w default zapisac w cache ostatni selected offer i go ustawic po ponownym wejsciu na strone

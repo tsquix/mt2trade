@@ -1,6 +1,4 @@
 import { Rating } from 'react-simple-star-rating';
-import { useEffect } from 'react';
-
 export default function TitleRating({
   offer,
   displayRatingNumber,
@@ -13,9 +11,9 @@ export default function TitleRating({
 }) {
   const isEditing = mode === 'profile' && status === 'edit';
 
-  useEffect(() => {
-    console.log(offer?.seller?.userRating);
-  }, [offer]);
+  // useEffect(() => {
+  //   console.log(offer?.seller?.userRating);
+  // }, [offer]);
 
   if (!offer || !offer.seller) return null;
 

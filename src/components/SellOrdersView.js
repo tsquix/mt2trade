@@ -1,14 +1,11 @@
 import Link from 'next/link';
 import OrderCard from './OrderCard';
 import { OrderActions } from './OrderActions';
+import { useOrders } from '@/contexts/OrdersContext';
 
-export default function SellOrdersView({
-  orders,
-  deleteOrder,
-  handleStatusChange,
-  handleUpdateOffer,
-  isLoading,
-}) {
+export default function SellOrdersView() {
+  const { state } = useOrders();
+  const { orders } = state;
   const { sellOrders } = orders;
 
   return (
@@ -19,17 +16,8 @@ export default function SellOrdersView({
             {orders?.sellOrders?.map((order) => (
               <>
                 <div key={order._id} className="mb-4 bg-brighterBg">
-                  <OrderCard
-                    key={order._id}
-                    order={order}
-                    deleteOrder={deleteOrder}
-                  >
-                    <OrderActions
-                      order={order}
-                      handleStatusChange={handleStatusChange}
-                      handleUpdateOffer={handleUpdateOffer}
-                      isLoading={isLoading}
-                    />
+                  <OrderCard key={order._id} order={order}>
+                    <OrderActions order={order} />
                   </OrderCard>
                 </div>
               </>

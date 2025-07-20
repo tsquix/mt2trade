@@ -1,9 +1,9 @@
-export function OrderActions({
-  order,
-  handleStatusChange,
-  handleUpdateOffer,
-  isLoading,
-}) {
+import { useOrders } from '@/contexts/OrdersContext';
+
+export function OrderActions({ order }) {
+  const { state, actions } = useOrders();
+  const { isLoading } = state;
+  const { handleStatusChange, handleUpdateOffer } = actions;
   const { orderStatus } = order;
 
   if (orderStatus === 'pending') {

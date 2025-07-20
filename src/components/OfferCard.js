@@ -1,12 +1,12 @@
-import Link from 'next/link';
 import { memo, useEffect } from 'react';
 import OfferCardSkeleton from './OfferCardSkeleton';
-import Image from 'next/image';
-import { Rating } from 'react-simple-star-rating';
 import TitleRating from './TittleRating';
 import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
+import { useOrders } from '@/contexts/OrdersContext';
 
-function OfferCard({ offer, onClick, isSelected, isLoading, status = 'view' }) {
+function OfferCard({ offer, onClick, isSelected, status = 'view' }) {
+  const { state, actions } = useOrders();
+  const { isLoading } = state;
   useEffect(() => {
     console.log(offer);
   }, [offer]);

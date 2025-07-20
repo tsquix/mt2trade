@@ -3,28 +3,27 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import OfferDetailPage from './[offer]';
 import { useEffect, useState, useRef, useCallback } from 'react';
-import axios from 'axios';
 import OfferCard from '@/components/OfferCard';
 import BuyOrder from '@/components/BuyOrder';
 import Image from 'next/image';
 import FilterAndSearch from '@/components/FilterAndSearch';
+import { useOrders } from '@/contexts/OrdersContext';
 
 export default function OfferPage() {
+  const { state, actions, dispatch } = useOrders();
+  const { isLoading, selectedOffer, serverOffers } = state;
   const router = useRouter();
   const { server } = router.query;
-  const [selectedOffer, setSelectedOffer] = useState(null);
-  const [offers, setOffers] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(5);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
 
   // Function to load more items
   const loadMore = useCallback(() => {
-    if (offers && visibleCount < offers.length) {
-      setVisibleCount((prev) => Math.min(prev + 3, offers.length));
+    if (serverOffers && visibleCount < serverOffers.length) {
+      setVisibleCount((prev) => Math.min(prev + 3, serverOffers.length));
     }
-  }, [offers, visibleCount]);
+  }, [serverOffers, visibleCount]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -51,86 +50,69 @@ export default function OfferPage() {
   }, [loadMore]);
 
   useEffect(() => {
-    const fetchOffers = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(`/api/offer?server=${server}`);
-        setOffers(response.data.offers);
-        // Auto-select first offer if available
-        if (response.data.offers && response.data.offers.length > 0) {
-          setSelectedOffer(response.data.offers[0]);
-        } else {
-          setIsLoading(false);
-        }
-      } catch (error) {
-        console.error('Error fetching offers:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     if (server) {
-      fetchOffers();
+      actions.fetchServerOffers(server);
     }
   }, [server]);
 
-  // useEffect(() => {
-  //   console.log(selectedOffer);
-  // }, [selectedOffer]);
-
   const handleSort = (e) => {
     const option = e.target.value;
-    const sorted = [...offers];
-    if (currencyAmount) {
-      switch (option) {
-        case 'yangAsc': {
-          sorted.sort((a, b) => a.currencyAmount - b.currencyAmount);
-          break;
-        }
-        case 'yangDesc': {
-          sorted.sort((a, b) => b.currencyAmount - a.currencyAmount);
-          break;
-        }
-        case 'priceAsc': {
-          sorted.sort(
-            (a, b) =>
-              a.pricePLN / a.currencyAmount - b.pricePLN / b.currencyAmount
-          );
-          break;
-        }
-        case 'priceDesc': {
-          sorted.sort(
-            (a, b) =>
-              b.pricePLN / b.currencyAmount - a.pricePLN / a.currencyAmount
-          );
-          break;
-        }
-        case 'rating': {
-          sorted.sort((a, b) => b.seller.userRating - a.seller.userRating);
-          break;
-        }
-        case 'updatedAtDesc': {
-          sorted.sort(
-            (a, b) =>
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-          );
-          break;
-        }
-        case 'updatedAtAsc': {
-          sorted.sort(
-            (a, b) =>
-              new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
-          );
-          break;
-        }
+    const sorted = [...serverOffers];
+
+    switch (option) {
+      case 'yangAsc': {
+        sorted.sort((a, b) => a.currencyAmount - b.currencyAmount);
+        break;
+      }
+      case 'yangDesc': {
+        sorted.sort((a, b) => b.currencyAmount - a.currencyAmount);
+        break;
+      }
+      case 'priceAsc': {
+        sorted.sort(
+          (a, b) =>
+            a.pricePLN / a.currencyAmount - b.pricePLN / b.currencyAmount
+        );
+        break;
+      }
+      case 'priceDesc': {
+        sorted.sort(
+          (a, b) =>
+            b.pricePLN / b.currencyAmount - a.pricePLN / a.currencyAmount
+        );
+        break;
+      }
+      case 'rating': {
+        sorted.sort((a, b) => b.seller.userRating - a.seller.userRating);
+        break;
+      }
+      case 'updatedAtDesc': {
+        sorted.sort(
+          (a, b) =>
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+        );
+        break;
+      }
+      case 'updatedAtAsc': {
+        sorted.sort(
+          (a, b) =>
+            new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
+        );
+        break;
       }
     }
-    setOffers(sorted);
+    dispatch({
+      type: 'SET_SERVER_OFFERS',
+      payload: sorted,
+    });
   };
 
   const handleBuy = (e) => {
     setActionType(e.target.value);
   };
+  useEffect(() => {
+    console.log(serverOffers);
+  }, [serverOffers]);
   return (
     <Layout>
       <div className="bg-mainBg">
@@ -187,28 +169,29 @@ export default function OfferPage() {
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
                 {!isLoading ? (
-                  <FilterAndSearch
-                    handleSort={handleSort}
-                    isLoading={isLoading}
-                  />
+                  <FilterAndSearch handleSort={handleSort} />
                 ) : (
                   <FilterAndSearch handleSort={handleSort} isLoading={true} />
                 )}
 
                 {!isLoading ? (
                   <>
-                    {offers?.slice(0, visibleCount).map((offer) => (
+                    {serverOffers?.slice(0, visibleCount).map((offer) => (
                       <OfferCard
                         key={offer._id}
                         offer={offer}
                         isSelected={selectedOffer?._id === offer._id}
-                        onClick={() => setSelectedOffer(offer)}
-                        isLoading={isLoading}
+                        onClick={() =>
+                          dispatch({
+                            type: 'SET_SELECTED_OFFER',
+                            payload: offer,
+                          })
+                        }
                       />
                     ))}
 
                     {/* Load more trigger element */}
-                    {offers && visibleCount < offers.length && (
+                    {serverOffers && visibleCount < serverOffers.length && (
                       <div ref={listRef} className="py-4 text-center">
                         <OfferCard offer={''} isLoading={true} />
                       </div>
@@ -220,7 +203,7 @@ export default function OfferPage() {
                     <OfferCard offer={''} isLoading={true} />
                   </>
                 )}
-                {offers?.length === 0 && (
+                {serverOffers?.length === 0 && (
                   <div>
                     <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
                     <p className="mb-1">
@@ -241,8 +224,6 @@ export default function OfferPage() {
                 <div className="absolute w-full z-20">
                   {actionType === 'buy' && (
                     <BuyOrder
-                      selectedOffer={selectedOffer}
-                      handleBuy={handleBuy}
                       setActionType={setActionType}
                       actionType={actionType}
                     />
@@ -252,20 +233,8 @@ export default function OfferPage() {
                   className={`flex bg-mainBg rounded-3xl ${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
                   // className={``}
                 >
-                  {!isLoading && selectedOffer ? (
-                    <OfferDetailPage
-                      offers={offers}
-                      selectedOffer={selectedOffer}
-                      handleBuy={handleBuy}
-                      isLoading={isLoading}
-                    />
-                  ) : (
-                    <OfferDetailPage
-                      offers={offers}
-                      selectedOffer={selectedOffer}
-                      handleBuy={handleBuy}
-                      isLoading={isLoading}
-                    />
+                  {!isLoading && selectedOffer && (
+                    <OfferDetailPage handleBuy={handleBuy} />
                   )}
                 </div>
               </div>

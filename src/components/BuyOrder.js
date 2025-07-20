@@ -1,15 +1,18 @@
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { socket } from '../../public/socket.js';
 import UserDisplay from './UserDisplayOffer/UserDisplay.js';
+import { useOrders } from '@/contexts/OrdersContext.js';
 
-export default function BuyOrder({ selectedOffer, setActionType, actionType }) {
+export default function BuyOrder({ setActionType, actionType }) {
+  const { state } = useOrders();
+  const { selectedOffer } = state;
   const [currencyCount, setCurrencyCount] = useState(1);
   const { data: session } = useSession();
   const router = useRouter();
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape') {

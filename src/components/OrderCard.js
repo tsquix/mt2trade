@@ -1,4 +1,8 @@
-export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
+import { useOrders } from '@/contexts/OrdersContext';
+
+export default function OrderCard({ order, children }) {
+  const { actions } = useOrders();
+
   const statusStyles = {
     finalized: {
       width: 'w-full',
@@ -52,7 +56,7 @@ export default function OrderCard({ order, deleteOrder, children, buyOrder }) {
             <button
               type="button"
               className="text-gray-400 hover:text-red-400 transition-colors"
-              onClick={() => deleteOrder(order._id)}
+              onClick={() => actions.deleteOrder(order._id)}
             >
               X
             </button>
