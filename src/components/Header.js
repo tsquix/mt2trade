@@ -50,7 +50,7 @@ export default function Header({ noMb }) {
                     onChange={handleChange}
                     className="bg-gray-800 text-white p-2 rounded"
                   >
-                    <option value="">Select</option>
+                    <option value="">Admin panel</option>
                     <option value="/panel/create">Add new Server</option>
                     <option value="/panel/ticket">Ticket</option>
                   </select>

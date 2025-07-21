@@ -36,11 +36,11 @@ export default function BuyOrdersView() {
       </div>
     );
   }
-  if (!isLoading && orders?.buyOrders?.length === 0) {
+  if (orders?.buyOrders?.length === 0) {
     return (
       <>
         <div className="opacity-0 animate-fade-in animation-delay-400 p-6 bg-mainBg shadow-xl">
-          <p className="text-lg">Nie masz złożonych żadnych zamówień...</p>
+          <p className="text-lg">Nie złożyłeś jeszcze żadnego zamówienia...</p>
           <p>
             Sprawdź oferty{' '}
             <span className="font-bold text-red-300">

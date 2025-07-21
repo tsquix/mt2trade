@@ -15,7 +15,7 @@ export default function UserProfile({ sessionUser, otherUser }) {
   // Using SWR for data fetching with caching and revalidation
   const { state, actions, dispatch } = useOrders();
   const { selectedOffer, userOffers } = state;
-  const [view, setView] = useState('offers');
+  const [view, setView] = useState('profile');
   const [status, setStatus] = useState('view');
 
   const { data, error, isLoading } = useSWR(

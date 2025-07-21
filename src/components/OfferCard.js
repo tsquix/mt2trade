@@ -5,7 +5,7 @@ import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
 import { useOrders } from '@/contexts/OrdersContext';
 
 function OfferCard({ offer, onClick, isSelected, status = 'view' }) {
-  const { state, actions } = useOrders();
+  const { state } = useOrders();
   const { isLoading } = state;
   useEffect(() => {
     console.log(offer);

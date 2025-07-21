@@ -61,7 +61,7 @@ export default function PushNotification() {
 
       if (response.ok) {
         setSubscription(pushSubscription);
-        console.log('Successfully subscribed to push notifications');
+        alert('Successfully subscribed to push notifications');
       }
     } catch (error) {
       console.error('Error subscribing to push notifications:', error);
@@ -87,21 +87,21 @@ export default function PushNotification() {
   };
 
   return (
-    <div>
+    <div className="mb-2">
       <button
         onClick={subscribeToNotifications}
         className="bg-brighterBg px-4 py-2 rounded-lg text-red-300 mr-2"
       >
-        Subscribe to Notifications
+        Subscribe to receive notifications when someone buy from you
       </button>
-      {subscription && (
+      {/* {subscription && (
         <button
           onClick={sendNotification}
           className="bg-brighterBg px-4 py-2 rounded-lg text-red-300"
         >
           Send Test Notification
         </button>
-      )}
+      )} */}
     </div>
   );
 }

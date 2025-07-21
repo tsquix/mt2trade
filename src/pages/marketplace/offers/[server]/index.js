@@ -168,10 +168,8 @@ export default function OfferPage() {
           <div>
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
-                {!isLoading ? (
+                {serverOffers?.length !== 0 && (
                   <FilterAndSearch handleSort={handleSort} />
-                ) : (
-                  <FilterAndSearch handleSort={handleSort} isLoading={true} />
                 )}
 
                 {!isLoading ? (
@@ -233,9 +231,11 @@ export default function OfferPage() {
                   className={`flex bg-mainBg rounded-3xl ${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
                   // className={``}
                 >
-                  {!isLoading && selectedOffer && (
-                    <OfferDetailPage handleBuy={handleBuy} />
-                  )}
+                  {!isLoading &&
+                    selectedOffer &&
+                    serverOffers?.length !== 0 && (
+                      <OfferDetailPage handleBuy={handleBuy} />
+                    )}
                 </div>
               </div>
             </div>

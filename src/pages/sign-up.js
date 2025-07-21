@@ -40,7 +40,7 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="text-black">
       <input
         type="name"
         value={name}
@@ -62,7 +62,9 @@ export default function RegisterForm() {
         placeholder="Hasło"
         required
       />
-      <button type="submit">Zarejestruj się</button>
+      <button type="submit" className="text-white">
+        Zarejestruj się
+      </button>
     </form>
   );
 }
@@ -95,7 +97,7 @@ export function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="text-black">
       <input
         type="email"
         value={email}
@@ -110,7 +112,9 @@ export function LoginForm() {
         placeholder="Hasło"
         required
       />
-      <button type="submit">Zaloguj się</button>
+      <button type="submit" className="text-white">
+        Zaloguj się
+      </button>
     </form>
   );
 }

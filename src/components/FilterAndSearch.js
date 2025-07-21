@@ -1,4 +1,8 @@
-export default function FilterAndSearch({ handleSort, isLoading }) {
+import { useOrders } from '@/contexts/OrdersContext';
+
+export default function FilterAndSearch({ handleSort }) {
+  const { state } = useOrders();
+  const { isLoading } = state;
   if (isLoading) {
     return (
       <div className="animate-pulse bg-mainBg p-4 rounded-xl border mb-1 ">
