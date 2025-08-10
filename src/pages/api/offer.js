@@ -9,13 +9,12 @@ export default async function handler(req, res) {
     const { server } = req.query;
     const { userId } = req.query;
     await connectMongoDB();
-    const session = await getServerSession(req, res, authOptions);
-
-    if (!session) {
-      return res.status(401).json({ message: 'Unauthorized' });
-    }
+    // const session = await getServerSession(req, res, authOptions);
+    // if (!session) {
+    //   return res.status(401).json({ message: 'Unauthorized' });
+    // }
     if (method === 'GET') {
-      console.log(session.id);
+      // console.log(session.id);
       if (server) {
         // Find offers for specific server with populated seller data
         const offers = await Offer.find({ serverName: server })
@@ -40,6 +39,7 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, offers });
       }
     }
+
     if (method === 'PUT') {
       const { offerId, newCurrAmount, newOffer } = req.body;
       if (!offerId) {
