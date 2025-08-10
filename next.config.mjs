@@ -1,6 +1,7 @@
 // Update your next.config.mjs file to include image domains
 const nextConfig = {
   images: {
+    unoptimized: true,
     domains: [
       'www.google.com',
       'images.unsplash.com',
@@ -13,6 +14,7 @@ const nextConfig = {
       'a.allegroimg.com',
       'mt2trade.s3.amazonaws.com',
       'mt2trade.s3.eu-north-1.amazonaws.com',
+      'yt3.googleusercontent.com',
     ],
   },
   reactStrictMode: true,

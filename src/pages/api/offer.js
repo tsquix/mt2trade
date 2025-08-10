@@ -1,15 +1,21 @@
 // Should be
 import connectMongoDB from '../../../lib/mongoose';
 import Offer from '../../../models/Offer';
-
+import { getServerSession } from 'next-auth';
+import { authOptions } from './auth/[...nextauth]';
 export default async function handler(req, res) {
   try {
     const { method } = req;
     const { server } = req.query;
     const { userId } = req.query;
     await connectMongoDB();
+    const session = await getServerSession(req, res, authOptions);
 
+    if (!session) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
     if (method === 'GET') {
+      console.log(session.id);
       if (server) {
         // Find offers for specific server with populated seller data
         const offers = await Offer.find({ serverName: server })
@@ -20,7 +26,6 @@ export default async function handler(req, res) {
           .exec();
         return res.status(200).json({ success: true, offers });
       } else if (userId) {
-        // Find offers for specific server with populated seller data
         const offers = await Offer.find({ seller: userId })
           .populate(
             'seller',
@@ -40,6 +45,19 @@ export default async function handler(req, res) {
       if (!offerId) {
         return res.status(400).json({ success: false, error: 'Brak offerId' });
       }
+      const offer = await Offer.findById(offerId);
+      if (!offer) {
+        return res
+          .status(404)
+          .json({ success: false, error: 'Nie znaleziono oferty' });
+      }
+
+      if (offer.seller._id.toString() !== session.user.id) {
+        return res
+          .status(403)
+          .json({ success: false, error: 'Brak uprawnień' });
+      }
+
       if (newCurrAmount) {
         await Offer.findByIdAndUpdate(offerId, {
           currencyAmount: newCurrAmount,

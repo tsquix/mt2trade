@@ -5,6 +5,7 @@ import UserDisplay from '@/components/UserDisplayOffer/UserDisplay';
 import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
 import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
 import { useOrders } from '@/contexts/OrdersContext';
+import { useSession } from 'next-auth/react';
 
 export default function OfferDetailPage({
   handleBuy,
@@ -12,6 +13,7 @@ export default function OfferDetailPage({
   status,
   setStatus, // edit or view
 }) {
+  const { data: session } = useSession();
   const { state, actions, dispatch } = useOrders();
   const { isLoading, selectedOffer } = state;
 
@@ -70,10 +72,14 @@ export default function OfferDetailPage({
       </div>
     );
   }
+  // useEffect(() => {
+  //   console.log(selectedOffer);
+  //   console.log(session);
+  // }, [selectedOffer]);
   const edit = async (edit, saveEdit) => {
     setStatus(edit);
-    console.log(selectedOffer);
-    if (saveEdit) {
+    //
+    if (saveEdit && selectedOffer.seller.name === session.user.name) {
       await axios.put('/api/offer', {
         offerId: selectedOffer._id,
         newOffer,
