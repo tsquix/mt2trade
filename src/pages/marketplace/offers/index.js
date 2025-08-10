@@ -56,6 +56,22 @@ export default function OffersPage({ servers }) {
 }
 export async function getStaticProps() {
   const baseUrl = process.env.NEXTAUTH_URL;
+
   const servers = await fetchServerList(baseUrl);
-  return { props: { servers }, revalidate: 86400 };
+
+  const serversWithOffers = await Promise.all(
+    servers.map(async (server) => {
+      const res = await fetch(`${baseUrl}/api/offer?server=${server.name}`);
+      const data = await res.json();
+      return {
+        ...server,
+        offerCount: data.offers?.length || 0,
+      };
+    })
+  );
+
+  return {
+    props: { servers: serversWithOffers },
+    revalidate: 86400,
+  };
 }

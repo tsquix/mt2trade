@@ -4,19 +4,21 @@ import Link from 'next/link';
 import { useEffect } from 'react';
 
 export default function ServerCard({ server }) {
-  const { state, actions } = useOrders();
-  const { serverOffers } = state;
+  // const { state, actions } = useOrders();
+  // const { serverOffers } = state;
 
-  useEffect(() => {
-    actions.fetchServerOffers(server.name);
-  }, []);
+  const offerCount = server.offerCount;
+
+  // useEffect(() => {
+  //   actions.fetchServerOffers(server.name);
+  // }, []);
 
   // useEffect(() => {
   //   console.log(serverOffers);
   // }, [serverOffers]);
-  const offerCount = serverOffers.filter(
-    (offer) => offer.serverName === server.name
-  ).length;
+  // const offerCount = serverOffers.filter(
+  //   (offer) => offer.serverName === server.name
+  // ).length;
   return (
     <Link
       key={server._id}
