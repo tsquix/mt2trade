@@ -4,17 +4,30 @@ import Link from 'next/link';
 import { fetchServerList } from '../../../../lib/fetchServers';
 import ServerCard from '@/components/ServerCard';
 import { useState } from 'react';
+import { getAllOffersCount } from '../../../../lib/offers';
 
-export default function OffersPage({ servers }) {
+export default function OffersPage({ servers, debug, error }) {
   const [expand, setExpand] = useState(false);
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500 text-center">
+          <h1 className="text-2xl font-bold mb-4">Błąd ładowania</h1>
+          <p>{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    //TODO wyszukiwarka
     <div className="">
       <Header />
       <div className="flex flex-col mx-auto max-w-7xl justify-center">
-        <div className="pb-12 flex text-center justify-center">
+        <div className="pb-12 flex text-center justify-center items-center gap-4">
           <h1 className="text-3xl">Wybierz swój serwer</h1>
         </div>
+
         <div className="grid grid-cols-3 gap-x-32 gap-y-24">
           {servers.slice(0, 6).map((server) => (
             <ServerCard key={server._id} server={server} />
@@ -23,11 +36,11 @@ export default function OffersPage({ servers }) {
             servers
               .slice(6)
               .map((server) => <ServerCard key={server._id} server={server} />)
-          ) : (
+          ) : servers.length > 6 ? (
             <div className="col-span-3 flex justify-center items-center">
               <button
                 onClick={() => setExpand(true)}
-                className="bg-brighterBg hover:bg-white hover:text-black transition-colors px-8 pt-4 rounded-lg text-xl font-bold  border-mainBg border-solid border-2"
+                className="bg-brighterBg hover:bg-white hover:text-black transition-colors px-8 pt-4 rounded-lg text-xl font-bold border-mainBg border-solid border-2"
               >
                 Show More Servers
                 <div className="flex justify-center">
@@ -48,30 +61,42 @@ export default function OffersPage({ servers }) {
                 </div>
               </button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
   );
 }
-export async function getStaticProps() {
-  const baseUrl = process.env.NEXTAUTH_URL || 'https://mt2trade.vercel.app';
 
-  const servers = await fetchServerList(baseUrl);
+export async function getServerSideProps(context) {
+  const host = context.req.headers.host;
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  const baseUrl = `${protocol}://${host}`;
 
-  const serversWithOffers = await Promise.all(
-    servers.map(async (server) => {
-      const res = await fetch(`${baseUrl}/api/offer?server=${server.name}`);
-      const data = await res.json();
-      return {
-        ...server,
-        offerCount: data.offers?.length || 0,
-      };
-    })
-  );
+  try {
+    const servers = await fetchServerList(baseUrl);
+    const offerCounts = await getAllOffersCount();
 
-  return {
-    props: { servers: serversWithOffers },
-    revalidate: 86400,
-  };
+    const serversWithOffers = servers.map((server) => ({
+      ...server,
+      offerCount: offerCounts[server.name] || 0,
+    }));
+
+    return {
+      props: {
+        servers: serversWithOffers,
+        debug: {
+          timestamp: new Date().toISOString(),
+          baseUrl,
+          serverCount: serversWithOffers.length,
+          totalOffers: Object.values(offerCounts).reduce(
+            (sum, count) => sum + count,
+            0
+          ),
+        },
+      },
+    };
+  } catch (error) {
+    console.error('error', error);
+  }
 }
