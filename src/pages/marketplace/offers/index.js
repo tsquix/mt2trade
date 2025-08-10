@@ -55,7 +55,7 @@ export default function OffersPage({ servers }) {
   );
 }
 export async function getStaticProps() {
-  const baseUrl = process.env.NEXTAUTH_URL;
+  const baseUrl = process.env.NEXTAUTH_URL || 'https://mt2trade.vercel.app';
 
   const servers = await fetchServerList(baseUrl);
 

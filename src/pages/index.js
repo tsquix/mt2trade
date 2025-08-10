@@ -377,7 +377,28 @@ export default function Home() {
               halfSection ? 'text-black' : 'text-white'
             }`}
           >
-            <div></div>
+            <div
+              // ref={galleryRef}
+              className="h-[100vh] overflow-y-auto border border-gray-300 rounded p-4 w-1/2 relative hscroll-snap-y-mandatory"
+            >
+              <ul className="">
+                <li className="p-2 w-[800px] h-[400px] flex items-center justify-center scroll-snap-align-start"></li>
+                {/* {Array.from({ length: 4 }).map((_, i) => ( */}
+                <li className="p-2 bg-gray-100 rounded w-[800px] h-[400px] flex items-center justify-center scroll-snap-align-start my-24">
+                  Item
+                </li>
+                <li className="p-2 bg-gray-100 rounded w-[800px] h-[400px] flex items-center justify-center scroll-snap-align-start my-24">
+                  Item
+                </li>
+                <li className="p-2 bg-gray-100 rounded w-[800px] h-[400px] flex items-center justify-center scroll-snap-align-start my-24">
+                  Item
+                </li>
+                <li className="p-2 bg-gray-100 rounded w-[800px] h-[400px] flex items-center justify-center scroll-snap-align-start my-24">
+                  Item
+                </li>
+                {/* ))} */}
+              </ul>
+            </div>
             <div className="font-normal top-1/4 self-start relative text-5xl">
               Sprawdź też nasz blog
             </div>
