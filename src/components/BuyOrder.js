@@ -49,7 +49,7 @@ export default function BuyOrder({ setActionType, actionType }) {
 
   const createBuyOrder = async (e) => {
     e.preventDefault();
-    if (!session) return;
+    if (!session) return alert('aby kupić walute musisz się zalogować');
 
     try {
       const orderToSubmit = {

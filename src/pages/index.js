@@ -285,9 +285,14 @@ export default function Home() {
           >
             <div className="p-4 mt-48 grid grid-cols-2 gap-24 items-start">
               <div className="font-normal sticky top-24 self-start">
-                <p className="text-5xl">z nami nie zginiesz zobacz</p>
+                {/* <p className="text-5xl">z nami nie zginiesz zobacz</p>
+                 <p className="text-5xl">z nami nie zginiesz zobacz</p>
                 <p className="text-5xl">juz teraz jak nie być</p>
-                <p className="text-5xl mb-4">biedny w metin2</p>
+                <p className="text-5xl mb-4">biedny w metin2</p> */}
+                <p className="text-5xl">Lorem ipsum dolor sit amet</p>
+                <p className="text-5xl">consectetur adipisicing elit.</p>
+                <p className="text-5xl">Odio natus amet, </p>
+                <p className="text-5xl mb-4">sapiente </p>
                 <button className="bg-transparent border border-black px-3 rounded-xl  hover:text-white hover:bg-black py-3 transition-all">
                   Dowiedz się więcej -&gt;
                 </button>
