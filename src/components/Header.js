@@ -16,8 +16,8 @@ export default function Header({ noMb, fadeIn }) {
       className={`relative z-20 text-white ${noMb ? '' : 'pb-20'} ${fadeIn ? 'animate-fade-in-slow-rev' : ''} shadow-2xl  `}
     >
       <div className="absolute w-full">
-        <div className="flex mx-auto w-full py-4 justify-between shadow-xl px-12 ">
-          <div className="flex gap-12 ">
+        <div className="flex py-4 justify-between shadow-xl px-4 lg:px-12 ">
+          <div className="flex gap-4 lg:gap-12 ">
             <div className="rounded-xl ">
               <Link href={'/'}>Home</Link>
             </div>
@@ -32,7 +32,7 @@ export default function Header({ noMb, fadeIn }) {
             </div>
           </div>
 
-          <div className="">
+          <div className="lg:block hidden">
             {!session ? (
               <>
                 <Link href={'/login'}>

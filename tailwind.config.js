@@ -7,6 +7,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        fluid: 'clamp(1rem, 4vw, 11rem)',
+      },
       keyframes: {
         'fade-in': {
           '0%': { opacity: 0 },
@@ -28,13 +31,40 @@ module.exports = {
           '0%': { height: '100%' },
           '100%': { height: '0%' },
         },
+        revealRightSm: {
+          '0%': { width: '150px', height: '150px' },
+          '100%': { width: '325px', height: '325px' },
+        },
+        revealRightLg: {
+          '0%': { width: '250px', height: '250px' },
+          '100%': { width: '500px', height: '500px' },
+        },
+
         slideDown: {
           '0%': { maxHeight: '0' },
           '100%': { maxHeight: '100px' }, // set max height to fit text
         },
+        slideDown2: {
+          '0%': { maxHeight: '300px', opacity: '100%' },
+          '100%': { maxHeight: '0', opacity: '0' }, // set max height to fit text
+        },
         leftSlide: {
           '0%': { transform: 'translateX(-100%)' },
           '100%': { transform: 'translateX(0)' },
+        },
+        'leftSlide-fast': {
+          '0%': {
+            transform: 'translateX(-75%) scale(0.2)',
+            filter: 'blur(24px)',
+
+            opacity: 0.6,
+          },
+          '100%': {
+            transform: 'translateX(0) scale(1)',
+            filter: 'blur(0)',
+
+            opacity: 1,
+          },
         },
       },
       animation: {
@@ -43,8 +73,15 @@ module.exports = {
         'fade-out-slow': 'fade-out-slow 2s ease forwards',
         'fade-in-slow-rev': 'fade-in-slow-rev 3.5s ease forwards',
         slideDown: 'slideDown 3s ease forwards',
+        slideDown2: 'slideDown2 1s ease forwards',
         reveal: 'reveal 1s ease-out forwards',
+        revealRightSm: 'revealRightSm 1s ease-in-out 1s forwards',
+        revealRightLg: 'revealRightLg 1s ease-in-out 1s forwards',
         leftSlide: 'leftSlide 2.5s ease forwards',
+        'leftSlide-fast': 'leftSlide-fast 1.5s ease forwards',
+        activeImgSlide: 'activeImgSlide .5s ease forwards',
+
+        'slide-up-fade-in': 'slideUpFadeIn 0.7s ease forwards',
       },
       colors: {
         background: 'var(--background)',

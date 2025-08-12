@@ -28,6 +28,7 @@
     "react-sweetalert2": "^0.6.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
+    "swiper": "^11.2.10",
     "swr": "^2.3.3",
     "web-push": "^3.6.7"
   },
