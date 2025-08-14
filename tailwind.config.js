@@ -39,7 +39,18 @@ module.exports = {
           '0%': { width: '250px', height: '250px' },
           '100%': { width: '500px', height: '500px' },
         },
-
+        slideUpNeg44: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        slideUp0: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
+        slideUp44: {
+          '0%': { transform: 'translateY(100%)' },
+          '100%': { transform: 'translateY(0)' },
+        },
         slideDown: {
           '0%': { maxHeight: '0' },
           '100%': { maxHeight: '100px' }, // set max height to fit text
@@ -72,6 +83,9 @@ module.exports = {
         'fade-in-slow': 'fade-in-slow 3s ease forwards',
         'fade-out-slow': 'fade-out-slow 2s ease forwards',
         'fade-in-slow-rev': 'fade-in-slow-rev 3.5s ease forwards',
+        slideUpNeg44: 'slideUpNeg44 1.5s ease-out forwards',
+        slideUp0: 'slideUp0 1.5s ease-out forwards',
+        slideUp44: 'slideUp44 1.5s ease-out forwards',
         slideDown: 'slideDown 3s ease forwards',
         slideDown2: 'slideDown2 1s ease forwards',
         reveal: 'reveal 1s ease-out forwards',
