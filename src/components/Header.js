@@ -54,6 +54,7 @@ export default function Header({ noMb, fadeIn }) {
                       <option value="">Admin panel</option>
                       <option value="/panel/create">Add new Server</option>
                       <option value="/panel/ticket">Ticket</option>
+                      <option value="/panel/messages">Messages</option>
                     </select>
                   </div>
                   <Link href={'/profile'}>
