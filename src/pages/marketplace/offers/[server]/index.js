@@ -21,9 +21,10 @@ export const getServerSideProps = async (context) => {
 };
 
 export default function OfferPage({ serverOffers }) {
-  const { state, actions, dispatch } = useOrders();
+  const { state, dispatch } = useOrders();
   const { isLoading, selectedOffer } = state;
-  // const { isLoading, selectedOffer, serverOffers } = state;
+  const [phrase, setPhrase] = useState('');
+  const [searchServer, setSearchServer] = useState([]);
   const router = useRouter();
   const { server } = router.query;
   const [visibleCount, setVisibleCount] = useState(5);
@@ -31,7 +32,7 @@ export default function OfferPage({ serverOffers }) {
   const [actionType, setActionType] = useState(null);
   useEffect(() => {
     if (!router.query.server) return;
-
+    //aktualizujemy oferty w przypadku przejscia na inny server bez reloaudu strony
     const fetchOffers = async () => {
       dispatch({ type: 'SET_LOADING', payload: true });
       try {
@@ -54,6 +55,7 @@ export default function OfferPage({ serverOffers }) {
   }, [router.query.server, dispatch]);
 
   useEffect(() => {
+    //po ssr synchronizujemy dane z conntextem
     if (serverOffers?.length && state.serverOffers.length === 0) {
       dispatch({ type: 'SET_SERVER_OFFERS', payload: serverOffers });
       dispatch({
@@ -65,6 +67,7 @@ export default function OfferPage({ serverOffers }) {
   }, [serverOffers, state.serverOffers.length, dispatch]);
 
   useEffect(() => {
+    //przy wyszukiwaniu z parametrem slug ustawiamy znaleziona oferte na selected
     if (router.query.offer && state.serverOffers?.length) {
       const found = state.serverOffers.find(
         (o) => o.slug === router.query.offer
@@ -77,10 +80,10 @@ export default function OfferPage({ serverOffers }) {
   }, [router.query.offer, state.serverOffers, dispatch]);
 
   const handleSelect = (offer) => {
-    // ustawiamy w state natychmiast
+    //ustawiamy selected offer
     dispatch({ type: 'SET_SELECTED_OFFER', payload: offer });
 
-    // aktualizujemy url (dla podlinkowania / refresh)
+    // aktualizujemy url z slug oferty
     router.push(
       {
         pathname: `/marketplace/offers/${router.query.server}`,
@@ -125,12 +128,6 @@ export default function OfferPage({ serverOffers }) {
       }
     };
   }, [loadMore, visibleCount, state.serverOffers?.length]);
-
-  // useEffect(() => {
-  //   if (server) {
-  //     actions.fetchServerOffers(server);
-  //   }
-  // }, [server]);
 
   const handleSort = (e) => {
     const option = e.target.value;
@@ -187,9 +184,42 @@ export default function OfferPage({ serverOffers }) {
   const handleBuy = (e) => {
     setActionType(e.target.value);
   };
+
   useEffect(() => {
     console.log(selectedOffer);
   }, [selectedOffer]);
+
+  useEffect(() => {
+    //wyszukiwarka z regex
+    if (!phrase) {
+      setSearchServer([]);
+      return;
+    }
+    const handler = setTimeout(() => {
+      const cleanPhrase = phrase.replace(/\s+/g, '');
+      const regex = new RegExp(cleanPhrase, 'i');
+
+      let res = serverOffers.filter(
+        (o) =>
+          regex.test(o.title.replace(/\s+/g, '')) ||
+          regex.test(o.description.replace(/\s+/g, '')) ||
+          regex.test(o.seller.name.replace(/\s+/g, ''))
+      );
+      //partial search if nothing found
+      if (res.length === 0 && phrase.length > 2) {
+        const partial = phrase.slice(0, 2).replace(/\s+/g, '');
+        const regexPartial = new RegExp(partial, 'i');
+        res = serverOffers.filter((o) =>
+          regexPartial.test(o.title.replace(/\s+/g, ''))
+        );
+      }
+
+      setSearchServer(res);
+    }, 300); //add debounce
+
+    return () => clearTimeout(handler);
+  }, [phrase, serverOffers]);
+
   return (
     <Layout>
       <div className="bg-mainBg">
@@ -246,18 +276,33 @@ export default function OfferPage({ serverOffers }) {
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
                 {serverOffers?.length !== 0 && (
-                  <FilterAndSearch handleSort={handleSort} />
+                  <FilterAndSearch
+                    handleSort={handleSort}
+                    setPhrase={setPhrase}
+                    phrase={phrase}
+                  />
                 )}
                 {!isLoading && (
                   <>
-                    {state.serverOffers?.slice(0, visibleCount).map((offer) => (
-                      <OfferCard
-                        key={offer._id}
-                        offer={offer}
-                        isSelected={selectedOffer?._id === offer._id}
-                        onClick={() => handleSelect(offer)}
-                      />
-                    ))}
+                    {phrase.length > 0
+                      ? searchServer.map((offer) => (
+                          <OfferCard
+                            key={offer._id}
+                            offer={offer}
+                            isSelected={selectedOffer?._id === offer._id}
+                            onClick={() => handleSelect(offer)}
+                          />
+                        ))
+                      : state.serverOffers
+                          ?.slice(0, visibleCount)
+                          .map((offer) => (
+                            <OfferCard
+                              key={offer._id}
+                              offer={offer}
+                              isSelected={selectedOffer?._id === offer._id}
+                              onClick={() => handleSelect(offer)}
+                            />
+                          ))}
 
                     {/* Load more trigger element */}
                     {serverOffers && visibleCount < serverOffers.length && (

@@ -1,8 +1,9 @@
 import { useOrders } from '@/contexts/OrdersContext';
 
-export default function FilterAndSearch({ handleSort }) {
+export default function FilterAndSearch({ handleSort, phrase, setPhrase }) {
   const { state } = useOrders();
   const { isLoading } = state;
+
   if (isLoading) {
     return (
       <div className="animate-pulse bg-mainBg p-4 rounded-xl border mb-1 ">
@@ -68,6 +69,8 @@ export default function FilterAndSearch({ handleSort }) {
       <div className="relative">
         <input
           type="text"
+          value={phrase}
+          onChange={(e) => setPhrase(e.target.value)}
           placeholder="Search offers..."
           className="w-full bg-mainBg border border-gray-700 rounded-lg py-2 px-3 text-sm"
         />
