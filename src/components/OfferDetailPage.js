@@ -80,10 +80,19 @@ export default function OfferDetailPage({
     setStatus(edit);
     //
     if (saveEdit && selectedOffer.seller.name === session.user.name) {
-      await axios.put('/api/offer', {
-        offerId: selectedOffer._id,
-        newOffer,
-      });
+      if (selectedOffer.title !== newOffer.title) {
+        const toSlug = true;
+        await axios.put('/api/offer', {
+          offerId: selectedOffer._id,
+          newOffer,
+          toSlug,
+        });
+      } else {
+        await axios.put('/api/offer', {
+          offerId: selectedOffer._id,
+          newOffer,
+        });
+      }
       await actions.fetchUserOffers();
       dispatch({
         type: 'REFRESH_EDITED_OFFER',

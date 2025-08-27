@@ -1,5 +1,5 @@
-import OfferDetailPage from '@/pages/marketplace/offers/[server]/[offer]';
 import OfferCard from './OfferCard';
+import OfferDetailPage from './OfferDetailPage';
 export default function OffersView({ offers }) {
   const { state, dispatch } = useOrders();
   const { selectedOffer } = state;

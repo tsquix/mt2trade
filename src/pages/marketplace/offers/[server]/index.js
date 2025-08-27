@@ -1,29 +1,106 @@
 import Layout from '@/pages/layout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import OfferDetailPage from './[offer]';
+
 import { useEffect, useState, useRef, useCallback } from 'react';
 import OfferCard from '@/components/OfferCard';
 import BuyOrder from '@/components/BuyOrder';
 import Image from 'next/image';
 import FilterAndSearch from '@/components/FilterAndSearch';
 import { useOrders } from '@/contexts/OrdersContext';
+import OfferDetailPage from '@/components/OfferDetailPage';
+import axios from 'axios';
 
-export default function OfferPage() {
+export const getServerSideProps = async (context) => {
+  const { server } = context.params;
+  const res = await axios.get(
+    `${process.env.BASE_URL}/api/offer?server=${server}`
+  );
+  const serverOffers = res.data.offers;
+  return { props: { serverOffers } };
+};
+
+export default function OfferPage({ serverOffers }) {
   const { state, actions, dispatch } = useOrders();
-  const { isLoading, selectedOffer, serverOffers } = state;
+  const { isLoading, selectedOffer } = state;
+  // const { isLoading, selectedOffer, serverOffers } = state;
   const router = useRouter();
   const { server } = router.query;
   const [visibleCount, setVisibleCount] = useState(5);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
+  useEffect(() => {
+    if (!router.query.server) return;
+
+    const fetchOffers = async () => {
+      dispatch({ type: 'SET_LOADING', payload: true });
+      try {
+        const res = await axios.get(`/api/offer?server=${router.query.server}`);
+        dispatch({ type: 'SET_SERVER_OFFERS', payload: res.data.offers });
+        dispatch({
+          type: 'SET_SELECTED_OFFER',
+          payload: res.data.offers[0] || null,
+        });
+      } catch (err) {
+        console.error(err);
+        dispatch({ type: 'SET_SERVER_OFFERS', payload: [] });
+        dispatch({ type: 'SET_SELECTED_OFFER', payload: null });
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
+      }
+    };
+
+    fetchOffers();
+  }, [router.query.server, dispatch]);
+
+  useEffect(() => {
+    if (serverOffers?.length && state.serverOffers.length === 0) {
+      dispatch({ type: 'SET_SERVER_OFFERS', payload: serverOffers });
+      dispatch({
+        type: 'SET_SELECTED_OFFER',
+        payload: serverOffers[0] || null,
+      });
+      dispatch({ type: 'SET_LOADING', payload: false });
+    }
+  }, [serverOffers, state.serverOffers.length, dispatch]);
+
+  useEffect(() => {
+    if (router.query.offer && state.serverOffers?.length) {
+      const found = state.serverOffers.find(
+        (o) => o.slug === router.query.offer
+      );
+
+      if (found) {
+        dispatch({ type: 'SET_SELECTED_OFFER', payload: found });
+      }
+    }
+  }, [router.query.offer, state.serverOffers, dispatch]);
+
+  const handleSelect = (offer) => {
+    // ustawiamy w state natychmiast
+    dispatch({ type: 'SET_SELECTED_OFFER', payload: offer });
+
+    // aktualizujemy url (dla podlinkowania / refresh)
+    router.push(
+      {
+        pathname: `/marketplace/offers/${router.query.server}`,
+        query: { offer: offer.slug },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
+
+  useEffect(() => {
+    console.log();
+  });
 
   // Function to load more items
   const loadMore = useCallback(() => {
-    if (serverOffers && visibleCount < serverOffers.length) {
-      setVisibleCount((prev) => Math.min(prev + 3, serverOffers.length));
+    if (state.serverOffers && visibleCount < state.serverOffers.length) {
+      setVisibleCount((prev) => Math.min(prev + 3, state.serverOffers.length));
     }
-  }, [serverOffers, visibleCount]);
+  }, [state.serverOffers, visibleCount]);
 
   // Intersection Observer for infinite scroll
   useEffect(() => {
@@ -47,13 +124,13 @@ export default function OfferPage() {
         observer.unobserve(currentRef);
       }
     };
-  }, [loadMore]);
+  }, [loadMore, visibleCount, state.serverOffers?.length]);
 
-  useEffect(() => {
-    if (server) {
-      actions.fetchServerOffers(server);
-    }
-  }, [server]);
+  // useEffect(() => {
+  //   if (server) {
+  //     actions.fetchServerOffers(server);
+  //   }
+  // }, [server]);
 
   const handleSort = (e) => {
     const option = e.target.value;
@@ -111,8 +188,8 @@ export default function OfferPage() {
     setActionType(e.target.value);
   };
   useEffect(() => {
-    console.log(serverOffers);
-  }, [serverOffers]);
+    console.log(selectedOffer);
+  }, [selectedOffer]);
   return (
     <Layout>
       <div className="bg-mainBg">
@@ -171,36 +248,35 @@ export default function OfferPage() {
                 {serverOffers?.length !== 0 && (
                   <FilterAndSearch handleSort={handleSort} />
                 )}
-
-                {!isLoading ? (
+                {!isLoading && (
                   <>
-                    {serverOffers?.slice(0, visibleCount).map((offer) => (
+                    {state.serverOffers?.slice(0, visibleCount).map((offer) => (
                       <OfferCard
                         key={offer._id}
                         offer={offer}
                         isSelected={selectedOffer?._id === offer._id}
-                        onClick={() =>
-                          dispatch({
-                            type: 'SET_SELECTED_OFFER',
-                            payload: offer,
-                          })
-                        }
+                        onClick={() => handleSelect(offer)}
                       />
                     ))}
 
                     {/* Load more trigger element */}
                     {serverOffers && visibleCount < serverOffers.length && (
-                      <div ref={listRef} className="py-4 text-center">
-                        <OfferCard offer={''} isLoading={true} />
+                      <div
+                        ref={listRef}
+                        className="py-4 text-center text-gray-400"
+                      >
+                        Ładowanie więcej...
                       </div>
                     )}
                   </>
-                ) : (
-                  <>
-                    <OfferCard offer={''} isLoading={true} />
-                    <OfferCard offer={''} isLoading={true} />
-                  </>
                 )}
+                {/* // : ( //{' '}
+                <>
+                  // <OfferCard offer={''} />
+                  // <OfferCard offer={''} />
+                  //{' '}
+                </>
+                // )} */}
                 {serverOffers?.length === 0 && (
                   <div>
                     <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>

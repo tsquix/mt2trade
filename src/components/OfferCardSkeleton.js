@@ -3,7 +3,7 @@ import { Rating } from 'react-simple-star-rating';
 export default function OfferCardSkeleton() {
   return (
     <button
-      className={`px-2 py-6 rounded-lg animate-pulse border bg-mainBg  hover:opacity-90`}
+      className={`px-2 py-6 rounded-lg animate-pulse border bg-mainBg hover:opacity-90`}
     >
       <div className="bg-mainBg  rounded-3xl">
         <div className="justify-between flex">

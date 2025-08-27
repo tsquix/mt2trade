@@ -1,3 +1,5 @@
+import axios from 'axios';
+import { useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
 export default function TitleRating({
   offer,
@@ -9,6 +11,7 @@ export default function TitleRating({
   newOffer,
   handleEdit,
 }) {
+  const [copied, setCopied] = useState(false);
   const isEditing = mode === 'profile' && status === 'edit';
 
   // useEffect(() => {
@@ -76,7 +79,39 @@ export default function TitleRating({
           </div>
         </div>
 
-        <div className="bg-brighterBg text-right">
+        <div className="bg-brighterBg text-right flex">
+          {!smaller && (
+            <div
+              className="h-[36px] group"
+              onMouseLeave={() => setCopied(false)}
+            >
+              <div className="absolute -translate-x-1 top-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-gray-100">
+                {copied ? 'copied' : 'Copy link'}
+              </div>
+
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-6 hover:opacity-50 transition-opacity cursor-pointer mt-2 mx-2"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `http://localhost:3000/marketplace/offers/${offer.serverName}?offer=${offer.slug}`
+                  );
+                  setCopied(true);
+                }}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244"
+                />
+              </svg>
+            </div>
+          )}
+
           {isEditing ? (
             <>
               <div className="flex gap-2 items-center">
@@ -110,14 +145,14 @@ export default function TitleRating({
               </div>
             </>
           ) : (
-            <>
+            <div className="flex flex-col">
               <p className="text-red-300">
                 {offer?.currencyAmount} {offer?.tag !== '' ? 'kk' : 'Wony'}
               </p>
               <p className="text-xs text-lightGray font-semibold">
                 {formatPricePer1kk()} zł za 1kk
               </p>
-            </>
+            </div>
           )}
         </div>
       </div>

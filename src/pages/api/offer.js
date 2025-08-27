@@ -9,10 +9,8 @@ export default async function handler(req, res) {
     const { server } = req.query;
     const { userId } = req.query;
     await connectMongoDB();
-    // const session = await getServerSession(req, res, authOptions);
-    // if (!session) {
-    //   return res.status(401).json({ message: 'Unauthorized' });
-    // }
+    const session = await getServerSession(req, res, authOptions);
+
     if (method === 'GET') {
       // console.log(session.id);
       if (server) {
@@ -39,9 +37,12 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, offers });
       }
     }
-
+    if (!session) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
     if (method === 'PUT') {
-      const { offerId, newCurrAmount, newOffer } = req.body;
+      //TODO IF ZMIENIONA NAZWA / AUTOGENERATE NEW SLUG
+      const { offerId, newCurrAmount, newOffer, toSlug } = req.body;
       if (!offerId) {
         return res.status(400).json({ success: false, error: 'Brak offerId' });
       }
@@ -66,7 +67,50 @@ export default async function handler(req, res) {
       }
       if (newOffer) {
         const { title, currencyAmount, pricePLN, description } = newOffer;
-        const updateData = { title, currencyAmount, pricePLN, description };
+        const baseSlug = title
+          .toLowerCase()
+          .trim()
+          .replace(/[\s_]+/g, '-')
+          .replace(/[^\w-]+/g, '');
+
+        let slug = baseSlug;
+        if (toSlug) {
+          let attempt = 0;
+
+          let existsBase = await Offer.find({ slug: baseSlug });
+          if (existsBase.length === 0) {
+            slug = baseSlug;
+          } else {
+            //generate free slugtitle
+            while (true) {
+              const timestamp = Date.now().toString().slice(-4);
+              slug = `${baseSlug}-${timestamp}`;
+
+              const exists = await Offer.find({ slug });
+              if (exists.length === 0) break;
+
+              attempt++;
+
+              if (attempt > 10) {
+                const timestamp6 = Date.now().toString().slice(-6);
+                const random = Math.floor(Math.random() * 100);
+                slug = `${baseSlug}-${timestamp6}-${random}`;
+
+                const exists6 = await Offer.find({ slug });
+                if (exists6.length === 0) break;
+              }
+              await new Promise((r) => setTimeout(r, 1));
+            }
+          }
+        }
+
+        const updateData = {
+          title,
+          currencyAmount,
+          pricePLN,
+          description,
+          slug,
+        };
         await Offer.findByIdAndUpdate(offerId, updateData);
         return res.status(200).json({ success: true });
       }
@@ -82,21 +126,41 @@ export default async function handler(req, res) {
         description,
       } = req.body;
 
-      // // Validate required fields
-      // if (!seller || !serverName || !currencyAmount || !pricePLN) {
-      //   return res.status(400).json({
-      //     success: false,
-      //     message: 'Missing required fields',
-      //   });
-      // }
+      const baseSlug = title
+        .toLowerCase()
+        .trim()
+        .replace(/[\s_]+/g, '-')
+        .replace(/[^\w-]+/g, '');
 
-      // // Validate numeric values
-      // if (isNaN(currencyAmount) || isNaN(pricePLN)) {
-      //   return res.status(400).json({
-      //     success: false,
-      //     message: 'Invalid numeric values',
-      //   });
-      // }
+      let slug = baseSlug;
+      let attempt = 0;
+
+      let existsBase = await Offer.find({ slug: baseSlug });
+      if (existsBase.length === 0) {
+        slug = baseSlug;
+      } else {
+        //generate free slugtitle
+        while (true) {
+          const timestamp = Date.now().toString().slice(-4);
+          slug = `${baseSlug}-${timestamp}`;
+
+          const exists = await Offer.find({ slug });
+          if (exists.length === 0) break;
+
+          attempt++;
+
+          if (attempt > 10) {
+            const timestamp6 = Date.now().toString().slice(-6);
+            const random = Math.floor(Math.random() * 100);
+            slug = `${baseSlug}-${timestamp6}-${random}`;
+
+            const exists6 = await Offer.find({ slug });
+            if (exists6.length === 0) break;
+          }
+
+          await new Promise((r) => setTimeout(r, 1));
+        }
+      }
 
       const offer = await Offer.create({
         seller,
@@ -106,6 +170,7 @@ export default async function handler(req, res) {
         pricePLN: Number(pricePLN),
         description: description || '',
         title: title,
+        slug,
       });
 
       return res.status(201).json({

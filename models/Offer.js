@@ -7,6 +7,7 @@ const OfferSchema = new mongoose.Schema({
   currencyType: { type: String, required: true },
   pricePLN: { type: Number, required: true },
   title: { type: String, required: true },
+  slug: { type: String, required: true, unique: true },
   description: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
