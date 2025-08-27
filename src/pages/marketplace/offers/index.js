@@ -68,14 +68,14 @@ export default function OffersPage({ servers, debug, error }) {
   );
 }
 
-export async function getServerSideProps(context) {
-  const host = context.req.headers.host;
-  const protocol = host.includes('localhost') ? 'http' : 'https';
-  const baseUrl = `${protocol}://${host}`;
-
+export async function getStaticProps() {
   try {
-    const servers = await fetchServerList(baseUrl);
-    const offerCounts = await getAllOffersCount();
+    const baseUrl = process.env.NEXTAUTH_URL || 'https://mt2trade.vercel.app';
+
+    const [servers, offerCounts] = await Promise.all([
+      fetchServerList(baseUrl),
+      getAllOffersCount(),
+    ]);
 
     const serversWithOffers = servers.map((server) => ({
       ...server,
@@ -85,18 +85,8 @@ export async function getServerSideProps(context) {
     return {
       props: {
         servers: serversWithOffers,
-        debug: {
-          timestamp: new Date().toISOString(),
-          baseUrl,
-          serverCount: serversWithOffers.length,
-          totalOffers: Object.values(offerCounts).reduce(
-            (sum, count) => sum + count,
-            0
-          ),
-        },
       },
+      revalidate: 14400,
     };
-  } catch (error) {
-    console.error('error', error);
-  }
+  } catch (error) {}
 }
