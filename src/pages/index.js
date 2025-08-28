@@ -36,7 +36,7 @@ export default function Home() {
   ];
 
   const [activeIndex, setActiveIndex] = useState(null);
-  const [halfSection, setHalfSection] = useState(true);
+  const [halfSection, setHalfSection] = useState(false);
   const [activeImg, setActiveImg] = useState([ambassadors[0].image]);
   const afterCarouselRef = useRef();
   const section3ref = useRef();
@@ -210,7 +210,8 @@ export default function Home() {
   }, [section3ref]);
 
   return (
-    <div className="bg-[#efefef]">
+    <div className={`${halfSection ? 'bg-[#efefef]' : 'bg-[#322C33]'}`}>
+      {/* TODO  add max-w container so wide screen looks good*/}
       <HomePage
         halfSection={halfSection}
         carouselRef={carouselRef}

@@ -46,11 +46,11 @@ export default function ContactForm() {
           <h2 className="mb-4 text-xl md:text-4xl tracking-wide font-extrabold text-center text-gray-900 dark:text-[#dac7a7] [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)]">
             Skontaktuj się z nami
           </h2>
-          <p className="font-light text-center text-[#dac7a7] dark:text-gray-300 [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)] md:text-xl">
+          <p className="font-normal text-center text-[#dac7a7] dark:text-gray-300 [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)] md:text-xl">
             Masz problem techniczny? Chcesz przesłać opinię o funkcji w wersji
             beta? Chcesz zawrzeć współpracę biznesową?
           </p>
-          <p className="mb-8 lg:mb-16 font-light text-center text-[#dac7a7] dark:text-gray-300 [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)] md:text-xl">
+          <p className="mb-8 lg:mb-16 font-normal text-center text-[#dac7a7] dark:text-gray-300 [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)] md:text-xl">
             Daj nam znać.
           </p>
         </div>

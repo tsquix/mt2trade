@@ -8,7 +8,7 @@ export default function ServerCard({ server }) {
     <Link
       key={server._id}
       href={`/marketplace/offers/${server.slug}`}
-      className="hover:opacity-80 transition-all h-[172px] w-[308px] relative block"
+      className="hover:opacity-80 transition-all h-[152px] w-[288px]  md:h-[172px] md:w-[308px] relative block"
     >
       <Image
         src={server.img}

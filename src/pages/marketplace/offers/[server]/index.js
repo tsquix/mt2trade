@@ -2,7 +2,7 @@ import Layout from '@/pages/layout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 
-import { useEffect, useState, useRef, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import OfferCard from '@/components/OfferCard';
 import BuyOrder from '@/components/BuyOrder';
 import Image from 'next/image';
@@ -25,78 +25,58 @@ export default function OfferPage({ serverOffers }) {
   const { isLoading, selectedOffer } = state;
   const [phrase, setPhrase] = useState('');
   const [searchServer, setSearchServer] = useState([]);
+  const [debouncedPhrase, setDebouncedPhrase] = useState('');
   const router = useRouter();
   const { server } = router.query;
   const [visibleCount, setVisibleCount] = useState(5);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
+
   useEffect(() => {
-    if (!router.query.server) return;
-    //aktualizujemy oferty w przypadku przejscia na inny server bez reloaudu strony
     const fetchOffers = async () => {
-      dispatch({ type: 'SET_LOADING', payload: true });
-      try {
-        const res = await axios.get(`/api/offer?server=${router.query.server}`);
-        dispatch({ type: 'SET_SERVER_OFFERS', payload: res.data.offers });
+      //sync context jesti ssr
+      if (serverOffers?.length && !state.serverOffers.length) {
+        dispatch({ type: 'SET_SERVER_OFFERS', payload: serverOffers });
         dispatch({
           type: 'SET_SELECTED_OFFER',
-          payload: res.data.offers[0] || null,
+          payload: serverOffers[0] || null,
         });
-      } catch (err) {
-        console.error(err);
-        dispatch({ type: 'SET_SERVER_OFFERS', payload: [] });
-        dispatch({ type: 'SET_SELECTED_OFFER', payload: null });
-      } finally {
         dispatch({ type: 'SET_LOADING', payload: false });
+        return;
+      }
+
+      //aktualizujemy oferty w przypadku przejscia na inny server bez reload strony
+      if (server) {
+        dispatch({ type: 'SET_LOADING', payload: true });
+        try {
+          const res = await axios.get(`/api/offer?server=${server}`);
+          dispatch({ type: 'SET_SERVER_OFFERS', payload: res.data.offers });
+          dispatch({
+            type: 'SET_SELECTED_OFFER',
+            payload: res.data.offers[0] || null,
+          });
+        } catch (err) {
+          console.error(err);
+          dispatch({ type: 'SET_SERVER_OFFERS', payload: [] });
+          dispatch({ type: 'SET_SELECTED_OFFER', payload: null });
+        } finally {
+          dispatch({ type: 'SET_LOADING', payload: false });
+        }
       }
     };
-
     fetchOffers();
-  }, [router.query.server, dispatch]);
+  }, [server, serverOffers, state.serverOffers.length, dispatch]);
 
   useEffect(() => {
-    //po ssr synchronizujemy dane z conntextem
-    if (serverOffers?.length && state.serverOffers.length === 0) {
-      dispatch({ type: 'SET_SERVER_OFFERS', payload: serverOffers });
-      dispatch({
-        type: 'SET_SELECTED_OFFER',
-        payload: serverOffers[0] || null,
-      });
-      dispatch({ type: 'SET_LOADING', payload: false });
-    }
-  }, [serverOffers, state.serverOffers.length, dispatch]);
-
-  useEffect(() => {
-    //przy wyszukiwaniu z parametrem slug ustawiamy znaleziona oferte na selected
-    if (router.query.offer && state.serverOffers?.length) {
-      const found = state.serverOffers.find(
-        (o) => o.slug === router.query.offer
-      );
+    //set selected offer if url contain slug
+    if (server && state.serverOffers?.length) {
+      const found = state.serverOffers.find((o) => o.slug === server);
 
       if (found) {
         dispatch({ type: 'SET_SELECTED_OFFER', payload: found });
       }
     }
-  }, [router.query.offer, state.serverOffers, dispatch]);
-
-  const handleSelect = (offer) => {
-    //ustawiamy selected offer
-    dispatch({ type: 'SET_SELECTED_OFFER', payload: offer });
-
-    // aktualizujemy url z slug oferty
-    router.push(
-      {
-        pathname: `/marketplace/offers/${router.query.server}`,
-        query: { offer: offer.slug },
-      },
-      undefined,
-      { shallow: true }
-    );
-  };
-
-  useEffect(() => {
-    console.log();
-  });
+  }, [server, state.serverOffers, dispatch]);
 
   // Function to load more items
   const loadMore = useCallback(() => {
@@ -104,7 +84,6 @@ export default function OfferPage({ serverOffers }) {
       setVisibleCount((prev) => Math.min(prev + 3, state.serverOffers.length));
     }
   }, [state.serverOffers, visibleCount]);
-
   // Intersection Observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -128,6 +107,52 @@ export default function OfferPage({ serverOffers }) {
       }
     };
   }, [loadMore, visibleCount, state.serverOffers?.length]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedPhrase(phrase);
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [phrase]);
+  const filteredOffers = useMemo(() => {
+    if (!debouncedPhrase) return state.serverOffers || [];
+    //wyszukiwarka z regex
+
+    const cleanPhrase = debouncedPhrase.replace(/\s+/g, '');
+    const regex = new RegExp(cleanPhrase, 'i');
+
+    let res = state.serverOffers.filter(
+      (o) =>
+        regex.test(o.title.replace(/\s+/g, '')) ||
+        regex.test(o.description.replace(/\s+/g, '')) ||
+        regex.test(o.seller.name.replace(/\s+/g, ''))
+    );
+    //partial search if nothing found
+    if (res.length === 0 && debouncedPhrase.length > 2) {
+      const partial = debouncedPhrase.slice(0, 2).replace(/\s+/g, '');
+      const regexPartial = new RegExp(partial, 'i');
+      res = state.serverOffers.filter((o) =>
+        regexPartial.test(o.title.replace(/\s+/g, ''))
+      );
+    }
+    return res;
+  }, [debouncedPhrase, state.serverOffers]);
+
+  const handleSelect = (offer) => {
+    //ustawiamy selected offer
+    dispatch({ type: 'SET_SELECTED_OFFER', payload: offer });
+
+    // aktualizujemy url z slug oferty
+    router.push(
+      {
+        pathname: `/marketplace/offers/${server}`,
+        query: { offer: offer.slug },
+      },
+      undefined,
+      { shallow: true }
+    );
+  };
 
   const handleSort = (e) => {
     const option = e.target.value;
@@ -185,41 +210,6 @@ export default function OfferPage({ serverOffers }) {
     setActionType(e.target.value);
   };
 
-  useEffect(() => {
-    console.log(selectedOffer);
-  }, [selectedOffer]);
-
-  useEffect(() => {
-    //wyszukiwarka z regex
-    if (!phrase) {
-      setSearchServer([]);
-      return;
-    }
-    const handler = setTimeout(() => {
-      const cleanPhrase = phrase.replace(/\s+/g, '');
-      const regex = new RegExp(cleanPhrase, 'i');
-
-      let res = serverOffers.filter(
-        (o) =>
-          regex.test(o.title.replace(/\s+/g, '')) ||
-          regex.test(o.description.replace(/\s+/g, '')) ||
-          regex.test(o.seller.name.replace(/\s+/g, ''))
-      );
-      //partial search if nothing found
-      if (res.length === 0 && phrase.length > 2) {
-        const partial = phrase.slice(0, 2).replace(/\s+/g, '');
-        const regexPartial = new RegExp(partial, 'i');
-        res = serverOffers.filter((o) =>
-          regexPartial.test(o.title.replace(/\s+/g, ''))
-        );
-      }
-
-      setSearchServer(res);
-    }, 300); //add debounce
-
-    return () => clearTimeout(handler);
-  }, [phrase, serverOffers]);
-
   return (
     <Layout>
       <div className="bg-mainBg">
@@ -229,7 +219,7 @@ export default function OfferPage({ serverOffers }) {
               src="https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png"
               alt="Background"
               fill
-              classNameName="object-cover"
+              className="object-cover"
               priority
             />
             <div className="absolute inset-0 bg-black bg-opacity-50"></div>
@@ -285,7 +275,7 @@ export default function OfferPage({ serverOffers }) {
                 {!isLoading && (
                   <>
                     {phrase.length > 0
-                      ? searchServer.map((offer) => (
+                      ? filteredOffers.map((offer) => (
                           <OfferCard
                             key={offer._id}
                             offer={offer}
