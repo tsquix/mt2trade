@@ -14,7 +14,7 @@ export default function Carousel({
   //   const indexRef = useRef(0);
 
   return (
-    <section className="relative h-[100vh] text-white" ref={section3ref}>
+    <section className="relative h-[100vh] text-white " ref={section3ref}>
       <div
         // bg-gradient-to-b from-[#54393D] to-[#141416]
         className={`absolute inset-0 
@@ -30,11 +30,11 @@ export default function Carousel({
       />
 
       <div
-        className={`p-4 pt-24 lg:pt-36 md:px-24 flex 2xl:flex-row flex-col-reverse 2xl:justify-between items-center 2xl:items-start transition-colors duration-500  ${
+        className={`pt-24 lg:pt-36 flex 2xl:flex-row flex-col-reverse 2xl:justify-between items-center 2xl:items-start transition-colors duration-500  mx-auto max-w-7xl  ${
           halfSection ? 'text-black' : 'text-white'
         }`}
       >
-        <div>
+        <div className="">
           {!showCarousel ? (
             <div className="relative">
               <div className="grid grid-cols-2 ">
@@ -90,7 +90,7 @@ export default function Carousel({
             </Swiper>
           )}
         </div>
-        <div className="font-normal relative text-3xl text-end   md:text-5xl mb-24">
+        <div className="font-normal relative text-3xl text-end md:text-5xl mb-24 2xl:mb-0">
           Sprawdź też nasz blog
         </div>
       </div>

@@ -45,24 +45,24 @@ export default function HomePage({
 
                 {/* Foreground content */}
                 <div className="relative mb-4 z-10">
-                  <h1 className="text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 overflow-hidden max-h-0 animate-slideDown tracking-wide [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)]">
+                  <h1 className="text-3xl lg:text-4xl font-bold mb-4 sm:mb-6 overflow-hidden max-h-0 animate-slideDown tracking-wide [text-shadow:_2px_2px_4px_rgba(0,0,0,0.8)] animation-delay-800">
                     Metin2Trade
                   </h1>
-                  <div className="overflow-hidden max-h-0 animate-slideDown">
+                  <div className="overflow-hidden max-h-0 animate-slideDown animation-delay-800">
                     <h3 className="text-lg font-bold tracking-tight sm:tracking-normal">
                       Twój nowy ulubiony sposób handlu
                     </h3>
                   </div>
-                  <div className="overflow-hidden max-h-0 animate-slideDown tracking-tight sm:tracking-normal">
+                  <div className="overflow-hidden max-h-0 animate-slideDown animation-delay-800 tracking-tight sm:tracking-normal">
                     Sprzedawaj oraz kupuj od zaufanych handlarzy
                   </div>
-                  <div className="overflow-hidden max-h-0 animate-slideDown tracking-tight sm:tracking-normal">
+                  <div className="overflow-hidden max-h-0 animate-slideDown animation-delay-800 tracking-tight sm:tracking-normal">
                     Handel yang nigdy nie był jeszcze tak prosty
                   </div>
                 </div>
               </div>
 
-              <div className=" gap-6 sm:gap-4 flex overflow-hidden  opacity-0 animate-fade-in animation-delay-1200 justify-center">
+              <div className=" gap-6 sm:gap-4 flex overflow-hidden opacity-0 animate-fade-in animation-delay-1200 justify-center">
                 <button className="bg-white text-sm sm:text-base px-2 sm:px-3 rounded-xl text-black hover:bg-gray-300 py-3">
                   Dowiedz się więcej
                 </button>

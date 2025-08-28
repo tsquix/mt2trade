@@ -116,6 +116,7 @@ module.exports = {
         '.animation-delay-400': { animationDelay: '400ms' },
         '.animation-delay-600': { animationDelay: '600ms' },
         '.animation-delay-800': { animationDelay: '800ms' },
+        '.animation-delay-1200': { animationDelay: '1200ms' },
         '.animation-delay-1600': { animationDelay: '1600ms' },
         '.animation-delay-1800': { animationDelay: '1800ms' },
         '.animation-delay-2000': { animationDelay: '2000ms' },

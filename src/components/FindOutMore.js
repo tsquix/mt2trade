@@ -33,7 +33,7 @@ export default function FindOutMore({ halfSection, afterCarouselRef }) {
       />
 
       <section
-        className={`${halfSection ? 'text-[#333333]' : 'text-white'} flex md:px-24 lg:pt-36 xl:py-48 `}
+        className={`${halfSection ? 'text-[#333333]' : 'text-white'} flex md:px-24 lg:pt-36 xl:py-48 mx-auto max-w-7xl  `}
       >
         <div className="p-4 xl:grid xl:grid-cols-[0.5fr_1.5fr] gap-24 ">
           <div
