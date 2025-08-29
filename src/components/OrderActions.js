@@ -9,7 +9,7 @@ export function OrderActions({ order }) {
   if (orderStatus === 'pending') {
     return (
       <div className="flex flex-col items-center py-3 px-4  bg-mainBg w-full mb-4">
-        <div className="flex gap-4 justify-center rounded-lg bg-[#252525] py-3 w-full">
+        <div className="flex gap-4 justify-center rounded-lg bg-[#252525] py-4 w-full">
           <button
             onClick={() => handleStatusChange('accepted', order._id)}
             className={`bg-mainBg px-4 py-2 rounded-lg hover:opacity-50 transition ${
@@ -36,7 +36,7 @@ export function OrderActions({ order }) {
   if (orderStatus === 'accepted') {
     return (
       <div className="flex flex-col items-center py-3 px-4  bg-mainBg w-full mb-4">
-        <div className="flex gap-4 justify-center rounded-lg bg-[#252525] py-3 w-full ">
+        <div className="flex gap-4 justify-center rounded-lg bg-[#252525] py-4 w-full ">
           <button
             disabled={isLoading}
             className={`bg-red-100 text-mainBg px-4 py-2 rounded-lg hover:opacity-70 transition ${
@@ -67,7 +67,7 @@ export function OrderActions({ order }) {
   ) {
     return (
       <div className="flex flex-col items-center py-3 px-4  bg-mainBg w-full mb-4">
-        <div className="flex gap-4 justify-center rounded-lg bg-[#252525] py-3 w-full">
+        <div className="flex gap-4 justify-center rounded-lg bg-[#252525] py-4 w-full">
           <button
             disabled={isLoading}
             className={`bg-red-100 text-mainBg px-4 py-2 rounded-lg hover:opacity-70 transition ${

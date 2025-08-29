@@ -96,6 +96,7 @@ export default function UserProfile({ sessionUser, otherUser }) {
       ) : (
         <div className="bg-mainBg p-12 shadow-2xl">
           <div className="flex mb-4 gap-2 group relative">
+            {/* //TODO change layout bcs its bad*/}
             {userOffers?.map((offer) => (
               <OfferCard
                 key={offer._id}

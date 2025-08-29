@@ -26,6 +26,7 @@ export default function OffersPage({ servers, debug, error }) {
       <div className="flex flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 justify-center items-center">
         <div className="pb-8 flex text-center justify-center items-center gap-4">
           <h1 className="text-2xl sm:text-3xl font-bold">
+            {/* /TODO make it non dragable */}
             Wybierz swój serwer
           </h1>
         </div>

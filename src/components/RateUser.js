@@ -82,10 +82,10 @@ export default function RateUser({ order }) {
 
   return (
     <>
-      <div className="flex justify-center mb-4 bg-mainBg p-4 shadow-md">
-        <div className="flex flex-col items-center text-white py-3 rounded-lg bg-[#252525] w-full">
+      <div className="flex justify-center mb-4 bg-mainBg p-3 shadow-md">
+        <div className="flex flex-col items-center text-white py-3 rounded-lg  w-full">
           {rateOk === undefined && order.rated === 'no' && (
-            <>
+            <div className="w-full max-w-md mx-auto bg-[#2a2a2a] rounded-xl shadow-lg overflow-hidden transition-all duration-300 transform hover:scale-[1.01] border border-[#333333] text-center p-2">
               <p className="mb-4">Czy transakcja przebiegła pomyślnie?</p>
               <div className="flex gap-6 justify-center">
                 <button
@@ -101,7 +101,7 @@ export default function RateUser({ order }) {
                   Nie
                 </button>
               </div>
-            </>
+            </div>
           )}
           {rateOk === true && order.rated === 'no' && (
             <>

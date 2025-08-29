@@ -7,13 +7,16 @@ export default function SellOrdersView() {
   const { state } = useOrders();
   const { orders } = state;
   const { sellOrders } = orders;
+  const sortedSellOrders = sellOrders.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   return (
     <div className=" mb-12">
       <>
         {sellOrders.length > 0 ? (
           <div className=" p-6 mb-4 bg-brighterBg ">
-            {orders?.sellOrders?.map((order) => (
+            {sortedSellOrders?.map((order) => (
               <>
                 <div key={order._id} className="mb-4 bg-brighterBg">
                   <OrderCard key={order._id} order={order}>
