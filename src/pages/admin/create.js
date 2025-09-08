@@ -2,7 +2,12 @@ import { useState } from 'react';
 import Layout from '../layout';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import AdminNav from '@/components/AdminNav';
+import { requireAdminAuth } from '../../../lib/adminAuth';
 
+export async function getServerSideProps(context) {
+  return requireAdminAuth(context);
+}
 export default function Create() {
   const [serverData, setServerData] = useState({
     name: '',
@@ -39,8 +44,8 @@ export default function Create() {
   };
 
   return (
-    <Layout>
-      <div className="max-w-md mx-auto bg-mainBg p-6 rounded-lg">
+    <AdminNav>
+      <div className="max-w-md mx-auto bg-mainBg p-6 rounded-lg text-white">
         <h1 className="text-2xl font-bold mb-6">Add New Server</h1>
 
         {error && (
@@ -94,6 +99,6 @@ export default function Create() {
           </button>
         </form>
       </div>
-    </Layout>
+    </AdminNav>
   );
 }

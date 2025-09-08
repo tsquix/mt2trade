@@ -18,6 +18,14 @@ const nextConfig = {
     ],
   },
   reactStrictMode: true,
+  // async rewrites() {
+  //   return [
+  //     {
+  //       source: '/marketplace/offers/:server',
+  //       destination: '/marketplace/offers/[server]',
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

@@ -8,6 +8,7 @@ export default async function handler(req, res) {
     const { method } = req;
     const { server } = req.query;
     const { userId } = req.query;
+
     await connectMongoDB();
     const session = await getServerSession(req, res, authOptions);
 

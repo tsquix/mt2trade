@@ -1,6 +1,38 @@
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 
-const UserSchema = new mongoose.Schema({
+export interface IUser extends Document {
+  name: string;
+  email: string;
+  password: string;
+  pushSubscription?: {
+    endpoint: string;
+    keys: {
+      p256dh: string;
+      auth: string;
+    };
+  };
+  sensData: {
+    ipHistory: string[];
+  }[];
+  loginHistory: {
+    ip: string;
+    browser: string;
+    timestamp: Date;
+    success: boolean;
+    location?: string;
+    deviceType?: string;
+  }[];
+  role: 'user' | 'admin';
+  userRating: number;
+  ratingCount: number;
+  transactionCount: number;
+  prefPayment: 'BLIK' | 'przelew' | 'revolut' | 'paypal';
+  verified: boolean;
+  createdAt: Date;
+  avatar: string;
+}
+
+const UserSchema = new mongoose.Schema<IUser>({
   name: { type: String, required: true, unique: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
@@ -11,8 +43,25 @@ const UserSchema = new mongoose.Schema({
       auth: String,
     },
   },
+  loginHistory: {
+    type: [
+      {
+        ip: { type: String, required: true },
+        browser: { type: String, required: true },
+        timestamp: { type: Date, required: true },
+        success: { type: Boolean, required: true },
+        location: { type: String },
+        deviceType: { type: String },
+      },
+    ],
+    default: [],
+  },
 
-  // role: { type: String, enum: ["buyer", "seller"], default: "buyer" }, // można rozszerzyć w przyszłości
+  sensData: {
+    ipHistory: { type: [String], default: [] },
+    // any other sensitive info can go here
+  },
+  role: { type: String, enum: ['user', 'admin'], default: 'user' },
   userRating: { type: Number, default: 0, min: 0, max: 5 },
   ratingCount: { type: Number, default: 0 },
   transactionCount: { type: Number, default: 0 },

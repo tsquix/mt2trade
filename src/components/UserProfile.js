@@ -28,7 +28,7 @@ export default function UserProfile({ sessionUser, otherUser }) {
       dedupingInterval: 60000, // Dedupe requests within 1 minute
     }
   );
-
+  //TODO add redirect to login if not logged
   const userData = data?.user;
 
   useEffect(() => {

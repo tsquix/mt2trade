@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import Layout from '../layout';
 import axios from 'axios';
 import Image from 'next/image';
+import AdminNav from '@/components/AdminNav';
+import { requireAdminAuth } from '../../../lib/adminAuth';
 
+export async function getServerSideProps(context) {
+  return requireAdminAuth(context);
+}
 export default function Messages() {
   const [messages, setMessages] = useState([]);
 
@@ -30,7 +35,7 @@ export default function Messages() {
   };
 
   return (
-    <Layout>
+    <AdminNav>
       <div>
         <h1 className="text-2xl font-semibold mb-6">Wiadomosci</h1>
         {messages.length > 0
@@ -69,6 +74,6 @@ export default function Messages() {
             ))
           : 'nie ma zadnych wiadomosci'}
       </div>
-    </Layout>
+    </AdminNav>
   );
 }

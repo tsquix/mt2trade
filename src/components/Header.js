@@ -7,10 +7,6 @@ export default function Header({ noMb, fadeIn }) {
   const { data: session } = useSession();
   const router = useRouter();
 
-  const handleChange = (e) => {
-    const path = e.target.value;
-    if (path) router.push(path);
-  };
   return (
     <section
       className={`relative z-20 text-white ${noMb ? '' : 'pb-20'} ${fadeIn ? 'animate-fade-in-slow-rev' : ''} shadow-2xl  `}
@@ -47,15 +43,7 @@ export default function Header({ noMb, fadeIn }) {
               <>
                 <div className="flex gap-8 items-center">
                   <div className="text-xs rounded-xl">
-                    <select
-                      onChange={handleChange}
-                      className="bg-gray-800 text-white p-2 rounded"
-                    >
-                      <option value="">Admin panel</option>
-                      <option value="/panel/create">Add new Server</option>
-                      <option value="/panel/ticket">Ticket</option>
-                      <option value="/panel/messages">Messages</option>
-                    </select>
+                    <Link href={'/admin'}>Admin panel</Link>
                   </div>
                   <Link href={'/profile'}>
                     <p className="rounded-xl">Profil</p>

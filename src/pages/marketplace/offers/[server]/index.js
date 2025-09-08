@@ -84,7 +84,7 @@ export default function OfferPage({ serverOffers }) {
       setVisibleCount((prev) => Math.min(prev + 3, state.serverOffers.length));
     }
   }, [state.serverOffers, visibleCount]);
-  // Intersection Observer for infinite scroll
+  // observer for infinite scroll
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {

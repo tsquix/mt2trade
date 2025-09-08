@@ -2,7 +2,12 @@ import { useEffect, useState } from 'react';
 import Layout from '../layout';
 import axios from 'axios';
 import Image from 'next/image';
+import AdminNav from '@/components/AdminNav';
+import { requireAdminAuth } from '../../../lib/adminAuth';
 
+export async function getServerSideProps(context) {
+  return requireAdminAuth(context);
+}
 export default function Ticket() {
   const [tickets, setTickets] = useState([]);
 
@@ -25,7 +30,7 @@ export default function Ticket() {
   };
 
   return (
-    <Layout>
+    <AdminNav>
       <div>
         <h1 className="text-2xl font-semibold mb-6">Zgłoszenia</h1>
         {tickets.map((ticket) => (
@@ -78,6 +83,6 @@ export default function Ticket() {
           </div>
         ))}
       </div>
-    </Layout>
+    </AdminNav>
   );
 }
