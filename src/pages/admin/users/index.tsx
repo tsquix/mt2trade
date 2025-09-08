@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { requireAdminAuth } from '../../../../lib/adminAuth';
+import { GetServerSideProps } from 'next';
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return requireAdminAuth(context);
-}
+};
 
 export default function Users() {
   const [users, setUsers] = useState<any[]>([]);

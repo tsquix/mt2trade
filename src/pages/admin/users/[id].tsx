@@ -3,10 +3,19 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { requireAdminAuth } from '../../../../lib/adminAuth';
+import { GetServerSideProps } from 'next';
 
-export async function getServerSideProps(context) {
-  return requireAdminAuth(context);
+interface ExpandableRowProps {
+  row: {
+    id: string | number;
+    [key: string]: any;
+  };
+  children: React.ReactNode;
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  return requireAdminAuth(context);
+};
 export default function UserDetailsPage() {
   const router = useRouter();
   const { id } = router.query;
@@ -34,7 +43,7 @@ export default function UserDetailsPage() {
     console.log(userData);
   }, [userData]);
 
-  const deleteUser = async function (id) {
+  const deleteUser = async function (id: string) {
     if (!id) return;
     await axios.delete(`/api/admin/users?userId=${id}`);
     router.push('/admin/users');
@@ -241,7 +250,7 @@ export default function UserDetailsPage() {
     </AdminNav>
   );
 }
-function ExpandableRow({ row, children }) {
+function ExpandableRow({ row, children }: ExpandableRowProps) {
   const [open, setOpen] = useState(false);
 
   return (

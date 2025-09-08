@@ -4,10 +4,11 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import AdminNav from '../../components/AdminNav';
 import { requireAdminAuth } from '../../../lib/adminAuth';
+import { GetServerSideProps } from 'next';
 
-export async function getServerSideProps(context) {
+export const getServerSideProps: GetServerSideProps = async (context) => {
   return requireAdminAuth(context);
-}
+};
 export default function AdminPage() {
   return (
     <AdminNav>

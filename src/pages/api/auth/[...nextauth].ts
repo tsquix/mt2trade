@@ -1,9 +1,28 @@
-import NextAuth, { getServerSession } from 'next-auth';
+import NextAuth, { getServerSession, NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
 import User, { IUser } from '../../../../models/User';
 import connectMongoDB from '../../../../lib/mongoose';
 import axios from 'axios';
+import bcrypt from 'bcryptjs';
+import { NextApiRequest, NextApiResponse } from 'next';
+import { JWT } from 'next-auth/jwt';
+import { RequestInternal } from 'next-auth';
+declare module 'next-auth/jwt' {
+  interface JWT {
+    id?: string;
+    role?: string;
+  }
+}
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id?: string;
+      name?: string;
+      email?: string;
+      role?: string;
+    };
+  }
+}
 async function getGeo(ip: string) {
   try {
     const url = `http://ip-api.com/json/${ip}?fields=status,country,regionName,city,timezone`;
@@ -28,7 +47,10 @@ async function isAdminEmail(email: string) {
   const user = await User.findOne({ email });
   return user?.role === 'admin';
 }
-export async function isAdminRequest(req, res) {
+export async function isAdminRequest(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const session = await getServerSession(req, res, authOptions);
 
   if (!session?.user?.email) {
@@ -42,7 +64,7 @@ export async function isAdminRequest(req, res) {
     throw new Error('Nie jest adminem');
   }
 }
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -51,15 +73,23 @@ export const authOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials, req) {
+        // Type assertion to access the properties we need
+        const reqWithSocket = req as RequestInternal & {
+          socket?: { remoteAddress?: string };
+        };
+
         if (!credentials?.email || !credentials?.password) return null;
 
         await connectMongoDB();
         const user = await User.findOne({ email: credentials.email });
 
         const ip =
-          req.headers['x-forwarded-for']?.toString().split(',')[0] ||
-          req.socket.remoteAddress;
-        const browser = req.headers['user-agent'] || 'unknown';
+          reqWithSocket.headers && reqWithSocket.headers['x-forwarded-for']
+            ? reqWithSocket.headers['x-forwarded-for'].toString().split(',')[0]
+            : reqWithSocket.socket?.remoteAddress;
+        const browser = reqWithSocket.headers
+          ? reqWithSocket.headers['user-agent'] || 'unknown'
+          : 'unknown';
         const timestamp = new Date();
 
         // Check if login succeeds
@@ -108,14 +138,14 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: { token: JWT; user: any }) {
       if (user) {
         token.id = user.id;
         token.role = user.role || 'user';
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: { session: any; token: JWT }) {
       if (session?.user) {
         session.user.id = token.id;
         session.user.role = token.role || 'user';
@@ -131,4 +161,5 @@ export const authOptions = {
   debug: process.env.NODE_ENV === 'development',
 };
 
-export default (req, res) => NextAuth(req, res, authOptions);
+export default (req: NextApiRequest, res: NextApiResponse) =>
+  NextAuth(req, res, authOptions);

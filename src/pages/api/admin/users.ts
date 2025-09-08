@@ -3,8 +3,12 @@ import User from '../../../../models/User';
 import Offer from '../../../../models/Offer';
 import BuyOrder from '../../../../models/BuyOrder';
 import { isAdminRequest } from '../auth/[...nextauth]';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-export default async function handler(req, res) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     await connectMongoDB();
     await isAdminRequest(req, res);
