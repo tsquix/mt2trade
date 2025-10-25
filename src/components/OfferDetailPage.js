@@ -6,7 +6,7 @@ import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
 import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
 import { useOrders } from '@/contexts/OrdersContext';
 import { useSession } from 'next-auth/react';
-
+import DiscordMessages from './UserDisplayOffer/DiscordMessages';
 function OfferDetailPage({
   handleBuy,
   mode = 'default', // default or profile,
@@ -115,22 +115,29 @@ function OfferDetailPage({
             newOffer={newOffer}
             handleEdit={handleEdit}
           />
-          <div className="border-t border-b border-gray-700 py-4 mb-6">
-            <UserDisplay
-              offer={selectedOffer}
-              height={45}
-              width={45}
-              classNameImg={''}
-            />
-          </div>
-          <OfferDetails
-            selectedOffer={selectedOffer}
-            mode={mode}
-            status={status}
-            newOffer={newOffer}
-            handleEdit={handleEdit}
-          />
-          {mode === 'default' && <DeliveryInfo />}
+          {selectedOffer.offerType === 'dc' ? (
+            <DiscordMessages offer={selectedOffer} />
+          ) : (
+            <>
+              <div className="border-t border-b border-gray-700 py-4 mb-6">
+                <UserDisplay
+                  offer={selectedOffer}
+                  height={45}
+                  width={45}
+                  classNameImg={''}
+                />
+              </div>
+              <OfferDetails
+                selectedOffer={selectedOffer}
+                mode={mode}
+                status={status}
+                newOffer={newOffer}
+                handleEdit={handleEdit}
+              />
+              {mode === 'default' && <DeliveryInfo />}
+            </>
+          )}
+
           {mode === 'default' && (
             <div className="bg-mainBg rounded-lg p-4 mb-6">
               <div className="flex flex-col sm:flex-row gap-4 mb-2">

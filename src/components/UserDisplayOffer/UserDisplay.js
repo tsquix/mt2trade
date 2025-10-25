@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
 
 function UserDisplay({
   offer,
@@ -16,6 +16,9 @@ function UserDisplay({
     month: 'long',
   });
 
+  useEffect(() => {
+    console.log(offer);
+  }, [offer]);
   return (
     <>
       <div
@@ -55,10 +58,10 @@ function UserDisplay({
             )}
           </div>
         </div>
-        {smaller && offer?.messages?.length > 0 && (
+        {smaller && offer?.messageCount > 0 && (
           <div className="flex gap-2">
             {/* //TODO ADD real count  */}
-            {offer?.messages?.length}
+            {offer?.messageCount}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

@@ -1,7 +1,6 @@
 import Layout from '@/pages/layout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import OfferCard from '@/components/OfferCard';
 import BuyOrder from '@/components/BuyOrder';
@@ -10,6 +9,8 @@ import FilterAndSearch from '@/components/FilterAndSearch';
 import { useOrders } from '@/contexts/OrdersContext';
 import OfferDetailPage from '@/components/OfferDetailPage';
 import axios from 'axios';
+import ViewSelect from '@/components/ViewSelect';
+import convertToOfferObject from '../../../../../lib/convertToOfferObject';
 
 export const getServerSideProps = async (context) => {
   const { server } = context.params;
@@ -31,7 +32,38 @@ export default function OfferPage({ serverOffers }) {
   const [visibleCount, setVisibleCount] = useState(5);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
+  const [offersView, setOffersView] = useState('ofertydc');
+  const [threads, setThreads] = useState([]);
+  const [preparedThreads, setPreparedThreads] = useState([]);
 
+  const currentOffers =
+    offersView === 'oferty' ? state.serverOffers : preparedThreads;
+
+  useEffect(() => {
+    const fetchExtrenalOffers = async () => {
+      const url = 'http://localhost:3001/threads';
+      try {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Response status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        setThreads(result);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchExtrenalOffers();
+  }, []);
+  useEffect(() => {
+    if (!threads || threads.length === 0) return;
+
+    setPreparedThreads(convertToOfferObject(threads));
+  }, [threads]);
+  useEffect(() => {
+    console.log(preparedThreads);
+  }, [preparedThreads]);
   useEffect(() => {
     const fetchOffers = async () => {
       //sync context jesti ssr
@@ -115,29 +147,45 @@ export default function OfferPage({ serverOffers }) {
 
     return () => clearTimeout(handler);
   }, [phrase]);
+  //TODO figureout how to replace it with hook
   const filteredOffers = useMemo(() => {
-    if (!debouncedPhrase) return state.serverOffers || [];
+    if (!debouncedPhrase) return currentOffers || [];
     //wyszukiwarka z regex
 
     const cleanPhrase = debouncedPhrase.replace(/\s+/g, '');
     const regex = new RegExp(cleanPhrase, 'i');
 
-    let res = state.serverOffers.filter(
-      (o) =>
-        regex.test(o.title.replace(/\s+/g, '')) ||
-        regex.test(o.description.replace(/\s+/g, '')) ||
-        regex.test(o.seller.name.replace(/\s+/g, ''))
-    );
+    let res = currentOffers.filter((o) => {
+      if (offersView === 'oferty') {
+        console.log('using oferty branch');
+        return (
+          regex.test(o.title?.replace(/\s+/g, '') || '') ||
+          regex.test(o.description?.replace(/\s+/g, '') || '') ||
+          regex.test(o.seller?.name?.replace(/\s+/g, '') || '')
+        );
+      } else {
+        console.log('using thread branch');
+        return (
+          regex.test(o.seller?.name?.replace(/\s+/g, '') || '') ||
+          regex.test(o.title?.replace(/\s+/g, '') || '') ||
+          regex.test(o.starterMessage?.replace(/\s+/g, '') || '')
+        );
+      }
+    });
+
+    console.log(currentOffers);
     //partial search if nothing found
     if (res.length === 0 && debouncedPhrase.length > 2) {
       const partial = debouncedPhrase.slice(0, 2).replace(/\s+/g, '');
       const regexPartial = new RegExp(partial, 'i');
-      res = state.serverOffers.filter((o) =>
-        regexPartial.test(o.title.replace(/\s+/g, ''))
+      res = currentOffers.filter((o) =>
+        offersView === 'oferty'
+          ? regexPartial.test(o.title?.replace(/\s+/g, ''))
+          : regexPartial.test(o.thread?.name?.replace(/\s+/g, ''))
       );
     }
     return res;
-  }, [debouncedPhrase, state.serverOffers]);
+  }, [debouncedPhrase, currentOffers, offersView]);
 
   const handleSelect = (offer) => {
     //ustawiamy selected offer
@@ -262,6 +310,12 @@ export default function OfferPage({ serverOffers }) {
             </div>
           </div>
 
+          <ViewSelect
+            view={offersView}
+            setView={setOffersView}
+            orders={false}
+          />
+
           <div>
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
@@ -283,7 +337,7 @@ export default function OfferPage({ serverOffers }) {
                             onClick={() => handleSelect(offer)}
                           />
                         ))
-                      : state.serverOffers
+                      : currentOffers
                           ?.slice(0, visibleCount)
                           .map((offer) => (
                             <OfferCard
@@ -294,7 +348,6 @@ export default function OfferPage({ serverOffers }) {
                             />
                           ))}
 
-                    {/* Load more trigger element */}
                     {serverOffers && visibleCount < serverOffers.length && (
                       <div
                         ref={listRef}
@@ -305,13 +358,7 @@ export default function OfferPage({ serverOffers }) {
                     )}
                   </>
                 )}
-                {/* // : ( //{' '}
-                <>
-                  // <OfferCard offer={''} />
-                  // <OfferCard offer={''} />
-                  //{' '}
-                </>
-                // )} */}
+
                 {serverOffers?.length === 0 && (
                   <div>
                     <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
@@ -330,7 +377,7 @@ export default function OfferPage({ serverOffers }) {
               </div>
 
               <div className="sticky -top-7 self-start h-fit  ">
-                <div className="absolute w-full z-20">
+                <div className="absolute w-full z-10">
                   {actionType === 'buy' && (
                     <BuyOrder
                       setActionType={setActionType}

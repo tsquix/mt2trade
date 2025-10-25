@@ -12,11 +12,11 @@ export default function Footer({ footerVisible, setFooterVisible }) {
       (entries) => {
         const entry = entries[0];
         if (entry.isIntersecting) {
-          console.log('footerRef jest widoczny');
+          // console.log('footerRef jest widoczny');
 
           setFooterVisible(true);
         } else {
-          console.log('footerRef NIE jest widoczny');
+          // console.log('footerRef NIE jest widoczny');
         }
       },
       {

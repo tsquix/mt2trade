@@ -17,7 +17,7 @@ function OfferCard({ offer, onClick, isSelected, status = 'view' }) {
   return (
     <>
       <div
-        className={`flex ${status === 'view' ? 'hover:ml-1 hover:-mr-1' : ''} transition-all `}
+        className={`flex z-0 ${status === 'view' ? 'hover:ml-1 hover:-mr-1' : ''} transition-all `}
       >
         <div
           className={

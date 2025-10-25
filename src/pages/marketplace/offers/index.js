@@ -3,12 +3,57 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { fetchServerList } from '../../../../lib/fetchServers';
 import ServerCard from '@/components/ServerCard';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getAllOffersCount } from '../../../../lib/offers';
+import { useFilterByRegex } from '../../../../hooks/useFilterByRegex';
 
 export default function OffersPage({ servers, debug, error }) {
   const [expand, setExpand] = useState(false);
+  const [phrase, setPhrase] = useState('');
+  const [debouncedPhrase, setDebouncedPhrase] = useState('');
 
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedPhrase(phrase);
+    }, 300);
+
+    return () => clearTimeout(handler);
+  }, [phrase]);
+
+  const filteredOffers = useFilterByRegex(debouncedPhrase, servers, [
+    'name',
+    'slug',
+  ]);
+  // const filteredOffers = function (debouncedPhrase) {
+
+  //   return useMemo(() => {
+  //     if (!debouncedPhrase) return servers || [];
+  //     //wyszukiwarka z regex
+  //     const cleanPhrase = debouncedPhrase.replace(/\s+/g, '');
+  //     const regex = new RegExp(cleanPhrase, 'i');
+
+  //     let res = servers.filter(
+  //       (s) =>
+  //         regex.test(s.name.replace(/\s+/g, '')) ||
+  //         regex.test(s.slug.replace(/\s+/g, ''))
+  //     );
+  //     //partial search if nothing found
+  //     if (res.length === 0 && debouncedPhrase.length > 1) {
+  //       const partial = debouncedPhrase.slice(0, 1).replace(/\s+/g, '');
+  //       const regexPartial = new RegExp(partial, 'i');
+  //       res = servers.filter((o) =>
+  //         regexPartial.test(o.name.replace(/\s+/g, ''))
+  //       );
+  //     }
+  //     return res;
+  //   }, [debouncedPhrase, servers]);
+  // };
+  const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 3);
+
+  const shouldShowExpandButton = filteredOffers.length > 3 && !expand;
+  // useEffect(() => {
+  //   console.log(filteredOffers);
+  // }, [filteredOffers]);
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -23,23 +68,33 @@ export default function OffersPage({ servers, debug, error }) {
   return (
     <div className="">
       <Header />
-      <div className="flex flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 justify-center items-center">
-        <div className="pb-8 flex text-center justify-center items-center gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold">
-            {/* /TODO make it non dragable */}
+      <div className="flex flex-col mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 justify-center items-center my-4">
+        <div className="pb-8 flex flex-col text-center justify-center items-center select-none ">
+          <h1 className="text-2xl sm:text-3xl font-bold ">
             Wybierz swój serwer
           </h1>
+          <p className="text-xs text-gray-300">lub</p>
+          <div className=" flex flex-col">
+            <div className="">
+              <label className="block text-sm text-gray-400 mb-1">
+                Wyszukaj
+              </label>
+            </div>
+
+            <input
+              type="text"
+              value={phrase}
+              onChange={(e) => setPhrase(e.target.value)}
+              placeholder="Tundria..."
+              className="w-full bg-mainBg border border-gray-700 rounded-lg py-2 px-3 text-sm"
+            />
+          </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 sm:gap-10  lg:gap-12 xl:gap-24">
-          {servers.slice(0, 6).map((server) => (
+          {displayedOffers.map((server) => (
             <ServerCard key={server._id} server={server} />
           ))}
-
-          {expand ? (
-            servers
-              .slice(6)
-              .map((server) => <ServerCard key={server._id} server={server} />)
-          ) : servers.length > 6 ? (
+          {shouldShowExpandButton && (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center">
               <button
                 onClick={() => setExpand(true)}
@@ -62,7 +117,7 @@ export default function OffersPage({ servers, debug, error }) {
                 </svg>
               </button>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
     </div>
