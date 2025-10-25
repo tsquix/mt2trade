@@ -1,17 +1,18 @@
-export default function ViewSelect({ view, setView }) {
-  const views = [
-    {
-      key: 'buy',
-      label: 'Kupuje',
-    },
-    {
-      key: 'sell',
-      label: 'Sprzedaje',
-    },
-  ];
+export default function ViewSelect({ view, setView, orders = true }) {
+  const views = {
+    orders: [
+      { key: 'buy', label: 'Kupuje' },
+      { key: 'sell', label: 'Sprzedaje' },
+    ],
+    offers: [
+      { key: 'oferty', label: 'Oferty naszych handlarzy' },
+      { key: 'ofertydc', label: 'Oferty zewnętrzne' },
+    ],
+  };
+  const currentViews = orders ? views.orders : views.offers;
   return (
     <div className="flex">
-      {views.map(({ key, label }) => (
+      {currentViews.map(({ key, label }) => (
         <button
           key={key}
           className={`w-full px-6 py-4 transition-colors  ${

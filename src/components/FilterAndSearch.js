@@ -30,7 +30,7 @@ export default function FilterAndSearch({ handleSort, phrase, setPhrase }) {
     );
   }
   return (
-    <div className="bg-brighterBg p-4 rounded-xl">
+    <div className="bg-brighterBg p-4 rounded-b-xl">
       <div className="flex justify-between mb-2">
         <p>Filtruj</p>
         <p className="text-red-300">Clear All</p>

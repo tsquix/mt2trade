@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import TitleRating from '@/components/TittleRating';
 import UserDisplay from '@/components/UserDisplayOffer/UserDisplay';
 import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
@@ -7,7 +7,7 @@ import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
 import { useOrders } from '@/contexts/OrdersContext';
 import { useSession } from 'next-auth/react';
 
-export default function OfferDetailPage({
+function OfferDetailPage({
   handleBuy,
   mode = 'default', // default or profile,
   status,
@@ -105,7 +105,7 @@ export default function OfferDetailPage({
     return (
       // <Layout>
       <>
-        <div className="bg-brighterBg p-6 flex flex-col rounded-xl w-full ">
+        <div className="bg-brighterBg p-6 flex flex-col rounded-b-xl w-full ">
           <TitleRating
             offer={selectedOffer}
             displayRatingNumber={true}
@@ -193,3 +193,4 @@ export default function OfferDetailPage({
     );
   }
 }
+export default memo(OfferDetailPage);

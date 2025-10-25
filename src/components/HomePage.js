@@ -3,6 +3,7 @@ import Header from './Header';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
+import { useEffect, useRef } from 'react';
 export default function HomePage({
   halfSection,
   activeIndex,
@@ -10,6 +11,7 @@ export default function HomePage({
   ambassadors,
   setActiveIndex,
 }) {
+  halfSection;
   const gridTemplate = [
     'lg:grid-cols-[2fr_1fr_1fr_1fr]',
     'grid-cols-[1fr_2fr_1fr_1fr]',
@@ -17,6 +19,14 @@ export default function HomePage({
     'grid-cols-[1fr_1fr_1fr_2fr]',
     'grid-cols-[1fr_1fr_1fr_1fr]',
   ];
+  const swiperRef = useRef(null);
+  useEffect(() => {
+    if (!swiperRef.current || !swiperRef.current.swiper) return;
+    if (!halfSection) {
+      swiperRef.current.swiper.allowTouchMove = true;
+      //change to swipe instead of auto change when not visible to not rerender
+    }
+  }, [halfSection]);
   return (
     <>
       <section className="h-[100vh]">
@@ -178,6 +188,7 @@ export default function HomePage({
             Ambasadorzy
           </h1>
           <Swiper
+            ref={swiperRef}
             spaceBetween={30}
             slidesPerView={1}
             modules={[Autoplay, Pagination]}

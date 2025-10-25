@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
-export default function TitleRating({
+function TitleRating({
   offer,
   displayRatingNumber,
   className,
@@ -44,7 +44,14 @@ export default function TitleRating({
                 className="bg-darkBg text-black rounded px-2 py-1 w-full"
               />
             ) : (
-              <strong>{offer?.title || '50M Yang - Fast Delivery'}</strong>
+              <p className="font-medium text- ">
+                {/* {offer?.title || '50M Yang - Fast Delivery'} */}
+                {smaller
+                  ? offer?.title.length >= 20
+                    ? offer?.title.slice(0, 20) + '..'
+                    : offer?.title
+                  : offer?.title}
+              </p>
             )}
           </div>
 
@@ -72,7 +79,7 @@ export default function TitleRating({
                   </p>
                 )}
                 <p className="text-xs text-lightGray">
-                  ({offer?.seller?.transactionCount} sales)
+                  {offer?.seller?.transactionCount || 0} sales
                 </p>
               </div>
             </div>
@@ -147,10 +154,18 @@ export default function TitleRating({
           ) : (
             <div className="flex flex-col">
               <p className="text-red-300">
-                {offer?.currencyAmount} {offer?.tag !== '' ? 'kk' : 'Wony'}
+                {/* //TODO handle tag */}
+                {offer?.currencyAmount}
+                {offer?.currencyAmount > 0
+                  ? offer?.tag !== ''
+                    ? 'kk'
+                    : 'Wony'
+                  : ''}
               </p>
               <p className="text-xs text-lightGray font-semibold">
-                {formatPricePer1kk()} zł za 1kk
+                {formatPricePer1kk() != 0
+                  ? formatPricePer1kk() + 'zł za 1kk'
+                  : ''}
               </p>
             </div>
           )}
@@ -159,3 +174,4 @@ export default function TitleRating({
     </div>
   );
 }
+export default memo(TitleRating);

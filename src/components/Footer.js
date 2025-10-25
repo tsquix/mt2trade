@@ -2,9 +2,9 @@ import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
 import ContactForm from './ContactForm';
 
-export default function Footer() {
+export default function Footer({ footerVisible, setFooterVisible }) {
   const footerRef = useRef();
-  const [footerVisible, setFooterVisible] = useState();
+
   useEffect(() => {
     if (!footerRef.current) return;
 
@@ -13,11 +13,11 @@ export default function Footer() {
         const entry = entries[0];
         if (entry.isIntersecting) {
           console.log('footerRef jest widoczny');
+
           setFooterVisible(true);
+        } else {
+          console.log('footerRef NIE jest widoczny');
         }
-        // else {
-        //   console.log('footerRef NIE jest widoczny');
-        // }
       },
       {
         root: null,

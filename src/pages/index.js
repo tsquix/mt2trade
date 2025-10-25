@@ -34,7 +34,6 @@ export default function Home() {
       quote: 'serio',
     },
   ];
-
   const [activeIndex, setActiveIndex] = useState(null);
   const [halfSection, setHalfSection] = useState(false);
   const [activeImg, setActiveImg] = useState([ambassadors[0].image]);
@@ -44,6 +43,7 @@ export default function Home() {
   const scrollLock = useRef(false);
   const carouselRef = useRef();
   const activeIndexRef = useRef(0);
+  const [footerVisible, setFooterVisible] = useState();
   useEffect(() => {
     activeIndexRef.current = activeIndex;
   }, [activeIndex]);
@@ -232,9 +232,13 @@ export default function Home() {
         index={index}
         halfSection={halfSection}
         section3ref={section3ref}
+        footerVisible={footerVisible}
       />
       {/* <ContactUs halfSection={halfSection} /> */}
-      <Footer />
+      <Footer
+        footerVisible={footerVisible}
+        setFooterVisible={setFooterVisible}
+      />
     </div>
   );
 }
