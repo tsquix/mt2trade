@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { memo, useEffect, useState } from 'react';
-import TitleRating from '@/components/TittleRating';
-import UserDisplay from '@/components/UserDisplayOffer/UserDisplay';
+import TitleRating from '@/components/ui/TittleRating';
+import UserDisplay from '@/components/marketplace/user/UserDisplay';
 import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
 import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
 import { useOrders } from '@/contexts/OrdersContext';

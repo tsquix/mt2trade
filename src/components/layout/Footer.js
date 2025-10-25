@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React, { useEffect, useRef, useState } from 'react';
-import ContactForm from './ContactForm';
+import ContactForm from '../contact/ContactForm';
 
 export default function Footer({ footerVisible, setFooterVisible }) {
   const footerRef = useRef();

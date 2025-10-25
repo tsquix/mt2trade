@@ -1,13 +1,13 @@
-import Carousel from '@/components/Carousel';
-import FindOutMore from '@/components/FindOutMore';
-import HomePage from '@/components/HomePage';
+import Carousel from '@/components/ui/Carousel';
+import FindOutMore from '@/components/contact/FindOutMore';
+import HomePage from '@/components/home/HomePage';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
-import ContactUs from '@/components/ContactUs';
-import Footer from '@/components/Footer';
+import ContactUs from '@/components/contact/ContactUs';
+import Footer from '@/components/layout/Footer';
 
 export default function Home() {
   const ambassadors = [

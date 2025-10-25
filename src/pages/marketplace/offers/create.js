@@ -1,4 +1,4 @@
-import Layout from '@/pages/layout';
+import Layout from '@/components/layout/Layout';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';

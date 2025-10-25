@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import useSWR from 'swr';
 import OfferCard from './OfferCard';
 
-import Profile from './Profile';
+import Profile from '../Profile';
 import { useOrders } from '@/contexts/OrdersContext';
 import OfferDetailPage from './OfferDetailPage';
 // SWR fetcher function

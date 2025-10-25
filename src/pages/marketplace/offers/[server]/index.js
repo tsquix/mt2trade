@@ -1,15 +1,15 @@
-import Layout from '@/pages/layout';
+import Layout from '@/components/layout/Layout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import OfferCard from '@/components/OfferCard';
-import BuyOrder from '@/components/BuyOrder';
+import BuyOrder from '@/components/orders/BuyOrder';
 import Image from 'next/image';
-import FilterAndSearch from '@/components/FilterAndSearch';
+import FilterAndSearch from '@/components/ui/FilterAndSearch';
 import { useOrders } from '@/contexts/OrdersContext';
 import OfferDetailPage from '@/components/OfferDetailPage';
 import axios from 'axios';
-import ViewSelect from '@/components/ViewSelect';
+import ViewSelect from '@/components/ui/ViewSelect';
 import convertToOfferObject from '../../../../../lib/convertToOfferObject';
 
 export const getServerSideProps = async (context) => {

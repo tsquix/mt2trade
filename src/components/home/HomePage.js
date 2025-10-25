@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Header from './Header';
+import Header from '../layout/Header';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';

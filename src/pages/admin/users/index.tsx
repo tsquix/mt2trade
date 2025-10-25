@@ -1,4 +1,4 @@
-import AdminNav from '@/components/AdminNav';
+import AdminNav from '@/components/layout/AdminNav';
 import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

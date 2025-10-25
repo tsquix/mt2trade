@@ -4,7 +4,7 @@ import '@fontsource/poppins/400.css';
 import '@fontsource/poppins/500.css';
 import '@fontsource/poppins/600.css';
 import '@fontsource/poppins/700.css';
-import AppInner from '@/components/AppInner';
+import AppInner from '@/components/home/AppInner';
 
 export default function App({
   Component,

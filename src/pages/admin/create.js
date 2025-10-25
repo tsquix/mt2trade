@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import Layout from '../layout';
+import Layout from '../../components/layout/Layout';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import AdminNav from '@/components/AdminNav';
+import AdminNav from '@/components/layout/AdminNav';
 import { requireAdminAuth } from '../../../lib/adminAuth';
 
 export async function getServerSideProps(context) {

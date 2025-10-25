@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import Layout from '../layout';
-import UserProfile from '@/components/UserProfile';
+import Layout from '../../components/layout/Layout';
+import UserProfile from '@/components/profile/UserProfile';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 export default function UserProfilePage() {

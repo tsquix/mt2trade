@@ -1,6 +1,6 @@
 import { memo, useEffect } from 'react';
 import OfferCardSkeleton from './OfferCardSkeleton';
-import TitleRating from './TittleRating';
+import TitleRating from './ui/TittleRating';
 import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
 import { useOrders } from '@/contexts/OrdersContext';
 

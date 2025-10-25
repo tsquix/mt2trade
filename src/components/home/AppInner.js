@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import { OrdersProvider } from '@/contexts/OrdersContext';
 import { useEffect } from 'react';
-import { socket } from '../../public/socket';
+import { socket } from '../../../public/socket';
 import { OffersProvider } from '@/contexts/OffersContext';
 
 export default function AppInner({ Component, pageProps }) {

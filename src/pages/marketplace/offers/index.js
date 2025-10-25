@@ -1,8 +1,8 @@
-import Header from '@/components/Header';
+import Header from '@/components/layout/Header';
 import Image from 'next/image';
 import Link from 'next/link';
 import { fetchServerList } from '../../../../lib/fetchServers';
-import ServerCard from '@/components/ServerCard';
+import ServerCard from '@/components/marketplace/servers/ServerCard';
 import { useEffect, useMemo, useState } from 'react';
 import { getAllOffersCount } from '../../../../lib/offers';
 import { useFilterByRegex } from '../../../../hooks/useFilterByRegex';

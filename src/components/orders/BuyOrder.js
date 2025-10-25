@@ -2,8 +2,8 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { socket } from '../../public/socket.js';
-import UserDisplay from './UserDisplayOffer/UserDisplay.js';
+import { socket } from '../../../public/socket.js';
+import UserDisplay from '../marketplace/user/UserDisplay.js';
 import { useOrders } from '@/contexts/OrdersContext.js';
 
 export default function BuyOrder({ setActionType, actionType }) {

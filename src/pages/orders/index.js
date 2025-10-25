@@ -1,12 +1,12 @@
 import PushNotification from '@/components/notification/PushNotification';
-import Layout from '@/pages/layout';
+import Layout from '@/components/layout/Layout.js';
 import { useSession } from 'next-auth/react';
 import { useContext, useEffect, useReducer, useState } from 'react';
 import { socket } from '../../../public/socket.js';
 import Swal from 'sweetalert2';
-import ViewSelect from '@/components/ViewSelect.js';
+import ViewSelect from '@/components/ui/ViewSelect.js';
 import SellOrdersView from '@/components/SellOrdersView.js';
-import BuyOrdersView from '@/components/BuyOrdersView.js';
+import BuyOrdersView from '@/components/orders/BuyOrdersView.js';
 import { useOrders } from '@/contexts/OrdersContext.js';
 
 export default function OrdersPage() {
