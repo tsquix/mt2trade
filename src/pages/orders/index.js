@@ -5,9 +5,10 @@ import { useContext, useEffect, useReducer, useState } from 'react';
 import { socket } from '../../../public/socket.js';
 import Swal from 'sweetalert2';
 import ViewSelect from '@/components/ui/ViewSelect.js';
-import SellOrdersView from '@/components/SellOrdersView.js';
+
 import BuyOrdersView from '@/components/orders/BuyOrdersView.js';
 import { useOrders } from '@/contexts/OrdersContext.js';
+import SellOrdersView from '@/components/orders/SellOrdersView.js';
 
 export default function OrdersPage() {
   const { data: session } = useSession();

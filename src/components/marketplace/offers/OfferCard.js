@@ -1,8 +1,9 @@
 import { memo, useEffect } from 'react';
 import OfferCardSkeleton from './OfferCardSkeleton';
-import TitleRating from './ui/TittleRating';
-import UserDisplayInOffer from './UserDisplayOffer/UserDisplay';
+
 import { useOrders } from '@/contexts/OrdersContext';
+import UserDisplay from '../user/UserDisplay';
+import TittleRating from '@/components/ui/TittleRating';
 
 function OfferCard({ offer, onClick, isSelected, status = 'view' }) {
   const { state } = useOrders();
@@ -32,8 +33,8 @@ function OfferCard({ offer, onClick, isSelected, status = 'view' }) {
           onClick={onClick}
         >
           {' '}
-          <TitleRating offer={offer} smaller />
-          <UserDisplayInOffer offer={offer} smaller />
+          <TittleRating offer={offer} smaller />
+          <UserDisplay offer={offer} smaller />
         </button>
       </div>
     </>

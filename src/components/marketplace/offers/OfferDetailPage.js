@@ -6,7 +6,8 @@ import OfferDetails from '@/components/UserDisplayOffer/OfferDetails';
 import DeliveryInfo from '@/components/UserDisplayOffer/DeliveryInfo';
 import { useOrders } from '@/contexts/OrdersContext';
 import { useSession } from 'next-auth/react';
-import DiscordMessages from './UserDisplayOffer/DiscordMessages';
+import DiscordMessages from '@/components/UserDisplayOffer/DiscordMessages';
+
 function OfferDetailPage({
   handleBuy,
   mode = 'default', // default or profile,

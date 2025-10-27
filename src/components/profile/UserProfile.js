@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import useSWR from 'swr';
-import OfferCard from './OfferCard';
 
-import Profile from '../Profile';
 import { useOrders } from '@/contexts/OrdersContext';
-import OfferDetailPage from './OfferDetailPage';
+import Profile from './Profile';
+import OfferCard from '../marketplace/offers/OfferCard';
+import OfferDetailPage from '../marketplace/offers/OfferDetailPage';
+
 // SWR fetcher function
 const fetcher = async (url) => {
   const res = await fetch(url);
