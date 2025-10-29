@@ -1,16 +1,75 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const DiscordMessages = ({ offer }) => {
   const [zoomedImg, setZoomedImg] = useState(null);
+  const [showBottomBtn, setShowBottomBtn] = useState(false);
+  const messagesEndRef = useRef();
+  const containerRef = useRef();
+
+  const scrollToBottom = () => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'end',
+        inline: 'nearest',
+      });
+    }
+  };
 
   useEffect(() => {
-    console.log(offer);
-  }, [offer]);
+    const div = containerRef.current;
+    if (!div) return;
 
+    let lastScrollTop = div.scrollTop;
+    const threshold = 5;
+    //flag to prevent multiple invokes when scroll changes
+    let ticking = false;
+
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const st = div.scrollTop;
+          const delta = st - lastScrollTop;
+          lastScrollTop = st;
+
+          const maxScrollY = div.scrollHeight - div.clientHeight;
+          const distanceFromBottom = maxScrollY - st;
+
+          // update kierunku scrolla
+          const direction =
+            Math.abs(delta) < threshold ? null : delta > 0 ? 'down' : 'up';
+
+          // update przycisku
+          if (direction === 'up' || distanceFromBottom <= 150) {
+            setShowBottomBtn(false);
+          } else if (direction === 'down' && distanceFromBottom > 150) {
+            setShowBottomBtn(true);
+          }
+
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    div.addEventListener('scroll', handleScroll);
+    return () => div.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // useEffect(() => {
+  //   console.log(scrollDir);
+  // }, [scrollDir]);
   return (
-    <div className="text-white rounded-xl p-4 py-8 shadow-md relative">
-      <div className="mb-3 pb-2 border-b border-[#202225]">
-        <div className="flex items-center gap-2">
+    <div
+      className="text-white rounded-xl p-4 py-8 shadow-md relative custom-scrollbar"
+      ref={containerRef}
+      style={{
+        overflowY: 'auto',
+        maxHeight: '80vh',
+      }}
+    >
+      <div className="">
+        <div className="flex items-center gap-2 bg-mainBg p-2 rounded-lg">
           <img
             src={offer?.seller?.avatar?.url}
             alt={offer?.seller?.displayName}
@@ -31,7 +90,23 @@ const DiscordMessages = ({ offer }) => {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-3 ">
+        {/* TODO dodac doscrolowanie do 100vgh zeby przycisk zawsze byl 100 procentach widoczny a nie np w polowie / 1/3 */}
+        <div
+          className={`sticky top-[70vh] w-full flex justify-center transition-all duration-300 ${
+            showBottomBtn
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-10'
+          }`}
+        >
+          <button
+            className="bg-red-300 px-4 py-1 rounded"
+            onClick={scrollToBottom}
+          >
+            Skocz do najnowszych
+          </button>
+        </div>
+        <div className="border-t border-[#202225]"></div>
         {offer?.ownerMessages?.map((msg) => (
           <div
             key={msg.id}
@@ -42,19 +117,26 @@ const DiscordMessages = ({ offer }) => {
               alt="avatar"
               className="w-8 h-8 rounded-full mt-1"
             />
-            <div>
-              <div className="flex items-center gap-2">
+            <div className="w-full max-w-lg">
+              <div className="flex items-center gap-1">
                 <span className="font-medium text-[#dcddde]">
                   {offer?.seller?.displayName}
+                </span>
+                <span className="text-xs text-[#72767d]">
+                  {new Date(msg.timestamp).toDateString() ===
+                  new Date().toDateString()
+                    ? ''
+                    : new Date(msg.timestamp).toLocaleDateString()}
                 </span>
                 <span className="text-xs text-[#72767d]">
                   {new Date(msg.timestamp).toLocaleTimeString([], {
                     hour: '2-digit',
                     minute: '2-digit',
+                    hour12: false,
                   })}
                 </span>
               </div>
-              <p className="whitespace-pre-wrap text-[#b9bbbe] leading-snug">
+              <p className="whitespace-pre-wrap break-words w-full text-[#b9bbbe] leading-snug">
                 {msg.content}
               </p>
 
@@ -65,7 +147,7 @@ const DiscordMessages = ({ offer }) => {
                       key={i}
                       src={att.url}
                       alt={`attachment-${i}`}
-                      className="max-h-64 rounded-md border border-[#202225] cursor-pointer transition-transform hover:scale-[1.02]"
+                      className="max-h-64 border border-[#202225] cursor-pointer transition-transform hover:scale-[1.02]"
                       onClick={() => setZoomedImg(att.url)}
                     />
                   ))}
@@ -74,6 +156,7 @@ const DiscordMessages = ({ offer }) => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       {/* Fullscreen Zoom */}

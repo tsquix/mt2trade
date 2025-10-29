@@ -74,8 +74,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   createdAt: { type: Date, default: Date.now },
   avatar: {
     type: String,
-    default:
-      'https://cdn.tipo.live/files/avatar/48968_avatar.jpg?id=fa2f0c061cfb9c5000b18d2561baf330',
+    default: 'https://mt2trade.s3.amazonaws.com/1761740352999.jpeg',
   },
 });
 

@@ -106,7 +106,7 @@ function OfferDetailPage({
     return (
       // <Layout>
       <>
-        <div className="bg-brighterBg p-6 flex flex-col rounded-b-xl w-full ">
+        <div className="bg-brighterBg p-6 flex flex-col w-full ">
           <TitleRating
             offer={selectedOffer}
             displayRatingNumber={true}
@@ -139,7 +139,7 @@ function OfferDetailPage({
             </>
           )}
 
-          {mode === 'default' && (
+          {/* {mode === 'default' && (
             <div className="bg-mainBg rounded-lg p-4 mb-6">
               <div className="flex flex-col sm:flex-row gap-4 mb-2">
                 <div className="flex-1">
@@ -154,9 +154,9 @@ function OfferDetailPage({
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
-          {mode === 'default' ? (
+          {/* {mode === 'default' ? (
             <div className="flex flex-col sm:flex-row gap-4">
               <button
                 className="flex-1 bg-red-300 hover:bg-red-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center"
@@ -195,7 +195,7 @@ function OfferDetailPage({
                 </div>
               )}
             </div>
-          )}
+          )} */}
         </div>
       </>
     );

@@ -18,9 +18,7 @@ export default function Profile({ userData }) {
               {' '}
               <div className="mb-4 flex lg:justify-start justify-center">
                 <Image
-                  src={
-                    'https://cdn.tipo.live/files/avatar/48968_avatar.jpg?id=fa2f0c061cfb9c5000b18d2561baf330'
-                  }
+                  src={`${userData?.avatar?.length > 0 ? userData?.avatar : 'https://mt2trade.s3.amazonaws.com/1761741585332.jpg'}`}
                   width={232}
                   height={232}
                   className="border border-red-300 rounded-lg"

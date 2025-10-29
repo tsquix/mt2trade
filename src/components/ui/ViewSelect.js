@@ -11,7 +11,7 @@ export default function ViewSelect({ view, setView, orders = true }) {
   };
   const currentViews = orders ? views.orders : views.offers;
   return (
-    <div className="flex">
+    <section className="flex">
       {currentViews.map(({ key, label }) => (
         <button
           key={key}
@@ -25,6 +25,6 @@ export default function ViewSelect({ view, setView, orders = true }) {
           {label}
         </button>
       ))}
-    </div>
+    </section>
   );
 }

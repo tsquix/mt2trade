@@ -16,9 +16,9 @@ function UserDisplay({
     month: 'long',
   });
 
-  useEffect(() => {
-    console.log(offer);
-  }, [offer]);
+  // useEffect(() => {
+  //   console.log(offer);
+  // }, [offer]);
   return (
     <>
       <div

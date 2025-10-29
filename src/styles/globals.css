@@ -26,6 +26,7 @@ span.style-module_starRatingWrap__q-lJC {
   initial-value: 0deg;
   inherits: false;
 }
+/* shining button on landing page */
 .shiningButton::after,
 .shiningButton::before {
   content: '';
@@ -125,4 +126,28 @@ span.style-module_starRatingWrap__q-lJC {
     transform: translateY(0);
     opacity: 1;
   }
+}
+
+/* Chrome, Edge, Safari */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.6);
+}
+
+/* Firefox */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.4) transparent;
 }

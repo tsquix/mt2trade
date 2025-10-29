@@ -66,6 +66,7 @@ export default function OfferPage({ serverOffers }) {
   useEffect(() => {
     console.log(preparedThreads);
   }, [preparedThreads]);
+
   useEffect(() => {
     const fetchOffers = async () => {
       //sync context jesti ssr
@@ -127,7 +128,7 @@ export default function OfferPage({ serverOffers }) {
           loadMore();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.3 }
     );
 
     const currentRef = listRef.current;
@@ -174,8 +175,6 @@ export default function OfferPage({ serverOffers }) {
         );
       }
     });
-
-    console.log(currentOffers);
     //partial search if nothing found
     if (res.length === 0 && debouncedPhrase.length > 2) {
       const partial = debouncedPhrase.slice(0, 2).replace(/\s+/g, '');
@@ -378,18 +377,25 @@ export default function OfferPage({ serverOffers }) {
                 )}
               </div>
 
-              <div className="sticky -top-7 self-start h-fit  ">
-                <div className="absolute w-full z-10">
-                  {actionType === 'buy' && (
+              <div className="sticky top-0 self-start h-fit  ">
+                {actionType === 'buy' && (
+                  <div className="absolute w-full z-10">
                     <BuyOrder
                       setActionType={setActionType}
                       actionType={actionType}
                     />
-                  )}
-                </div>
+                  </div>
+                )}
+
                 <div
-                  className={`flex bg-mainBg rounded-3xl ${actionType === 'buy' ? 'opacity-20' : 'opacity-100 '}`}
-                  // className={``}
+                  className={`flex flex-col bg-mainBg rounded-b-xl max-h-[90vh] ${
+                    actionType === 'buy' ? 'opacity-20' : 'opacity-100'
+                  }`}
+                  // style={{
+                  //   overflowY: 'auto', // scroll działa tylko wewnątrz tego div
+                  //   scrollbarWidth: 'none',
+                  //   msOverflowStyle: 'none',
+                  // }}
                 >
                   {!isLoading &&
                     selectedOffer &&

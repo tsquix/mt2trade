@@ -95,7 +95,6 @@ function TitleRating({
               <div className="absolute -translate-x-1 top-2 opacity-0 group-hover:opacity-100 transition-opacity text-xs text-gray-100">
                 {copied ? 'copied' : 'Copy link'}
               </div>
-
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -110,6 +109,7 @@ function TitleRating({
                   setCopied(true);
                 }}
               >
+                {/* //TODO zmienic link local hosyt */}
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

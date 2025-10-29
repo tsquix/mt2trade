@@ -7,7 +7,6 @@ const setCacheHeaders = (res) => {
   // Cache response for 5 minutes
   res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
 };
-
 export default async function handler(req, res) {
   try {
     await connectMongoDB();
@@ -16,7 +15,7 @@ export default async function handler(req, res) {
     if (req.method === 'GET') {
       // Optimize database query by selecting only needed fields
       const user = await User.findOne({ name: username }).select(
-        '_id name userRating prefPayment transactionCount verified createdAt'
+        '_id name userRating prefPayment transactionCount verified createdAt avatar'
       );
 
       if (!user) {
@@ -39,6 +38,7 @@ export default async function handler(req, res) {
           prefPayment: user.prefPayment,
           verified: user.verified,
           createdAt: user.createdAt,
+          avatar: user.avatar,
         },
       });
     }
