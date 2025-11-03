@@ -64,8 +64,8 @@ export default function UserDetailsPage() {
 
   return (
     <AdminNav>
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
-        <div>
+      <div className="max-w-4xl mx-auto p-6 space-y-6 text-black">
+        <div className="">
           <button onClick={() => router.push('/admin/users')}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -83,7 +83,7 @@ export default function UserDetailsPage() {
             </svg>
           </button>
         </div>
-        <div className="flex justify-between">
+        <div className="flex justify-between bg-gray-100  ">
           <div className="flex items-center space-x-4">
             <img
               src={user.avatar}

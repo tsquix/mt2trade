@@ -28,7 +28,7 @@ export default function Users() {
   const router = useRouter();
   return (
     <AdminNav>
-      <div className="p-6">
+      <div className="p-6 text-black bg-gray-100">
         <h1 className="text-2xl font-bold mb-4">Users</h1>
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-300 text-sm">
@@ -48,7 +48,7 @@ export default function Users() {
               {users.map((user) => (
                 <tr
                   key={user._id}
-                  className="text-center hover:bg-blue-600"
+                  className="text-center hover:bg-blue-200"
                   onClick={() => router.push(`/admin/users/${user._id}`)}
                 >
                   <td className="px-3 py-2 border">
