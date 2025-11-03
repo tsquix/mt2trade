@@ -47,7 +47,7 @@ function TitleRating({
               <p className="font-medium text- ">
                 {/* {offer?.title || '50M Yang - Fast Delivery'} */}
                 {smaller
-                  ? offer?.title.length >= 20
+                  ? offer?.title.length > 20
                     ? offer?.title.slice(0, 20) + '..'
                     : offer?.title
                   : offer?.title}

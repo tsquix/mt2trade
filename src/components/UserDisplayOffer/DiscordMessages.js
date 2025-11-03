@@ -93,14 +93,14 @@ const DiscordMessages = ({ offer }) => {
       <div className="space-y-3 ">
         {/* TODO dodac doscrolowanie do 100vgh zeby przycisk zawsze byl 100 procentach widoczny a nie np w polowie / 1/3 */}
         <div
-          className={`sticky top-[70vh] w-full flex justify-center transition-all duration-300 ${
+          className={`z-50 sticky top-[70vh] w-full flex justify-center transition-all duration-300 ${
             showBottomBtn
               ? 'opacity-100 translate-y-0'
               : 'opacity-0 translate-y-10'
           }`}
         >
           <button
-            className="bg-red-300 px-4 py-1 rounded"
+            className="bg-red-300 px-4 py-1 rounded "
             onClick={scrollToBottom}
           >
             Skocz do najnowszych
@@ -147,7 +147,7 @@ const DiscordMessages = ({ offer }) => {
                       key={i}
                       src={att.url}
                       alt={`attachment-${i}`}
-                      className="max-h-64 border border-[#202225] cursor-pointer transition-transform hover:scale-[1.02]"
+                      className="max-h-64 border border-[#202225] cursor-pointer transition-transform hover:scale-105 z-10"
                       onClick={() => setZoomedImg(att.url)}
                     />
                   ))}

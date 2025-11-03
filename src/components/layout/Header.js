@@ -42,6 +42,9 @@ export default function Header({ noMb, fadeIn }) {
             ) : (
               <>
                 <div className="flex gap-8 items-center">
+                  <Link href={'/report'}>
+                    <p className="rounded-xl text-xs">Report user</p>
+                  </Link>
                   <div className="text-xs rounded-xl">
                     <Link href={'/admin'}>Admin panel</Link>
                   </div>

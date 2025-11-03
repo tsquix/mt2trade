@@ -33,7 +33,10 @@ export default async function handler(req, res) {
         return res.status(200).json({ success: true, offers });
       } else {
         const offers = await Offer.find({})
-          .populate('seller', 'name userRating prefPayment transactionCount')
+          .populate(
+            'seller',
+            'name userRating prefPayment transactionCount avatar'
+          )
           .exec();
         return res.status(200).json({ success: true, offers });
       }
