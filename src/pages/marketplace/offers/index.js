@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { fetchServerList } from '../../../../lib/fetchServers';
 import ServerCard from '@/components/marketplace/servers/ServerCard';
 import { useEffect, useMemo, useState } from 'react';
-import { getAllOffersCount } from '../../../../lib/offers';
+import { getAllDcOffersCount, getAllOffersCount } from '../../../../lib/offers';
 import { useFilterByRegex } from '../../../../hooks/useFilterByRegex';
 
 export default function OffersPage({ servers, debug, error }) {
@@ -48,9 +48,9 @@ export default function OffersPage({ servers, debug, error }) {
   //     return res;
   //   }, [debouncedPhrase, servers]);
   // };
-  const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 3);
+  const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 6);
 
-  const shouldShowExpandButton = filteredOffers.length > 3 && !expand;
+  const shouldShowExpandButton = filteredOffers.length > 6 && !expand;
   // useEffect(() => {
   //   console.log(filteredOffers);
   // }, [filteredOffers]);
@@ -128,15 +128,21 @@ export async function getStaticProps() {
   try {
     const baseUrl = process.env.NEXTAUTH_URL || 'https://mt2trade.vercel.app';
 
-    const [servers, offerCounts] = await Promise.all([
+    const [servers, offerCounts, dcOfferCounts] = await Promise.all([
       fetchServerList(baseUrl),
       getAllOffersCount(),
+      getAllDcOffersCount(),
     ]);
 
-    const serversWithOffers = servers.map((server) => ({
-      ...server,
-      offerCount: offerCounts[server.name] || 0,
-    }));
+    const serversWithOffers = servers
+      .map((server) => ({
+        ...server,
+        offerCount: offerCounts[server.slug] || 0,
+        dcOfferCount: dcOfferCounts[server.slug] || 0,
+        totalOffers:
+          (offerCounts[server.slug] || 0) + (dcOfferCounts[server.slug] || 0),
+      }))
+      .sort((a, b) => b.totalOffers - a.totalOffers);
 
     return {
       props: {

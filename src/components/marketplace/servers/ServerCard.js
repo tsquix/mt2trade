@@ -1,9 +1,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function ServerCard({ server }) {
-  const offerCount = server.offerCount || 0;
+  const offerCount = server.offerCount;
+  const dcOfferCount = server.dcOfferCount;
 
+  useEffect(() => {
+    console.log(server);
+  }, [server]);
   return (
     <Link
       key={server._id}
@@ -20,9 +25,10 @@ export default function ServerCard({ server }) {
         <h3 className="text-white font-bold text-xl">{server.name}</h3>
         <h3 className="bg-black opacity-80 px-2 py-1 rounded">
           <span
-            className={`${offerCount > 0 ? 'text-green-400' : 'text-red-400'} font-bold text-sm`}
+            className={`${offerCount > 0 || dcOfferCount > 0 ? 'text-green-400' : 'text-red-400'} font-bold text-sm`}
           >
-            {offerCount} {offerCount === 1 ? 'oferta' : 'ofert'}
+            {offerCount + dcOfferCount}{' '}
+            {offerCount === 1 || dcOfferCount === 1 ? 'oferta' : 'ofert'}
           </span>
         </h3>
       </div>

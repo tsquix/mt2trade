@@ -1,6 +1,7 @@
 import axios from 'axios';
-import { memo, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Rating } from 'react-simple-star-rating';
+
 function TitleRating({
   offer,
   displayRatingNumber,
@@ -14,17 +15,22 @@ function TitleRating({
   const [copied, setCopied] = useState(false);
   const isEditing = mode === 'profile' && status === 'edit';
 
-  // useEffect(() => {
-  //   console.log(offer?.seller?.userRating);
-  // }, [offer]);
+  if (!offer) return null;
 
-  if (!offer || !offer.seller) return null;
+  // ✅ Ustal źródło danych użytkownika (seller lub thread.owner)
+  const user = offer?.seller ?? offer?.thread?.owner;
+  const title = offer?.title ?? offer.thread.name;
+  if (!user) return null;
 
   const formatPricePer1kk = () => {
     const raw = offer?.pricePLN / offer?.currencyAmount;
     if (!isFinite(raw)) return '0';
     return raw.toFixed(2).endsWith('.00') ? raw.toFixed(0) : raw.toFixed(2);
   };
+
+  // useEffect(() => {
+  //   console.log(offer);
+  // }, [offer]);
 
   return (
     <div className={className}>
@@ -38,23 +44,23 @@ function TitleRating({
             {isEditing ? (
               <input
                 type="text"
-                value={newOffer.title || ''}
+                value={newOffer?.title || ''}
                 onChange={(e) => handleEdit('title', e.target.value)}
                 placeholder={`${offer.title || 'Wpisz tytuł oferty'}`}
                 className="bg-darkBg text-black rounded px-2 py-1 w-full"
               />
             ) : (
-              <p className="font-medium text- ">
-                {/* {offer?.title || '50M Yang - Fast Delivery'} */}
+              <p className="font-medium">
                 {smaller
-                  ? offer?.title.length > 20
-                    ? offer?.title.slice(0, 20) + '..'
-                    : offer?.title
-                  : offer?.title}
+                  ? title.length > 20
+                    ? title.slice(0, 20) + '..'
+                    : title
+                  : title}
               </p>
             )}
           </div>
 
+          {/* ✅ Sekcja oceny użytkownika */}
           <div className="flex">
             <div className="text-sm font-bold">
               <div
@@ -66,7 +72,7 @@ function TitleRating({
                   <Rating
                     readonly
                     SVGclassName="inline"
-                    initialValue={offer?.seller?.userRating || 0}
+                    initialValue={user?.userRating || 0}
                     allowFraction
                     size={17}
                     fillColor="#facc15"
@@ -75,17 +81,18 @@ function TitleRating({
                 </div>
                 {displayRatingNumber && (
                   <p className="text-xs text-white">
-                    {offer?.seller?.userRating?.toFixed(1)}
+                    {(user?.userRating ?? 0).toFixed(1)}
                   </p>
                 )}
                 <p className="text-xs text-lightGray">
-                  {offer?.seller?.transactionCount || 0} sales
+                  {user?.transactionCount || 0} sales
                 </p>
               </div>
             </div>
           </div>
         </div>
 
+        {/* ✅ Sekcja ceny */}
         <div className="bg-brighterBg text-right flex">
           {!smaller && (
             <div
@@ -104,12 +111,11 @@ function TitleRating({
                 className="size-6 hover:opacity-50 transition-opacity cursor-pointer mt-2 mx-2"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `http://localhost:3000/marketplace/offers/${offer.serverName}?offer=${offer.slug}`
+                    `${window?.location?.origin ?? 'https://twojastrona.pl'}/marketplace/offers/${offer.serverName}?offer=${offer.slug}`
                   );
                   setCopied(true);
                 }}
               >
-                {/* //TODO zmienic link local hosyt */}
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -154,7 +160,6 @@ function TitleRating({
           ) : (
             <div className="flex flex-col">
               <p className="text-red-300">
-                {/* //TODO handle tag */}
                 {offer?.currencyAmount}
                 {offer?.currencyAmount > 0
                   ? offer?.tag !== ''
@@ -164,7 +169,7 @@ function TitleRating({
               </p>
               <p className="text-xs text-lightGray font-semibold">
                 {formatPricePer1kk() != 0
-                  ? formatPricePer1kk() + 'zł za 1kk'
+                  ? `${formatPricePer1kk()} zł za 1kk`
                   : ''}
               </p>
             </div>
@@ -174,4 +179,5 @@ function TitleRating({
     </div>
   );
 }
+
 export default memo(TitleRating);

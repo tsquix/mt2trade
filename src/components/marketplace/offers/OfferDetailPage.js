@@ -116,7 +116,9 @@ function OfferDetailPage({
             newOffer={newOffer}
             handleEdit={handleEdit}
           />
-          {selectedOffer.offerType === 'dc' ? (
+          {/* TODO zmienic na offerType po zaaktualizowaniu modelu ofert */}
+          {/* {selectedOffer.offerType === 'dc' ? ( */}
+          {selectedOffer.messageCount > 0 ? (
             <DiscordMessages offer={selectedOffer} />
           ) : (
             <>

@@ -27,7 +27,6 @@ export default function OfferPage({ serverOffers }) {
   const { state, dispatch } = useOrders();
   const { isLoading, selectedOffer } = state;
   const [phrase, setPhrase] = useState('');
-  const [searchServer, setSearchServer] = useState([]);
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
   const router = useRouter();
   const { server } = router.query;
@@ -35,47 +34,52 @@ export default function OfferPage({ serverOffers }) {
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
   const [offersView, setOffersView] = useState('ofertydc');
-  const [threads, setThreads] = useState([]);
-  const [preparedThreads, setPreparedThreads] = useState([]);
+  const [discordThreads, setDiscordThreads] = useState([]);
 
   const currentOffers =
-    offersView === 'oferty' ? state.serverOffers : preparedThreads;
+    offersView === 'oferty' ? state.serverOffers : discordThreads;
 
   useEffect(() => {
-    const fetchExtrenalOffers = async () => {
-      const url = 'http://localhost:3001/threads';
+    const fetchExternalOffers = async () => {
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`);
+        if (server) {
+          const res = await axios.get(`/api/dcOffers?server=${server}`);
+          console.log(res);
+          setDiscordThreads(res.data.data);
+          currentOffers !== 'oferty'
+            ? dispatch({
+                type: 'SET_SELECTED_OFFER',
+                payload: res.data.data[0] || null,
+              })
+            : '';
         }
-
-        const result = await response.json();
-        setThreads(result);
       } catch (error) {
         console.error(error.message);
+      } finally {
+        dispatch({ type: 'SET_LOADING', payload: false });
       }
     };
-    fetchExtrenalOffers();
-  }, []);
-  useEffect(() => {
-    if (!threads || threads.length === 0) return;
 
-    setPreparedThreads(convertToOfferObject(threads));
-  }, [threads]);
+    fetchExternalOffers();
+  }, []);
+  // useEffect(() => {
+  //   if (!threads || threads.length === 0) return;
+
+  //   setPreparedThreads(convertToOfferObject(threads));
+  // }, [threads]);
   useEffect(() => {
-    console.log(preparedThreads);
-  }, [preparedThreads]);
+    console.log(selectedOffer);
+  }, [selectedOffer]);
 
   useEffect(() => {
     const fetchOffers = async () => {
       //sync context jesti ssr
       if (serverOffers?.length && !state.serverOffers.length) {
         dispatch({ type: 'SET_SERVER_OFFERS', payload: serverOffers });
-        dispatch({
-          type: 'SET_SELECTED_OFFER',
-          payload: serverOffers[0] || null,
-        });
+        // dispatch({
+        //   type: 'SET_SELECTED_OFFER',
+        //   payload: serverOffers[0] || null,
+        // });
         dispatch({ type: 'SET_LOADING', payload: false });
         return;
       }
@@ -86,10 +90,12 @@ export default function OfferPage({ serverOffers }) {
         try {
           const res = await axios.get(`/api/offer?server=${server}`);
           dispatch({ type: 'SET_SERVER_OFFERS', payload: res.data.offers });
-          dispatch({
-            type: 'SET_SELECTED_OFFER',
-            payload: res.data.offers[0] || null,
-          });
+          currentOffers === 'oferty'
+            ? dispatch({
+                type: 'SET_SELECTED_OFFER',
+                payload: res.data.offers[0] || null,
+              })
+            : null;
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_SERVER_OFFERS', payload: [] });

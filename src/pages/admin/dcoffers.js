@@ -32,6 +32,9 @@ const DcOffers = () => {
   useEffect(() => {
     fetchOffers();
   }, []);
+  useEffect(() => {
+    console.log(dcOffers);
+  }, [dcOffers]);
 
   return (
     <AdminNav>

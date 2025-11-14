@@ -9,58 +9,66 @@ function UserDisplay({
   classNameImg,
   smaller,
 }) {
-  const createdAt = offer.seller.createdAt;
-  const date = new Date(createdAt);
-  const monthYear = date.toLocaleDateString('pl-PL', {
-    year: 'numeric',
-    month: 'long',
-  });
+  const user = offer?.seller ?? offer?.thread?.owner;
+
+  const createdAt = user?.createdAt ?? user?.accountAge?.timestamp;
+  const date = createdAt ? new Date(createdAt) : null;
+  const monthYear = date
+    ? date.toLocaleDateString('pl-PL', {
+        year: 'numeric',
+        month: 'long',
+      })
+    : '';
 
   // useEffect(() => {
-  //   console.log(offer);
+  //   console.log('Offer:', offer);
   // }, [offer]);
+
   return (
     <>
       <div
-        className={`flex gap-2 text-sm items-center  justify-between ${smaller ? '' : 'mb-4'}`}
+        className={`flex gap-2 text-sm items-center justify-between ${
+          smaller ? '' : 'mb-4'
+        }`}
       >
-        <div className="flex gap-2 ">
+        <div className="flex gap-2 items-center">
           <Image
-            src={offer?.seller?.avatar.url ?? offer?.seller?.avatar}
-            alt=""
+            src={user?.avatar?.url ?? user?.avatar ?? '/default-avatar.png'}
+            alt={user?.displayName ?? 'User Avatar'}
             width={width}
             height={height}
             className={`${classNameImg} rounded-full`}
           />
 
-          <div className="flex-col">
+          <div className="flex flex-col">
             <div className="flex gap-2 items-center">
               {!smaller ? (
-                <Link href={`/profile/${offer?.seller?.name}`}>
-                  {offer?.seller?.name}
+                <Link href={`/profile/${user?.name ?? user?.displayName}`}>
+                  {user?.displayName ?? user?.name ?? 'Nieznany użytkownik'}
                 </Link>
               ) : (
                 <p className={`font-sm ${smaller ? 'text-gray-400' : ''}`}>
-                  {offer?.seller?.name}
+                  {user?.displayName ?? user?.name ?? 'Nieznany użytkownik'}
                 </p>
               )}
 
-              {offer?.seller?.verified && (
+              {(user?.verified || user?.isVerified) && (
                 <p
-                  className={` bg-green-900 text-green-400 px-1.5 py-0.5 rounded text-xs`}
+                  className={`bg-green-900 text-green-400 px-1.5 py-0.5 rounded text-xs`}
                 >
                   {smaller ? 'Verified' : 'Verified Seller'}
                 </p>
               )}
             </div>
-            {!smaller && (
+
+            {!smaller && monthYear && (
               <p className="text-sm text-gray-400">Użytkownik od {monthYear}</p>
             )}
           </div>
         </div>
+
         {smaller && offer?.messageCount > 0 && (
           <div className="flex gap-2">
-            {/* //TODO ADD real count  */}
             {offer?.messageCount}
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -73,17 +81,18 @@ function UserDisplay({
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155"
+                d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951"
               />
             </svg>
           </div>
         )}
       </div>
+
       {!smaller && (
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="bg-mainBg rounded-lg p-3">
             <div className="sm:text-xl text-lg font-bold text-white">
-              {offer?.seller?.transactionCount}
+              {user?.transactionCount ?? '—'}
             </div>
             <div className="text-xs text-gray-400">Completed Sales</div>
           </div>
@@ -102,4 +111,5 @@ function UserDisplay({
     </>
   );
 }
+
 export default memo(UserDisplay);

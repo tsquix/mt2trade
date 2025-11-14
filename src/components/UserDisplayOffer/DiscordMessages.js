@@ -71,20 +71,22 @@ const DiscordMessages = ({ offer }) => {
       <div className="">
         <div className="flex items-center gap-2 bg-mainBg p-2 rounded-lg">
           <img
-            src={offer?.seller?.avatar?.url}
-            alt={offer?.seller?.displayName}
+            src={offer?.thread.owner?.avatar?.url}
+            alt={offer?.thread?.owner?.name}
             className="w-10 h-10 rounded-full"
           />
           <div>
             <h2 className="font-semibold text-[#dcddde]">
-              {offer?.seller?.displayName}
+              {offer?.thread?.owner?.name}
               <span className="text-[#72767d] text-sm ml-1">
                 • {new Date(offer?.createdAt).toLocaleDateString()}
               </span>
             </h2>
             <p className="text-sm text-[#b9bbbe]">
-              Offer: <span className="text-[#00b0f4]">{offer?.title}</span> (
-              {offer?.offerType.toUpperCase()})
+              Offer:{' '}
+              <span className="text-[#00b0f4]">{offer?.thread.name}</span>
+              {/* (
+              {offer?.offerType?.toUpperCase()}) */}
             </p>
           </div>
         </div>
@@ -113,14 +115,14 @@ const DiscordMessages = ({ offer }) => {
             className="flex items-start gap-3 hover:bg-[#36393f] p-2 rounded-md transition-colors"
           >
             <img
-              src={offer?.seller?.avatar?.url}
+              src={offer?.thread.owner?.avatar?.url}
               alt="avatar"
               className="w-8 h-8 rounded-full mt-1"
             />
             <div className="w-full max-w-lg">
               <div className="flex items-center gap-1">
                 <span className="font-medium text-[#dcddde]">
-                  {offer?.seller?.displayName}
+                  {offer?.thread?.owner?.name}
                 </span>
                 <span className="text-xs text-[#72767d]">
                   {new Date(msg.timestamp).toDateString() ===

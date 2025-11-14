@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 
 const dcOfferSchema = new mongoose.Schema(
   {
+    offerType: { type: String, default: 'dc' },
     id: {
       type: String,
       required: true,

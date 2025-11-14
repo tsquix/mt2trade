@@ -3,12 +3,18 @@ import DcOffer from '../../../models/DcOffer';
 
 export default async function handler(req, res) {
   const { method } = req;
+  const { server } = req.query;
   await connectMongoDB();
 
   try {
     if (method === 'GET') {
-      const dcOffers = await DcOffer.find();
-      return res.status(200).json({ success: true, data: dcOffers });
+      if (server) {
+        const dcOffers = await DcOffer.find({ serverName: server });
+        return res.status(200).json({ success: true, data: dcOffers });
+      } else {
+        const dcOffers = await DcOffer.find();
+        return res.status(200).json({ success: true, data: dcOffers });
+      }
     }
 
     if (method === 'DELETE') {
