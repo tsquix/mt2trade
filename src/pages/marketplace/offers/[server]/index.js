@@ -2,28 +2,70 @@ import Layout from '@/components/layout/Layout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
-
 import BuyOrder from '@/components/orders/BuyOrder';
 import Image from 'next/image';
 import FilterAndSearch from '@/components/ui/FilterAndSearch';
 import { useOrders } from '@/contexts/OrdersContext';
-
 import axios from 'axios';
 import ViewSelect from '@/components/ui/ViewSelect';
-import convertToOfferObject from '../../../../../lib/convertToOfferObject';
 import OfferCard from '@/components/marketplace/offers/OfferCard';
 import OfferDetailPage from '@/components/marketplace/offers/OfferDetailPage';
+import { useFilterByRegex } from '../../../../../hooks/useFilterByRegex';
 
 export const getServerSideProps = async (context) => {
-  const { server } = context.params;
-  const res = await axios.get(
-    `${process.env.BASE_URL}/api/offer?server=${server}`
-  );
-  const serverOffers = res.data.offers;
-  return { props: { serverOffers } };
+  const { server: serverSlug } = context.params;
+  try {
+    // Pobierz oferty i dane serwera równolegle
+    const [offersRes, serversRes] = await Promise.all([
+      axios.get(`${process.env.BASE_URL}/api/offer?server=${serverSlug}`),
+      axios.get(`${process.env.BASE_URL}/api/server`),
+    ]);
+
+    if (!offersRes.data || !offersRes.data.offers) {
+      return {
+        notFound: true,
+      };
+    }
+
+    // Znajdź obiekt serwera na podstawie slug lub nameAlias
+    const serverObject = serversRes.data.data.find(
+      (s) =>
+        s.slug === serverSlug ||
+        s.name === serverSlug ||
+        s.nameAlias?.includes(serverSlug)
+    );
+
+    if (!serverObject) {
+      return {
+        notFound: true,
+      };
+    }
+
+    return {
+      props: {
+        serverOffers: offersRes.data.offers,
+        serverData: serverObject, // Pełny obiekt serwera z img
+      },
+    };
+  } catch (error) {
+    console.error('Błąd pobierania danych:', error?.message);
+    if (error?.response?.status === 404) {
+      return {
+        notFound: true,
+      };
+    }
+    return {
+      props: {
+        serverOffers: [],
+        serverData: null,
+        error: true,
+        errorMessage: error.message || 'Wystąpił nieoczekiwany błąd',
+      },
+    };
+  }
 };
 
-export default function OfferPage({ serverOffers }) {
+export default function OfferPage({ serverOffers, serverData }) {
   const { state, dispatch } = useOrders();
   const { isLoading, selectedOffer } = state;
   const [phrase, setPhrase] = useState('');
@@ -35,6 +77,11 @@ export default function OfferPage({ serverOffers }) {
   const [actionType, setActionType] = useState(null);
   const [offersView, setOffersView] = useState('ofertydc');
   const [discordThreads, setDiscordThreads] = useState([]);
+  const [offersCount, setOffersCount] = useState(0);
+
+  useEffect(() => {
+    console.log(phrase);
+  }, [phrase]);
 
   const currentOffers =
     offersView === 'oferty' ? state.serverOffers : discordThreads;
@@ -45,7 +92,8 @@ export default function OfferPage({ serverOffers }) {
         if (server) {
           const res = await axios.get(`/api/dcOffers?server=${server}`);
           console.log(res);
-          setDiscordThreads(res.data.data);
+          const data = res.data.data;
+          setDiscordThreads(data);
           currentOffers !== 'oferty'
             ? dispatch({
                 type: 'SET_SELECTED_OFFER',
@@ -68,8 +116,8 @@ export default function OfferPage({ serverOffers }) {
   //   setPreparedThreads(convertToOfferObject(threads));
   // }, [threads]);
   useEffect(() => {
-    console.log(selectedOffer);
-  }, [selectedOffer]);
+    console.log(offersCount);
+  }, [offersCount]);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -90,6 +138,7 @@ export default function OfferPage({ serverOffers }) {
         try {
           const res = await axios.get(`/api/offer?server=${server}`);
           dispatch({ type: 'SET_SERVER_OFFERS', payload: res.data.offers });
+
           currentOffers === 'oferty'
             ? dispatch({
                 type: 'SET_SELECTED_OFFER',
@@ -156,43 +205,22 @@ export default function OfferPage({ serverOffers }) {
 
     return () => clearTimeout(handler);
   }, [phrase]);
-  //TODO figureout how to replace it with hook
-  const filteredOffers = useMemo(() => {
-    if (!debouncedPhrase) return currentOffers || [];
-    //wyszukiwarka z regex
 
-    const cleanPhrase = debouncedPhrase.replace(/\s+/g, '');
-    const regex = new RegExp(cleanPhrase, 'i');
-
-    let res = currentOffers.filter((o) => {
-      if (offersView === 'oferty') {
-        console.log('using oferty branch');
-        return (
-          regex.test(o.title?.replace(/\s+/g, '') || '') ||
-          regex.test(o.description?.replace(/\s+/g, '') || '') ||
-          regex.test(o.seller?.name?.replace(/\s+/g, '') || '')
-        );
-      } else {
-        console.log('using thread branch');
-        return (
-          regex.test(o.seller?.name?.replace(/\s+/g, '') || '') ||
-          regex.test(o.title?.replace(/\s+/g, '') || '') ||
-          regex.test(o.starterMessage?.replace(/\s+/g, '') || '')
-        );
-      }
-    });
-    //partial search if nothing found
-    if (res.length === 0 && debouncedPhrase.length > 2) {
-      const partial = debouncedPhrase.slice(0, 2).replace(/\s+/g, '');
-      const regexPartial = new RegExp(partial, 'i');
-      res = currentOffers.filter((o) =>
-        offersView === 'oferty'
-          ? regexPartial.test(o.title?.replace(/\s+/g, ''))
-          : regexPartial.test(o.thread?.name?.replace(/\s+/g, ''))
-      );
+  // Określamy pola do filtrowania w zależności od widoku
+  const fieldsToFilter = useMemo(() => {
+    if (offersView === 'oferty') {
+      return ['title', 'description', 'seller.name'];
+    } else {
+      return ['seller.name', 'title', 'starterMessage'];
     }
-    return res;
-  }, [debouncedPhrase, currentOffers, offersView]);
+  }, [offersView]);
+
+  // Używamy hooka useFilterByRegex
+  const filteredOffers = useFilterByRegex(
+    debouncedPhrase,
+    currentOffers,
+    fieldsToFilter
+  );
 
   const handleSelect = (offer) => {
     //ustawiamy selected offer
@@ -271,7 +299,10 @@ export default function OfferPage({ serverOffers }) {
         <div>
           <div className="relative w-full h-64 mb-8 bg-mainBg">
             <Image
-              src="https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png"
+              src={
+                serverData?.img ||
+                'https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png'
+              }
               alt="Background"
               fill
               className="object-cover"
@@ -279,7 +310,7 @@ export default function OfferPage({ serverOffers }) {
             />
             <div className="absolute inset-0 bg-black bg-opacity-50"></div>
             <div className="absolute inset-0 flex items-center justify-center text-white">
-              <h1 className="text-3xl">{server}</h1>
+              <h1 className="text-3xl">{serverData?.name || server}</h1>
             </div>
             <div className="absolute top-0 p-4 rounded-full pointer ">
               <Link href={'/marketplace/offers'}>
@@ -321,6 +352,8 @@ export default function OfferPage({ serverOffers }) {
             view={offersView}
             setView={setOffersView}
             orders={false}
+            offerCount={state.serverOffers.length}
+            dcOfferCount={discordThreads.length}
           />
 
           <div>
@@ -368,6 +401,7 @@ export default function OfferPage({ serverOffers }) {
 
                 {serverOffers?.length === 0 && (
                   <div>
+                    {/* //TODO FIX this if dc offers exists */}
                     <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
                     <p className="mb-1">
                       Bądź pierwszy i

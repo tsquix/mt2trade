@@ -6,34 +6,35 @@ export function useFilterByRegex(
   fieldsToFilter = []
 ) {
   return useMemo(() => {
-    if (!debouncedPhrase) return servers;
-    //wyszukiwarka z regex
+    if (!debouncedPhrase) return servers || [];
+
     const cleanPhrase = debouncedPhrase.replace(/\s+/g, '');
     const regex = new RegExp(cleanPhrase, 'i');
-    let res = servers.filter((s) =>
-      fieldsToFilter.some((field) => {
-        const value = s[field];
-        return (
-          typeof value === 'string' && regex.test(value.replace(/\s+/g, ''))
-        );
-      })
-    );
-    //partial search if nothing found
-    if (res.length === 0 && debouncedPhrase.length > 1) {
-      const partial = debouncedPhrase.slice(0, 1).replace(/\s+/g, '');
+
+    // Pre-extract and normalize fields once
+    const prepared = servers.map((s) => ({
+      original: s,
+      fields: fieldsToFilter.map((field) => {
+        const value = field.split('.').reduce((acc, key) => acc?.[key], s);
+        return typeof value === 'string' ? value.replace(/\s+/g, '') : '';
+      }),
+    }));
+
+    // First full search
+    let result = prepared
+      .filter((p) => p.fields.some((f) => regex.test(f)))
+      .map((p) => p.original);
+
+    // Partial fallback search
+    if (result.length === 0 && cleanPhrase.length > 2) {
+      const partial = cleanPhrase.slice(0, 2);
       const regexPartial = new RegExp(partial, 'i');
 
-      res = servers.filter((s) =>
-        fieldsToFilter.some((field) => {
-          const value = s[field];
-          return (
-            typeof value === 'string' &&
-            regexPartial.test(value.replace(/\s+/g, ''))
-          );
-        })
-      );
+      result = prepared
+        .filter((p) => p.fields.some((f) => regexPartial.test(f)))
+        .map((p) => p.original);
     }
 
-    return res;
-  }, [debouncedPhrase, servers]);
+    return result;
+  }, [debouncedPhrase, servers, fieldsToFilter]);
 }

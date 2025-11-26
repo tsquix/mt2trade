@@ -65,7 +65,7 @@ const EditServer = () => {
 
   return (
     <AdminNav>
-      <div className="max-w-xl mx-auto p-6 bg-white shadow-md rounded-xl mt-6">
+      <div className="max-w-xl mx-auto p-6 bg-white text-black shadow-md rounded-xl mt-6">
         <h1 className="text-xl font-semibold mb-4">Edit Server</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

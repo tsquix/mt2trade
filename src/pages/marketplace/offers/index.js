@@ -24,30 +24,7 @@ export default function OffersPage({ servers, debug, error }) {
     'name',
     'slug',
   ]);
-  // const filteredOffers = function (debouncedPhrase) {
 
-  //   return useMemo(() => {
-  //     if (!debouncedPhrase) return servers || [];
-  //     //wyszukiwarka z regex
-  //     const cleanPhrase = debouncedPhrase.replace(/\s+/g, '');
-  //     const regex = new RegExp(cleanPhrase, 'i');
-
-  //     let res = servers.filter(
-  //       (s) =>
-  //         regex.test(s.name.replace(/\s+/g, '')) ||
-  //         regex.test(s.slug.replace(/\s+/g, ''))
-  //     );
-  //     //partial search if nothing found
-  //     if (res.length === 0 && debouncedPhrase.length > 1) {
-  //       const partial = debouncedPhrase.slice(0, 1).replace(/\s+/g, '');
-  //       const regexPartial = new RegExp(partial, 'i');
-  //       res = servers.filter((o) =>
-  //         regexPartial.test(o.name.replace(/\s+/g, ''))
-  //       );
-  //     }
-  //     return res;
-  //   }, [debouncedPhrase, servers]);
-  // };
   const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 6);
 
   const shouldShowExpandButton = filteredOffers.length > 6 && !expand;

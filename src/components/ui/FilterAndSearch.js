@@ -33,6 +33,7 @@ export default function FilterAndSearch({ handleSort, phrase, setPhrase }) {
     <div className="bg-brighterBg p-4 rounded-b-xl">
       <div className="flex justify-between mb-2">
         <p>Filtruj</p>
+        {/* //TODO add clear all functionality */}
         <p className="text-red-300">Clear All</p>
       </div>
       <div className="grid grid-cols-2 gap-4">

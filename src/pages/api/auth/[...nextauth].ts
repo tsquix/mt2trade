@@ -7,6 +7,7 @@ import bcrypt from 'bcryptjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { JWT } from 'next-auth/jwt';
 import { RequestInternal } from 'next-auth';
+import { ratelimit } from '../../../../lib/ratelimit';
 declare module 'next-auth/jwt' {
   interface JWT {
     id?: string;
@@ -41,29 +42,48 @@ async function getGeo(ip: string) {
     return null;
   }
 }
+const ALLOWED_IPS = [
+  '::1', // localhost IPv6
+  '127.0.0.1', // localhost IPv4
+];
 
 async function isAdminEmail(email: string) {
   await connectMongoDB();
   const user = await User.findOne({ email });
   return user?.role === 'admin';
 }
+function getClientIP(req: NextApiRequest) {
+  return (
+    req.headers['x-forwarded-for']?.toString().split(',')[0].trim() ||
+    req.socket.remoteAddress ||
+    ''
+  );
+}
 export async function isAdminRequest(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const clientIP = getClientIP(req);
+
+  // 1. Rate limit
+  const { success } = await ratelimit.limit(clientIP);
+  if (!success) return res.status(429).json({ message: 'Too many requests' });
+
+  // 2. IP whitelist
+  if (!ALLOWED_IPS.includes(clientIP))
+    return res.status(403).json({ message: 'IP nie ma dostępu' });
+
+  // 3. Sesja
   const session = await getServerSession(req, res, authOptions);
+  if (!session?.user?.email)
+    return res.status(401).json({ message: 'Nie jesteś zalogowany' });
 
-  if (!session?.user?.email) {
-    res.status(401).json({ message: 'Nie jesteś zalogowany' });
-    throw new Error('Nie jesteś zalogowany');
-  }
-
+  // 4. Rola admin
   const isAdmin = await isAdminEmail(session.user.email);
-  if (!isAdmin) {
-    res.status(403).json({ message: 'Brak dostępu, tylko admin' });
-    throw new Error('Nie jest adminem');
-  }
+  if (!isAdmin)
+    return res.status(403).json({ message: 'Brak dostępu, tylko admin' });
 }
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
