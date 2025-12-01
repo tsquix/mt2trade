@@ -7,7 +7,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { getAllDcOffersCount, getAllOffersCount } from '../../../../lib/offers';
 import { useFilterByRegex } from '../../../../hooks/useFilterByRegex';
 
-export default function OffersPage({ servers, debug, error }) {
+export default function OffersPage({ servers, uncategorizedCount, debug, error }) {
   const [expand, setExpand] = useState(false);
   const [phrase, setPhrase] = useState('');
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
@@ -19,6 +19,9 @@ export default function OffersPage({ servers, debug, error }) {
 
     return () => clearTimeout(handler);
   }, [phrase]);
+  useEffect(() => {
+    console.log(servers);
+  }, [servers]);
 
   const filteredOffers = useFilterByRegex(debouncedPhrase, servers, [
     'name',
@@ -28,6 +31,17 @@ export default function OffersPage({ servers, debug, error }) {
   const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 6);
 
   const shouldShowExpandButton = filteredOffers.length > 6 && !expand;
+
+  // Create uncategorized server object
+  const uncategorizedServer = {
+    _id: 'uncategorized',
+    name: 'Uncategorized',
+    slug: 'uncategorized',
+    img: '/images/uncategorized.jpg',
+    offerCount: 0,
+    dcOfferCount: uncategorizedCount,
+    totalOffers: uncategorizedCount,
+  };
   // useEffect(() => {
   //   console.log(filteredOffers);
   // }, [filteredOffers]);
@@ -71,6 +85,9 @@ export default function OffersPage({ servers, debug, error }) {
           {displayedOffers.map((server) => (
             <ServerCard key={server._id} server={server} />
           ))}
+          {uncategorizedCount > 0 && (
+            <ServerCard key="uncategorized" server={uncategorizedServer} />
+          )}
           {shouldShowExpandButton && (
             <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center">
               <button
@@ -121,9 +138,13 @@ export async function getStaticProps() {
       }))
       .sort((a, b) => b.totalOffers - a.totalOffers);
 
+    // Add uncategorized server with dcOffers count
+    const uncategorizedCount = dcOfferCounts['uncategorized'] || 0;
+
     return {
       props: {
         servers: serversWithOffers,
+        uncategorizedCount,
       },
       revalidate: 14400,
     };

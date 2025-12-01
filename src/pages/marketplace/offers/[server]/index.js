@@ -15,6 +15,21 @@ import { useFilterByRegex } from '../../../../../hooks/useFilterByRegex';
 export const getServerSideProps = async (context) => {
   const { server: serverSlug } = context.params;
   try {
+    // Handle special "uncategorized" case
+    if (serverSlug === 'uncategorized') {
+      return {
+        props: {
+          serverOffers: [],
+          serverData: {
+            _id: 'uncategorized',
+            name: 'Uncategorized',
+            slug: 'uncategorized',
+            img: '/images/uncategorized.jpg',
+          },
+        },
+      };
+    }
+
     // Pobierz oferty i dane serwera równolegle
     const [offersRes, serversRes] = await Promise.all([
       axios.get(`${process.env.BASE_URL}/api/offer?server=${serverSlug}`),
@@ -75,7 +90,7 @@ export default function OfferPage({ serverOffers, serverData }) {
   const [visibleCount, setVisibleCount] = useState(5);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
-  const [offersView, setOffersView] = useState('ofertydc');
+  const [offersView, setOffersView] = useState('');
   const [discordThreads, setDiscordThreads] = useState([]);
   const [offersCount, setOffersCount] = useState(0);
 
@@ -94,10 +109,14 @@ export default function OfferPage({ serverOffers, serverData }) {
           console.log(res);
           const data = res.data.data;
           setDiscordThreads(data);
-          currentOffers !== 'oferty'
+          console.log(data[0]);
+          data.length === 0
+            ? setOffersView('oferty')
+            : setOffersView('ofertydc');
+          data.length > 0
             ? dispatch({
                 type: 'SET_SELECTED_OFFER',
-                payload: res.data.data[0] || null,
+                payload: data[0] || null,
               })
             : '';
         }
@@ -148,7 +167,7 @@ export default function OfferPage({ serverOffers, serverData }) {
         } catch (err) {
           console.error(err);
           dispatch({ type: 'SET_SERVER_OFFERS', payload: [] });
-          dispatch({ type: 'SET_SELECTED_OFFER', payload: null });
+          // dispatch({ type: 'SET_SELECTED_OFFER', payload: null });
         } finally {
           dispatch({ type: 'SET_LOADING', payload: false });
         }
@@ -293,6 +312,20 @@ export default function OfferPage({ serverOffers, serverData }) {
     setActionType(e.target.value);
   };
 
+  useEffect(() => {
+    // Automatycznie wybierz pierwszą ofertę gdy zmieniamy widok
+    if (offersView === 'oferty' && state.serverOffers.length > 0) {
+      dispatch({
+        type: 'SET_SELECTED_OFFER',
+        payload: state.serverOffers[0],
+      });
+    } else if (offersView === 'ofertydc' && discordThreads.length > 0) {
+      dispatch({
+        type: 'SET_SELECTED_OFFER',
+        payload: discordThreads[0],
+      });
+    }
+  }, [offersView]);
   return (
     <Layout>
       <div className="bg-mainBg">
@@ -359,7 +392,7 @@ export default function OfferPage({ serverOffers, serverData }) {
           <div>
             <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
-                {serverOffers?.length !== 0 && (
+                {currentOffers?.length !== 0 && (
                   <FilterAndSearch
                     handleSort={handleSort}
                     setPhrase={setPhrase}
@@ -399,8 +432,8 @@ export default function OfferPage({ serverOffers, serverData }) {
                   </>
                 )}
 
-                {serverOffers?.length === 0 && (
-                  <div>
+                {currentOffers?.length === 0 && (
+                  <div className="pt-8">
                     {/* //TODO FIX this if dc offers exists */}
                     <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
                     <p className="mb-1">
@@ -439,7 +472,7 @@ export default function OfferPage({ serverOffers, serverData }) {
                 >
                   {!isLoading &&
                     selectedOffer &&
-                    serverOffers?.length !== 0 && (
+                    currentOffers?.length !== 0 && (
                       <OfferDetailPage handleBuy={handleBuy} />
                     )}
                 </div>
