@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   try {
     await connectMongoDB();
 
-    const { name, email, password } = req.body;
+    const { name, email, password, hasSeenOnboarding } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Brak wymaganych danych' });
@@ -27,6 +27,11 @@ export default async function handler(req, res) {
       name,
       email,
       password: hashedPassword,
+      //convert to boolean
+      hasSeenOnboarding:
+        hasSeenOnboarding === 'true' || hasSeenOnboarding === true
+          ? true
+          : false,
     });
 
     res.status(201).json({

@@ -13,11 +13,12 @@ export default function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const hasSeenOnboarding = localStorage.getItem('HAS_SEEN_TOUR');
     // Rejestracja użytkownika
     const response = await fetch('/api/register', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, email, password }),
+      body: JSON.stringify({ name, email, password, hasSeenOnboarding }),
     });
 
     if (response.ok) {
@@ -42,7 +43,7 @@ export default function RegisterForm() {
   return (
     <form onSubmit={handleSubmit} className="text-black">
       <input
-        type="name"
+        type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         placeholder="name"

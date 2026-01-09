@@ -32,7 +32,8 @@ export default function ViewSelect({
         <button
           key={key}
           onClick={() => setView(key)}
-          className="w-full flex group"
+          data-tour={`view-${key === 'ofertydc' ? 'ofertydc' : 'oferty'}`}
+          className={`w-full flex group`}
         >
           {!orders && (
             <div

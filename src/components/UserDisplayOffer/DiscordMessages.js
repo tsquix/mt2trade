@@ -69,11 +69,15 @@ const DiscordMessages = ({ offer }) => {
       }}
     >
       <div className="">
-        <div className="flex items-center gap-2 bg-mainBg p-2 rounded-lg">
+        <div
+          className="flex items-center gap-2 bg-mainBg p-2 rounded-lg"
+          data-tour="discord-avatar"
+        >
+          {/* //TODO change to IMAge*/}
           <img
             src={offer?.thread.owner?.avatar?.url}
             alt={offer?.thread?.owner?.name}
-            className="w-10 h-10 rounded-full"
+            className="w-10 h-10 rounded-full "
           />
           <div>
             <h2 className="font-semibold text-[#dcddde]">

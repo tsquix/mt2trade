@@ -1,9 +1,9 @@
 import Layout from '@/components/layout/Layout';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useState, useRef, useCallback, useMemo, memo } from 'react';
 import BuyOrder from '@/components/orders/BuyOrder';
-import Image from 'next/image';
+
 import FilterAndSearch from '@/components/ui/FilterAndSearch';
 import { useOrders } from '@/contexts/OrdersContext';
 import axios from 'axios';
@@ -12,8 +12,12 @@ import OfferCard from '@/components/marketplace/offers/OfferCard';
 import OfferDetailPage from '@/components/marketplace/offers/OfferDetailPage';
 import { useFilterByRegex } from '../../../../../hooks/useFilterByRegex';
 
+import ServerImageCard from '@/components/marketplace/offers/ServerImageCard';
+
+import MarketplaceTour from '@/components/marketplace/offers/MarketplaceTour';
 export const getServerSideProps = async (context) => {
   const { server: serverSlug } = context.params;
+
   try {
     // Handle special "uncategorized" case
     if (serverSlug === 'uncategorized') {
@@ -87,16 +91,11 @@ export default function OfferPage({ serverOffers, serverData }) {
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
   const router = useRouter();
   const { server } = router.query;
-  const [visibleCount, setVisibleCount] = useState(5);
+  const [visibleCount, setVisibleCount] = useState(10);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
   const [offersView, setOffersView] = useState('');
   const [discordThreads, setDiscordThreads] = useState([]);
-  const [offersCount, setOffersCount] = useState(0);
-
-  useEffect(() => {
-    console.log(phrase);
-  }, [phrase]);
 
   const currentOffers =
     offersView === 'oferty' ? state.serverOffers : discordThreads;
@@ -106,10 +105,10 @@ export default function OfferPage({ serverOffers, serverData }) {
       try {
         if (server) {
           const res = await axios.get(`/api/dcOffers?server=${server}`);
-          console.log(res);
+          // console.log(res);
           const data = res.data.data;
           setDiscordThreads(data);
-          console.log(data[0]);
+          // console.log(data[0]);
           data.length === 0
             ? setOffersView('oferty')
             : setOffersView('ofertydc');
@@ -129,14 +128,6 @@ export default function OfferPage({ serverOffers, serverData }) {
 
     fetchExternalOffers();
   }, []);
-  // useEffect(() => {
-  //   if (!threads || threads.length === 0) return;
-
-  //   setPreparedThreads(convertToOfferObject(threads));
-  // }, [threads]);
-  useEffect(() => {
-    console.log(offersCount);
-  }, [offersCount]);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -150,8 +141,13 @@ export default function OfferPage({ serverOffers, serverData }) {
         dispatch({ type: 'SET_LOADING', payload: false });
         return;
       }
+      const isDataAlreadyLoaded =
+        state.serverOffers.length > 0 &&
+        state.serverOffers[0].serverSlug === server;
 
-      //aktualizujemy oferty w przypadku przejscia na inny server bez reload strony
+      if (isDataAlreadyLoaded) return;
+
+      // pobranie clientside -aktualizujemy oferty w przypadku przejscia na inny server bez reload strony
       if (server) {
         dispatch({ type: 'SET_LOADING', payload: true });
         try {
@@ -177,6 +173,7 @@ export default function OfferPage({ serverOffers, serverData }) {
   }, [server, serverOffers, state.serverOffers.length, dispatch]);
 
   useEffect(() => {
+    //TODO fix offer url z dc offers
     //set selected offer if url contain slug
     if (server && state.serverOffers?.length) {
       const found = state.serverOffers.find((o) => o.slug === server);
@@ -328,42 +325,10 @@ export default function OfferPage({ serverOffers, serverData }) {
   }, [offersView]);
   return (
     <Layout>
+      <MarketplaceTour setOffersView={setOffersView} />
       <div className="bg-mainBg">
         <div>
-          <div className="relative w-full h-64 mb-8 bg-mainBg">
-            <Image
-              src={
-                serverData?.img ||
-                'https://forum.balmora.pl/uploads/monthly_2018_02/logovs.png.4ea36bb248bfd59a3d82251695ea07ad.png'
-              }
-              alt="Background"
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-black bg-opacity-50"></div>
-            <div className="absolute inset-0 flex items-center justify-center text-white">
-              <h1 className="text-3xl">{serverData?.name || server}</h1>
-            </div>
-            <div className="absolute top-0 p-4 rounded-full pointer ">
-              <Link href={'/marketplace/offers'}>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-6 hover:text-red-300 hover:opacity-80 transition-all"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                  />
-                </svg>
-              </Link>
-            </div>
-          </div>
+          <ServerImageCard serverData={serverData} server={server} />
 
           <div className="flex lg:justify-between flex-col lg:flex-row mb-8 lg:mb-12 z-10">
             <div>
@@ -390,7 +355,7 @@ export default function OfferPage({ serverOffers, serverData }) {
           />
 
           <div>
-            <div className="grid grid-rows-2 lg:grid-cols-[0.7fr_1.3fr] gap-4">
+            <div className="grid grid-rows-1 lg:grid-cols-[0.7fr_1.3fr] gap-4">
               <div className="flex flex-col gap-y-4 lg:pr-4">
                 {currentOffers?.length !== 0 && (
                   <FilterAndSearch

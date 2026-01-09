@@ -7,7 +7,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { getAllDcOffersCount, getAllOffersCount } from '../../../../lib/offers';
 import { useFilterByRegex } from '../../../../hooks/useFilterByRegex';
 
-export default function OffersPage({ servers, uncategorizedCount, debug, error }) {
+export default function OffersPage({
+  servers,
+  uncategorizedCount,
+  debug,
+  error,
+}) {
   const [expand, setExpand] = useState(false);
   const [phrase, setPhrase] = useState('');
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
@@ -28,9 +33,9 @@ export default function OffersPage({ servers, uncategorizedCount, debug, error }
     'slug',
   ]);
 
-  const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 6);
+  const displayedOffers = expand ? filteredOffers : filteredOffers.slice(0, 5);
 
-  const shouldShowExpandButton = filteredOffers.length > 6 && !expand;
+  const shouldShowExpandButton = filteredOffers.length > 5 && !expand;
 
   // Create uncategorized server object
   const uncategorizedServer = {
@@ -92,7 +97,7 @@ export default function OffersPage({ servers, uncategorizedCount, debug, error }
             <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex justify-center">
               <button
                 onClick={() => setExpand(true)}
-                className="flex flex-col items-center bg-brighterBg hover:bg-white hover:text-black transition-colors px-6 sm:px-8 py-3 sm:py-4 rounded-lg text-lg sm:text-xl font-bold border-mainBg border-2"
+                className="flex flex-col items-center bg-brighterBg hover:bg-white hover:text-black transition-colors px-6 sm:px-8 py-3  rounded-lg text-lg sm:text-xl font-bold border-mainBg border-2"
               >
                 Show More Servers
                 <svg

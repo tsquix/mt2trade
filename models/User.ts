@@ -30,6 +30,7 @@ export interface IUser extends Document {
   verified: boolean;
   createdAt: Date;
   avatar: string;
+  hasSeenOnboarding: boolean;
 }
 
 const UserSchema = new mongoose.Schema<IUser>({
@@ -76,6 +77,7 @@ const UserSchema = new mongoose.Schema<IUser>({
     type: String,
     default: 'https://mt2trade.s3.amazonaws.com/1761740352999.jpeg',
   },
+  hasSeenOnboarding: { type: Boolean, default: false },
 });
 
 export default mongoose.models.User || mongoose.model('User', UserSchema);

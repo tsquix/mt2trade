@@ -140,68 +140,69 @@ function OfferDetailPage({
               {mode === 'default' && <DeliveryInfo />}
             </>
           )}
-
-          {mode === 'default' && selectedOffer?.offerType !== 'dc' && (
-            <div className="bg-mainBg rounded-lg p-4 mb-6">
-              <div className="flex flex-col sm:flex-row gap-4 mb-2">
-                <div className="flex-1">
-                  <label className="block text-sm text-gray-400 mb-1">
-                    Character Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter your character name"
-                    className="w-full bg-brighterBg border border-gray-700 rounded-lg py-2 px-3"
-                  />
+          <div data-tour="buy-now">
+            {mode === 'default' && selectedOffer?.offerType !== 'dc' && (
+              <div className="bg-mainBg rounded-lg p-4 mb-6">
+                <div className="flex flex-col sm:flex-row gap-4 mb-2">
+                  <div className="flex-1">
+                    <label className="block text-sm text-gray-400 mb-1">
+                      Character Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter your character name"
+                      className="w-full bg-brighterBg border border-gray-700 rounded-lg py-2 px-3"
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {selectedOffer?.offerType !== 'dc' && (
-            <>
-              {mode === 'default' ? (
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <button
-                    className="flex-1 bg-red-300 hover:bg-red-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center"
-                    value="buy"
-                    onClick={(e) => handleBuy(e)}
-                  >
-                    Kup teraz
-                  </button>
-                  <button className="flex-1 bg-transparent hover:bg-gray-700 text-white font-medium py-3 px-6 border border-gray-600 rounded-lg transition-colors duration-200 flex items-center justify-center">
-                    Zarezerwuj ofertę
-                  </button>
-                </div>
-              ) : (
-                <div className="flex justify-center">
-                  {status !== 'edit' ? (
+            {selectedOffer?.offerType !== 'dc' && (
+              <>
+                {mode === 'default' ? (
+                  <div className="flex flex-col sm:flex-row gap-4">
                     <button
-                      className="flex-1 bg-blue-300 hover:bg-blue-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center max-w-xs"
-                      onClick={() => edit('edit')}
+                      className="flex-1 bg-red-300 hover:bg-red-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                      value="buy"
+                      onClick={(e) => handleBuy(e)}
                     >
-                      Edytuj
+                      Kup teraz
                     </button>
-                  ) : (
-                    <div className="flex gap-4">
+                    <button className="flex-1 bg-transparent hover:bg-gray-700 text-white font-medium py-3 px-6 border border-gray-600 rounded-lg transition-colors duration-200 flex items-center justify-center">
+                      Zarezerwuj ofertę
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex justify-center">
+                    {status !== 'edit' ? (
                       <button
-                        className="bg-green-400 hover:bg-green-300 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 items-center justify-center max-w-xs"
-                        onClick={() => edit('view', 'saveEdit')}
+                        className="flex-1 bg-blue-300 hover:bg-blue-400 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 flex items-center justify-center max-w-xs"
+                        onClick={() => edit('edit')}
                       >
-                        Zakończ edycję
+                        Edytuj
                       </button>
-                      <button
-                        className="bg-red-400 hover:bg-red-300 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 items-center justify-center max-w-xs"
-                        onClick={() => edit('view')}
-                      >
-                        Odrzuć zmiany
-                      </button>
-                    </div>
-                  )}
-                </div>
-              )}
-            </>
-          )}
+                    ) : (
+                      <div className="flex gap-4">
+                        <button
+                          className="bg-green-400 hover:bg-green-300 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 items-center justify-center max-w-xs"
+                          onClick={() => edit('view', 'saveEdit')}
+                        >
+                          Zakończ edycję
+                        </button>
+                        <button
+                          className="bg-red-400 hover:bg-red-300 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 items-center justify-center max-w-xs"
+                          onClick={() => edit('view')}
+                        >
+                          Odrzuć zmiany
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </>
+            )}
+          </div>
         </div>
       </>
     );

@@ -7,14 +7,19 @@ body {
   background: var(--background);
   font-family: 'Poppins', sans-serif;
 }
-html {
+/* TODO fix snap */
+/* html {
   scroll-snap-type: y proximity;
 }
 section {
   scroll-snap-align: start;
   scroll-snap-stop: always;
-}
-
+} */
+/* .no-snap {
+  scroll-snap-type: none !important;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+} */
 span.style-module_starRatingWrap__q-lJC {
   display: flex;
   flex-direction: column;

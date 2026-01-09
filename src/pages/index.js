@@ -210,7 +210,9 @@ export default function Home() {
   }, [section3ref]);
 
   return (
-    <div className={`${halfSection ? 'bg-[#efefef]' : 'bg-[#322C33]'}`}>
+    <div
+      className={`${halfSection ? 'bg-[#efefef]' : 'bg-[#322C33]'} snap-container`}
+    >
       {/* TODO  add max-w container so wide screen looks good*/}
       <HomePage
         halfSection={halfSection}
