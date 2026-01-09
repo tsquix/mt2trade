@@ -24,9 +24,9 @@ export default function OffersPage({
 
     return () => clearTimeout(handler);
   }, [phrase]);
-  useEffect(() => {
-    console.log(servers);
-  }, [servers]);
+  // useEffect(() => {
+  //   console.log(servers);
+  // }, [servers]);
 
   const filteredOffers = useFilterByRegex(debouncedPhrase, servers, [
     'name',

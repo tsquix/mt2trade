@@ -105,13 +105,22 @@ export default function OfferPage({ serverOffers, serverData }) {
       try {
         if (server) {
           const res = await axios.get(`/api/dcOffers?server=${server}`);
-          // console.log(res);
-          const data = res.data.data;
+
+          let data = res.data.data;
+
+          data.sort((a, b) => {
+            return (
+              new Date(b.lastActivity).getTime() -
+              new Date(a.lastActivity).getTime()
+            );
+          });
+
           setDiscordThreads(data);
-          // console.log(data[0]);
+
           data.length === 0
             ? setOffersView('oferty')
             : setOffersView('ofertydc');
+
           data.length > 0
             ? dispatch({
                 type: 'SET_SELECTED_OFFER',

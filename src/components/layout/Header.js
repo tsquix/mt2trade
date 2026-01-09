@@ -17,30 +17,32 @@ export default function Header({ noMb, fadeIn }) {
 
   // handle repeated onboard
   const handleOnBoard = async () => {
+    setShowModal(false);
+
     localStorage.removeItem('HAS_SEEN_TOUR');
 
     if (session) {
-      axios
-        .patch(`/api/user/me`, {
+      try {
+        await axios.patch(`/api/user/me`, {
           hasSeenOnboarding: false,
-        })
-        .catch((err) => console.error(err));
+        });
+      } catch (err) {
+        console.error('Błąd resetowania onboardingu:', err);
+      }
     }
 
-    const isOnOffersPage = pathname?.includes('/marketplace/offers');
+    const isOnOffersPage = pathname?.includes('/marketplace/offers/Tundria2');
     if (isOnOffersPage) {
-      // wywolaj event samouczka
       window.dispatchEvent(new Event('start-onboarding'));
     } else {
-      // przejdz na strone z samouczkiem ktory sie sam odpali
       router.push('/marketplace/offers/Tundria2');
     }
-    setShowModal(false);
   };
 
   useEffect(() => {
     // handlee click
     const handleClickOutside = (event) => {
+      if (!showModal) return;
       if (
         modalRef.current &&
         !modalRef.current.contains(event.target) &&

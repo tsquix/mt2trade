@@ -7,44 +7,58 @@ export default function MarketplaceTour({ setOffersView }) {
   const { data: session } = useSession();
   const [run, setRun] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
+
+  //prevent scroll snap when tour is running
+  useEffect(() => {
+    if (run) {
+      document.documentElement.classList.add('no-scroll-snap');
+    } else {
+      document.documentElement.classList.remove('no-scroll-snap');
+    }
+  }, [run]);
+
   const steps = [
     {
       target: 'body',
       placement: 'center',
-      content: 'Pokażemy Ci jak działa aplikacja',
+      content: 'Cześć! Pokażemy Ci szybko, jak poruszać się po markecie.',
       disableBeacon: true,
     },
     {
       placement: 'bottom',
       target: '[data-tour="view-ofertydc"]',
       content:
-        'Tutaj znajdziesz szczegóły ofert zamieszczanych na serwerach discord',
+        'Tutaj lądują wszystkie ogłoszenia bezpośrednio z serwerów Discord.',
     },
     {
       placement: 'left-start',
       target: '[data-tour="discord-avatar"]',
-      content: 'Aby uzyskać kontakt do właściciela oferty kliknij na avatar!',
+      content:
+        'Zainteresowany? Kliknij w avatar, aby złapać kontakt z właścicielem oferty.',
     },
     {
       placement: 'left',
       target: '[data-tour="view-oferty"]',
-      content: 'Tutaj znajdziesz szczegóły ofert naszych handlarzy',
+      content: 'Tutaj znajdziesz oferty od naszych najlepszych handlarzy.',
     },
     {
-      placement: 'top',
+      placement: 'left-start',
       target: '[data-tour="buy-now"]',
       content:
-        'Jeśli zdecydujesz się na kupno musisz się zalogować! A następnie kliknij kup teraz',
+        'Aby kupić przedmiot, musisz być zalogowany. Potem wystarczy jedno kliknięcie "Kup teraz"!',
     },
     {
       placement: 'top',
       target: '[data-tour="orders-link"]',
       content:
-        'Następnie w zakładce zamówienia możesz śledzić przebieg transakcji!',
+        'Tutaj znajdziesz historię swoich zakupów i sprawdzisz status aktualnych zamówień.',
     },
   ];
   useEffect(() => {
-    const handleStartEvent = () => setRun(true);
+    const handleStartEvent = () => {
+      setStepIndex(0);
+      setRun(true);
+    };
     window.addEventListener('start-onboarding', handleStartEvent);
 
     const checkOnboarding = async () => {
@@ -67,7 +81,6 @@ export default function MarketplaceTour({ setOffersView }) {
       window.removeEventListener('start-onboarding', handleStartEvent);
   }, [session]);
 
-  // 2. Główna logika sterowania
   const handleJoyrideCallback = async (data) => {
     const { action, index, status, type } = data;
 
@@ -77,7 +90,8 @@ export default function MarketplaceTour({ setOffersView }) {
       try {
         localStorage.setItem('HAS_SEEN_TOUR', 'true');
         if (session) {
-          await axios.patch(`/api/user/me`, { // Changed endpoint
+          await axios.patch(`/api/user/me`, {
+            // Changed endpoint
             hasSeenOnboarding: true,
           });
         }
@@ -86,34 +100,26 @@ export default function MarketplaceTour({ setOffersView }) {
       }
       return; // Koniec funkcji
     }
-
-    // Obsługa zmiany kroków
     if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
-      // Logika przycisku DALEJ
       if (action === ACTIONS.NEXT) {
         if (index === 3) {
-          // Zmiana widoku
           setOffersView('oferty');
-          // Ważne: Opóźnienie zmiany indeksu, aby React zdążył wyrenderować nowy DOM
+
           setTimeout(() => {
             setStepIndex(index + 1);
-          }, 200); // 200ms zazwyczaj wystarcza
+          }, 200);
         } else {
-          // Normalne przejście
           setStepIndex(index + 1);
         }
       }
 
-      // Logika przycisku WSTECZ
       if (action === ACTIONS.PREV) {
         if (index === 4) {
-          // Powrót do poprzedniego widoku
           setOffersView('ofertydc');
           setTimeout(() => {
             setStepIndex(index - 1);
           }, 200);
         } else {
-          // Normalne cofnięcie
           setStepIndex(index - 1);
         }
       }
@@ -126,12 +132,18 @@ export default function MarketplaceTour({ setOffersView }) {
       steps={steps}
       stepIndex={stepIndex}
       continuous
-      showProgress
       showSkipButton
       callback={handleJoyrideCallback}
       disableBeacon={true}
       waitForSelector={true}
       disableOverlayClose={true}
+      locale={{
+        back: 'Wstecz',
+        close: 'Zamknij',
+        last: 'Zakończ',
+        next: 'Dalej',
+        skip: 'Pomiń',
+      }}
     />
   );
 }
