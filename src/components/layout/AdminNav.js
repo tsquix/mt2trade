@@ -58,6 +58,12 @@ export default function AdminNav({ children }) {
                 servers
               </Link>
             </div>
+            <div className="bg-green-100 text-black rounded-lg">
+              <Link href={'/admin/dcusers'} className="">
+                {' '}
+                dc users
+              </Link>
+            </div>
             <div className="bg-green-100 text-black rounded-lg"></div>
           </div>
           <div className="bg-brighterBg p-6">{children}</div>

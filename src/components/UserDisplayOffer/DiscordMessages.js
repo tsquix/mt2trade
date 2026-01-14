@@ -126,7 +126,7 @@ const DiscordMessages = ({ offer }) => {
             <div className="w-full max-w-lg">
               <div className="flex items-center gap-1">
                 <span className="font-medium text-[#dcddde]">
-                  {offer?.thread?.owner?.name}
+                  {offer?.thread?.owner?.displayName}
                 </span>
                 <span className="text-xs text-[#72767d]">
                   {new Date(msg.timestamp).toDateString() ===

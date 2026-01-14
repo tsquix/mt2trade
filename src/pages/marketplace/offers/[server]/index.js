@@ -91,7 +91,7 @@ export default function OfferPage({ serverOffers, serverData }) {
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
   const router = useRouter();
   const { server } = router.query;
-  const [visibleCount, setVisibleCount] = useState(10);
+  const [visibleCount, setVisibleCount] = useState(30);
   const listRef = useRef(null);
   const [actionType, setActionType] = useState(null);
   const [offersView, setOffersView] = useState('');
@@ -106,15 +106,7 @@ export default function OfferPage({ serverOffers, serverData }) {
         if (server) {
           const res = await axios.get(`/api/dcOffers?server=${server}`);
 
-          let data = res.data.data;
-
-          data.sort((a, b) => {
-            return (
-              new Date(b.lastActivity).getTime() -
-              new Date(a.lastActivity).getTime()
-            );
-          });
-
+          const data = res.data.data;
           setDiscordThreads(data);
 
           data.length === 0

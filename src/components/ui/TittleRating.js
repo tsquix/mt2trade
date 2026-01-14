@@ -88,6 +88,21 @@ function TitleRating({
                   {user?.transactionCount || 0} sales
                 </p>
               </div>
+              {!smaller && (
+                <div className="font-normal text-xs text-[#72767d]">
+                  <p>ostatnia aktywnosc</p>
+
+                  <span className="text-xs text-[#72767d]">
+                    {new Date(offer?.lastActivity).toLocaleString('pl-PL', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -111,7 +126,7 @@ function TitleRating({
                 className="size-6 hover:opacity-50 transition-opacity cursor-pointer mt-2 mx-2"
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${window?.location?.origin ?? 'https://twojastrona.pl'}/marketplace/offers/${offer.serverName}?offer=${offer.slug}`
+                    `${window?.location?.origin ?? 'https://mt2trade.vercel.app'}/marketplace/offers/${offer.serverName}?offer=${offer.slug}`
                   );
                   setCopied(true);
                 }}

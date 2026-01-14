@@ -114,7 +114,7 @@ const dcOfferSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ['active', 'sold', 'closed', 'archived'],
+      enum: ['active', 'sold', 'closed', 'archived', 'corrupted'],
       default: 'active',
     },
   },

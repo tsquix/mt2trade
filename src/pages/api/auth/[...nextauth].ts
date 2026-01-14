@@ -66,8 +66,8 @@ export async function isAdminRequest(
   const clientIP = getClientIP(req);
 
   // 1. Rate limit
-  const { success } = await ratelimit.limit(clientIP);
-  if (!success) return res.status(429).json({ message: 'Too many requests' });
+  // const { success } = await ratelimit.limit(clientIP);
+  // if (!success) return res.status(429).json({ message: 'Too many requests' });
 
   // 2. IP whitelist
   if (!ALLOWED_IPS.includes(clientIP))
