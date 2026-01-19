@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSession } from 'next-auth/react';
 import Joyride, { ACTIONS, EVENTS, STATUS } from 'react-joyride';
 import axios from 'axios';
 
-export default function MarketplaceTour({ setOffersView }) {
+export default function MarketplaceTour({ setOffersView, serverOffersLength }) {
   const { data: session } = useSession();
   const [run, setRun] = useState(false);
   const [stepIndex, setStepIndex] = useState(0);
@@ -17,7 +17,7 @@ export default function MarketplaceTour({ setOffersView }) {
     }
   }, [run]);
 
-  const steps = [
+  const allSteps = [
     {
       target: 'body',
       placement: 'center',
@@ -46,6 +46,7 @@ export default function MarketplaceTour({ setOffersView }) {
       target: '[data-tour="buy-now"]',
       content:
         'Aby kupić przedmiot, musisz być zalogowany. Potem wystarczy jedno kliknięcie "Kup teraz"!',
+      showOnlyIf: () => serverOffersLength > 0,
     },
     {
       placement: 'top',
@@ -54,6 +55,12 @@ export default function MarketplaceTour({ setOffersView }) {
         'Tutaj znajdziesz historię swoich zakupów i sprawdzisz status aktualnych zamówień.',
     },
   ];
+
+  // Filtruj kroki w zależności od warunków
+  const steps = useMemo(() => {
+    return allSteps.filter((step) => !step.showOnlyIf || step.showOnlyIf());
+  }, [serverOffersLength]);
+
   useEffect(() => {
     const handleStartEvent = () => {
       setStepIndex(0);
@@ -86,25 +93,23 @@ export default function MarketplaceTour({ setOffersView }) {
 
     if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
       setRun(false);
-      // Zapisywanie ukończenia (bez zmian)
       try {
         localStorage.setItem('HAS_SEEN_TOUR', 'true');
         if (session) {
           await axios.patch(`/api/user/me`, {
-            // Changed endpoint
             hasSeenOnboarding: true,
           });
         }
       } catch (error) {
         console.error('Błąd zapisu tour:', error);
       }
-      return; // Koniec funkcji
+      return;
     }
+
     if (type === EVENTS.STEP_AFTER || type === EVENTS.TARGET_NOT_FOUND) {
       if (action === ACTIONS.NEXT) {
-        if (index === 3) {
+        if (index === 3 && serverOffersLength > 0) {
           setOffersView('oferty');
-
           setTimeout(() => {
             setStepIndex(index + 1);
           }, 200);
@@ -114,7 +119,9 @@ export default function MarketplaceTour({ setOffersView }) {
       }
 
       if (action === ACTIONS.PREV) {
-        if (index === 4) {
+        // dostosowanie indeksu w zależności od tego czy krok buy-now jest widoczny
+        const buyNowStepIndex = serverOffersLength > 0 ? 4 : -1;
+        if (index === buyNowStepIndex + 1 && buyNowStepIndex !== -1) {
           setOffersView('ofertydc');
           setTimeout(() => {
             setStepIndex(index - 1);

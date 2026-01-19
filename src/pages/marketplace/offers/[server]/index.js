@@ -218,7 +218,7 @@ export default function OfferPage({ serverOffers, serverData }) {
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedPhrase(phrase);
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(handler);
   }, [phrase]);
@@ -228,7 +228,7 @@ export default function OfferPage({ serverOffers, serverData }) {
     if (offersView === 'oferty') {
       return ['title', 'description', 'seller.name'];
     } else {
-      return ['seller.name', 'title', 'starterMessage'];
+      return ['owner.displayName', 'thread.name', 'starterMessage.content'];
     }
   }, [offersView]);
 
@@ -239,6 +239,9 @@ export default function OfferPage({ serverOffers, serverData }) {
     fieldsToFilter
   );
 
+  useEffect(() => {
+    console.log(currentOffers);
+  }, []);
   const handleSelect = (offer) => {
     //ustawiamy selected offer
     dispatch({ type: 'SET_SELECTED_OFFER', payload: offer });
@@ -326,7 +329,10 @@ export default function OfferPage({ serverOffers, serverData }) {
   }, [offersView]);
   return (
     <Layout>
-      <MarketplaceTour setOffersView={setOffersView} />
+      <MarketplaceTour
+        setOffersView={setOffersView}
+        serverOffersLength={state.serverOffers.length}
+      />
       <div className="bg-mainBg">
         <div>
           <ServerImageCard serverData={serverData} server={server} />
@@ -355,8 +361,8 @@ export default function OfferPage({ serverOffers, serverData }) {
             dcOfferCount={discordThreads.length}
           />
 
-          <div>
-            <div className="grid grid-rows-1 lg:grid-cols-[0.7fr_1.3fr] gap-4">
+          <div className="min-h-screen">
+            <div className="grid grid-rows-1 lg:grid-cols-[0.7fr_1.3fr] gap-4 ">
               <div className="flex flex-col gap-y-4 lg:pr-4">
                 {currentOffers?.length !== 0 && (
                   <FilterAndSearch
