@@ -11,16 +11,16 @@ import OfferDetailPage from '@/components/marketplace/offers/OfferDetailPage';
 import { useFilterByRegex } from '../../../../../hooks/useFilterByRegex';
 import ServerImageCard from '@/components/marketplace/offers/ServerImageCard';
 import MarketplaceTour from '@/components/marketplace/offers/MarketplaceTour';
-import { useServerOffers } from '@/hooks/useServerOffers';
-import { useDiscordOffers } from '@/hooks/useDiscordOffers';
-import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
-import { sortOffers } from '@/lib/sorting/offerSorter';
+import { useServerOffers } from '@hooks/useServerOffers';
+import { useDiscordOffers } from '@hooks/useDiscordOffers';
+import { useInfiniteScroll } from '@hooks/useInfiniteScroll';
+import { sortOffers } from '@lib/sorting/offerSorter';
 import {
   OFFER_VIEWS,
   SORT_OPTIONS,
   ITEMS_PER_PAGE,
   LOAD_MORE_INCREMENT,
-} from '@/lib/constants/marketplace';
+} from '@lib/constants/marketplace';
 
 export const getServerSideProps = async (context) => {
   const { server: serverSlug } = context.params;

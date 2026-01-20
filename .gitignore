@@ -23,6 +23,9 @@
 # production
 /build
 
+# manual handler scripts
+/scripts
+
 # misc
 .DS_Store
 *.pem

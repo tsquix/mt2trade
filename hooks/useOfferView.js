@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useOrders } from '@/contexts/OrdersContext';
-import { OFFER_VIEWS } from '@/lib/constants/marketplace';
+import { OFFER_VIEWS } from '@lib/constants/marketplace';
 
 export const useOfferView = (discordThreadsLength) => {
   const { dispatch } = useOrders();
