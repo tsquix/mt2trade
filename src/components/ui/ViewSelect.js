@@ -37,25 +37,25 @@ export default function ViewSelect({
         >
           {!orders && (
             <div
-              className={`border px-6 py-4 w-[64px] min-w-[64px] ${
+              className={`border py-4 w-[64px] min-w-[64px] text-center ${
                 view === key
                   ? 'bg-mainBg border-b-2 border-red-300 text-white'
                   : 'bg-brighterBg border-b-2 border-gray-700 text-gray-500 group-hover:text-white transition-colors'
               }`}
             >
-              {offerAmount}
+              <p>{offerAmount}</p>
             </div>
           )}
 
           <div
             //pb-4 pt-[17px] to allign divs cause it has no top border and other div has
-            className={`transition-colors w-full px-6 pb-4 pt-[17px]  ${
+            className={`transition-colors w-full px-6 pb-4 pt-[21px] sm:pt-[17px] text-sm tracking-tight  sm:text-base sm:tracking-normal ${
               view === key
                 ? 'bg-mainBg border-b-2 border-red-300 text-white'
-                : 'bg-brighterBg border-b-2 border-gray-700 text-gray-500 group-hover:text-white'
+                : 'bg-brighterBg border-b-2 border-gray-700 text-gray-500 group-hover:text-white '
             }`}
           >
-            {label}
+            <span>{label}</span>
           </div>
         </button>
       ))}

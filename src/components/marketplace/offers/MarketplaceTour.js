@@ -140,6 +140,7 @@ export default function MarketplaceTour({ setOffersView, serverOffersLength }) {
       stepIndex={stepIndex}
       continuous
       showSkipButton
+      hideCloseButton
       callback={handleJoyrideCallback}
       disableBeacon={true}
       waitForSelector={true}

@@ -89,7 +89,7 @@ export default function OfferPage({ serverOffers, serverData }) {
 
   const [phrase, setPhrase] = useState('');
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
-  const [offersView, setOffersView] = useState('');
+  const [offersView, setOffersView] = useState(OFFER_VIEWS.DISCORD);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [actionType, setActionType] = useState(null);
   const listRef = useRef(null);
@@ -108,19 +108,19 @@ export default function OfferPage({ serverOffers, serverData }) {
     fieldsToFilter
   );
 
-  useEffect(() => {
-    if (discordThreads.length === 0) {
-      setOffersView(OFFER_VIEWS.REGULAR);
-    } else {
-      setOffersView(OFFER_VIEWS.DISCORD);
-      if (discordThreads.length > 0) {
-        dispatch({
-          type: 'SET_SELECTED_OFFER',
-          payload: discordThreads[0],
-        });
-      }
-    }
-  }, [discordThreads, dispatch]);
+  // useEffect(() => {
+  //   if (discordThreads.length === 0) {
+  //     setOffersView(OFFER_VIEWS.REGULAR);
+  //   } else {
+  //     setOffersView(OFFER_VIEWS.DISCORD);
+  //     if (discordThreads.length > 0) {
+  //       dispatch({
+  //         type: 'SET_SELECTED_OFFER',
+  //         payload: discordThreads[0],
+  //       });
+  //     }
+  //   }
+  // }, [discordThreads, dispatch]);
 
   // set first offer when view changes
   useEffect(() => {

@@ -6,7 +6,7 @@ export const EmptyOffersList = () => {
   const { server } = router.query;
 
   return (
-    <div className="pt-8">
+    <div className="pt-8 animation-delay-800 animate-fade-in opacity-0 transition-opacity">
       <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
       <p className="mb-1">
         Bądź pierwszy i

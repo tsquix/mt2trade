@@ -1,12 +1,8 @@
+import 'swiper/css';
+import { useEffect, useRef, useState } from 'react';
 import Carousel from '@/components/ui/Carousel';
 import FindOutMore from '@/components/contact/FindOutMore';
 import HomePage from '@/components/home/HomePage';
-import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Autoplay, Pagination } from 'swiper/modules';
-import 'swiper/css';
-import ContactUs from '@/components/contact/ContactUs';
 import Footer from '@/components/layout/Footer';
 
 export default function Home() {
@@ -210,9 +206,7 @@ export default function Home() {
   }, [section3ref]);
 
   return (
-    <div
-      className={`${halfSection ? 'bg-[#efefef]' : 'bg-[#322C33]'} snap-container`}
-    >
+    <div className={`${halfSection ? 'bg-[#efefef]' : 'bg-[#322C33]'}`}>
       {/* TODO  add max-w container so wide screen looks good*/}
       <HomePage
         halfSection={halfSection}

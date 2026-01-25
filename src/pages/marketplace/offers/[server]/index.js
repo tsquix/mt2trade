@@ -3,13 +3,12 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import axios from 'axios';
-
 import BuyOrder from '@/components/orders/BuyOrder';
 import FilterAndSearch from '@/components/ui/FilterAndSearch';
 import { useOrders } from '@/contexts/OrdersContext';
 import ViewSelect from '@/components/ui/ViewSelect';
 import OfferDetailPage from '@/components/marketplace/offers/OfferDetailPage';
-import { useFilterByRegex } from '@hooks/useFilterByRegex';
+import { useFilterByRegex } from '../../../../../hooks/useFilterByRegex';
 import ServerImageCard from '@/components/marketplace/offers/ServerImageCard';
 import MarketplaceTour from '@/components/marketplace/offers/MarketplaceTour';
 import { useServerOffers } from '@hooks/useServerOffers';
@@ -18,9 +17,11 @@ import { useInfiniteScroll } from '@hooks/useInfiniteScroll';
 import { sortOffers } from '@lib/sorting/offerSorter';
 import {
   OFFER_VIEWS,
+  SORT_OPTIONS,
   ITEMS_PER_PAGE,
   LOAD_MORE_INCREMENT,
 } from '@lib/constants/marketplace';
+import { EmptyOffersList } from '@/components/marketplace/offers/EmptyOffersList';
 import OfferCard from '@/components/marketplace/offers/OfferCard';
 
 export const getServerSideProps = async (context) => {
@@ -90,7 +91,7 @@ export default function OfferPage({ serverOffers, serverData }) {
 
   const [phrase, setPhrase] = useState('');
   const [debouncedPhrase, setDebouncedPhrase] = useState('');
-  const [offersView, setOffersView] = useState('');
+  const [offersView, setOffersView] = useState(OFFER_VIEWS.DISCORD);
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE);
   const [actionType, setActionType] = useState(null);
   const listRef = useRef(null);
@@ -110,19 +111,16 @@ export default function OfferPage({ serverOffers, serverData }) {
   );
 
   useEffect(() => {
-    if (discordThreads.length === 0) {
+    if (discordThreads.length < regularOffers.length) {
       setOffersView(OFFER_VIEWS.REGULAR);
-    } else {
-      setOffersView(OFFER_VIEWS.DISCORD);
-      if (discordThreads.length > 0) {
-        dispatch({
-          type: 'SET_SELECTED_OFFER',
-          payload: discordThreads[0],
-        });
-      }
+      dispatch({
+        type: 'SET_SELECTED_OFFER',
+        payload: regularOffers[0],
+      });
     }
   }, [discordThreads, dispatch]);
 
+  // set first offer when view changes
   useEffect(() => {
     if (offersView === OFFER_VIEWS.REGULAR && regularOffers.length > 0) {
       dispatch({
@@ -190,10 +188,7 @@ export default function OfferPage({ serverOffers, serverData }) {
 
   return (
     <Layout>
-      <MarketplaceTour
-        setOffersView={handleViewChange}
-        serverOffersLength={state.serverOffers.length}
-      />
+      <MarketplaceTour setOffersView={handleViewChange} />
       <div className="bg-mainBg">
         <ServerImageCard serverData={serverData} server={server} />
 
@@ -234,15 +229,17 @@ export default function OfferPage({ serverOffers, serverData }) {
 
               {!isLoading && (
                 <>
-                  {phrase.length > 0
-                    ? filteredOffers.map((offer) => (
-                        <OfferCard
-                          key={offer._id}
-                          offer={offer}
-                          isSelected={selectedOffer?._id === offer._id}
-                          onClick={() => handleSelect(offer)}
-                        />
-                      ))
+                  {debouncedPhrase.length > 0
+                    ? filteredOffers
+                        .slice(0, 30)
+                        .map((offer) => (
+                          <OfferCard
+                            key={offer._id}
+                            offer={offer}
+                            isSelected={selectedOffer?._id === offer._id}
+                            onClick={() => handleSelect(offer)}
+                          />
+                        ))
                     : currentOffers
                         ?.slice(0, visibleCount)
                         .map((offer) => (
@@ -254,33 +251,18 @@ export default function OfferPage({ serverOffers, serverData }) {
                           />
                         ))}
 
-                  {showLoader && (
+                  {/* {showLoader && (
                     <div
                       ref={listRef}
                       className="py-4 text-center text-gray-400"
                     >
                       Ładowanie więcej...
                     </div>
-                  )}
+                  )} */}
                 </>
               )}
 
-              {currentOffers?.length === 0 && !isLoading && (
-                <div className="pt-8">
-                  {/* //TODO FIX this if dc offers exists */}
-                  <h2>Nie znaleźliśmy żadnej oferty dla tego serwera...</h2>
-                  <p className="mb-1">
-                    Bądź pierwszy i
-                    <Link
-                      href={`/marketplace/offers/create?server=${server}`}
-                      className="text-red-300 hover:text-red-400"
-                    >
-                      {' '}
-                      utwórz teraz
-                    </Link>{' '}
-                  </p>
-                </div>
-              )}
+              {currentOffers?.length === 0 && !isLoading && <EmptyOffersList />}
             </div>
 
             <div className="sticky top-0 self-start h-fit">

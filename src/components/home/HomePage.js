@@ -84,7 +84,9 @@ export default function HomePage({
                     hover:from-[#423a43] hover:to-[#6c3b41]
                      "
                   >
-                    <div className="shiningButton">Sprawdź serwery</div>
+                    <div className="shiningButton">
+                      <Link href={'/marketplace/offers'}>Sprawdź serwery</Link>
+                    </div>
                   </div>
                 </button>
               </div>
